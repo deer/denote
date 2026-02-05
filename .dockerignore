@@ -1,0 +1,7 @@
+.git
+node_modules
+_fresh
+*.md
+!README.md
+!CONTRIBUTING.md
+!content/**/*.md

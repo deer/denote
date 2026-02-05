@@ -1,0 +1,10 @@
+services:
+  denote:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      # Mount your content directory for live updates
+      - ./content:/app/content:ro
+      - ./docs.config.ts:/app/docs.config.ts:ro
+    restart: unless-stopped

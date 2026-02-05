@@ -1,0 +1,16 @@
+{
+  "name": "@denote/monorepo",
+  "exports": "./packages/denote/mod.ts",
+  "nodeModulesDir": "auto",
+  "workspace": [
+    "packages/denote",
+    "packages/denote-init",
+    "docs"
+  ],
+  "tasks": {
+    "dev": "cd packages/denote && deno task dev",
+    "build": "cd packages/denote && deno task build",
+    "test": "deno test -A",
+    "ok": "deno fmt --check && deno lint && deno check && deno task test"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "name": "@denote/init",
+  "version": "0.1.0",
+  "exports": "./mod.ts",
+  "tasks": {
+    "dev": "deno run -A mod.ts",
+    "test": "deno test --allow-read --allow-write --allow-run"
+  }
+}

@@ -1,0 +1,153 @@
+---
+title: Deployment
+description: Deploy your Denote documentation site to production
+---
+
+# Deployment
+
+Denote can be deployed anywhere that runs Deno or Docker. This guide covers the
+most common options.
+
+## Build for Production
+
+Before deploying, create a production build:
+
+```bash
+deno task build
+```
+
+This generates an optimized build in the `_fresh/` directory. To test it
+locally:
+
+```bash
+deno task start
+```
+
+Your site will be available at [http://localhost:8000](http://localhost:8000).
+
+## Deno Deploy
+
+[Deno Deploy](https://deno.com/deploy) is the fastest way to deploy a Denote
+site. It runs on Deno's global edge network with zero configuration.
+
+### Prerequisites
+
+Install the `deployctl` CLI:
+
+```bash
+deno install -gArf jsr:@deno/deployctl
+```
+
+### Deploy
+
+Build and deploy in two commands:
+
+```bash
+deno task build
+deployctl deploy --project=<your-project> _fresh/server.js
+```
+
+### Automatic Deploys
+
+Connect your GitHub repository to Deno Deploy for automatic deployments on every
+push. See the [Deno Deploy docs](https://docs.deno.com/deploy/manual/) for setup
+instructions.
+
+### Environment Variables
+
+Deno Deploy supports environment variables through the dashboard. No special
+configuration is needed for Denote — it works out of the box.
+
+## Docker
+
+Docker is ideal for self-hosting or deploying to any container platform.
+
+### Quick Start
+
+Denote ships with a production-ready `Dockerfile`:
+
+```bash
+docker build -t my-docs .
+docker run -p 8000:8000 my-docs
+```
+
+Your site will be available at [http://localhost:8000](http://localhost:8000).
+
+### Docker Compose
+
+For easier management, use the included `docker-compose.yml`:
+
+```bash
+docker compose up -d
+```
+
+The default compose file mounts your `content/` directory and `docs.config.ts`
+as read-only volumes, so you can update documentation without rebuilding the
+image.
+
+### Custom Content Directory
+
+To serve different content, mount your own directory:
+
+```bash
+docker run -p 8000:8000 \
+  -v ./my-content:/app/content:ro \
+  -v ./my-config.ts:/app/docs.config.ts:ro \
+  my-docs
+```
+
+### Container Platforms
+
+The Docker image works on any container platform:
+
+- **Railway** — Connect your repo or deploy the Docker image directly
+- **Fly.io** — Use `fly launch` with the included Dockerfile
+- **Render** — Select "Docker" as the environment
+- **Any Kubernetes cluster** — Use the image in your pod spec
+
+## VPS / Self-Hosting
+
+For a traditional VPS deployment with Deno installed directly:
+
+```bash
+# On your server
+git clone https://github.com/<your-org>/my-docs.git
+cd my-docs
+deno task build
+deno task start
+```
+
+### Reverse Proxy
+
+Put Denote behind a reverse proxy like Caddy or Nginx for SSL and custom
+domains.
+
+**Caddy** (recommended — automatic HTTPS):
+
+```
+docs.example.com {
+    reverse_proxy localhost:8000
+}
+```
+
+**Nginx:**
+
+```nginx
+server {
+    listen 80;
+    server_name docs.example.com;
+
+    location / {
+        proxy_pass http://localhost:8000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+```
+
+## Next Steps
+
+- [Configuration](/docs/configuration) — Customize your site before deploying
+- [Writing Content](/docs/content) — Add more documentation pages
