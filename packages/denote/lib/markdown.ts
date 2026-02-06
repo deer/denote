@@ -1,3 +1,6 @@
+// Import Prism core FIRST to set up global before loading language components
+// This is required because language components expect `Prism` global to exist
+import "npm:prismjs@1.30.0";
 /**
  * Markdown parsing utilities using @deno/gfm
  *
