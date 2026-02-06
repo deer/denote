@@ -1,12 +1,6 @@
-import "../docs.config.ts"; // side-effect: registers default config
-import { setContentDir } from "./config.ts";
-import { dirname, fromFileUrl, join } from "@std/path";
+import "./test_config.ts"; // side-effect: sets up config for tests
 import { assertEquals } from "jsr:@std/assert@1";
 import { handleChat } from "./chat.ts";
-
-// Set content directory to docs/content/docs in monorepo
-const __dirname = dirname(fromFileUrl(import.meta.url));
-setContentDir(join(__dirname, "..", "..", "..", "docs", "content", "docs"));
 
 Deno.test("handleChat - search mode returns results for known topic", async () => {
   const result = await handleChat({

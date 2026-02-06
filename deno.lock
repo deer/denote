@@ -57,6 +57,7 @@
     "npm:rollup@^4.50.0": "4.57.1",
     "npm:sanitize-html@^2.17.0": "2.17.0",
     "npm:tailwindcss@^4.1.10": "4.1.18",
+    "npm:vite@*": "7.3.1_picomatch@4.0.3",
     "npm:vite@7": "7.3.1_picomatch@4.0.3",
     "npm:vite@^7.1.3": "7.3.1_picomatch@4.0.3",
     "npm:vite@^7.1.4": "7.3.1_picomatch@4.0.3",
@@ -2075,17 +2076,14 @@
     "members": {
       "docs": {
         "dependencies": [
-          "jsr:@deno/gfm@0.12.0",
           "jsr:@fresh/core@^2.2.0",
           "jsr:@fresh/plugin-vite@^1.0.8",
           "jsr:@std/path@1",
-          "npm:@modelcontextprotocol/sdk@^1.25.3",
           "npm:@preact/signals@^2.5.0",
           "npm:@tailwindcss/vite@^4.1.12",
           "npm:preact@^10.27.2",
           "npm:tailwindcss@^4.1.10",
-          "npm:vite@^7.1.3",
-          "npm:zod@^4.3.6"
+          "npm:vite@^7.1.3"
         ]
       },
       "packages/denote": {

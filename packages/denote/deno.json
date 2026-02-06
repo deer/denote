@@ -1,16 +1,20 @@
 {
   "name": "@denote/core",
   "version": "0.1.0",
-  "exports": "./mod.ts",
+  "exports": {
+    ".": "./mod.ts",
+    "./islands/ThemeToggle.tsx": "./islands/ThemeToggle.tsx",
+    "./islands/MobileMenu.tsx": "./islands/MobileMenu.tsx",
+    "./islands/Search.tsx": "./islands/Search.tsx",
+    "./islands/CollapsibleNav.tsx": "./islands/CollapsibleNav.tsx",
+    "./islands/CopyButton.tsx": "./islands/CopyButton.tsx",
+    "./islands/ActiveToc.tsx": "./islands/ActiveToc.tsx",
+    "./islands/AiChat.tsx": "./islands/AiChat.tsx",
+    "./assets/styles.css": "./assets/styles.css"
+  },
   "tasks": {
-    "dev": "vite",
-    "build": "vite build",
-    "start": "deno serve -A _fresh/server.js",
-    "update": "deno run -A -r jsr:@fresh/update .",
     "test": "deno test --allow-read --allow-net --allow-env",
-    "ok": "deno fmt --check . && deno lint . && deno check && deno task test",
-    "mcp": "deno run -A mcp.ts",
-    "mcp:http": "deno run -A mcp.ts --http --port 3100"
+    "ok": "deno fmt --check . && deno lint . && deno check && deno task test"
   },
   "lint": {
     "rules": {

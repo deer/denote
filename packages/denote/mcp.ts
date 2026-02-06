@@ -16,11 +16,14 @@ import {
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { WebStandardStreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js";
 import { buildSearchIndex, getAllDocs, getDoc } from "./lib/docs.ts";
-import { config } from "./docs.config.ts"; // side-effect: registers default config
+import { getConfig } from "./docs.config.ts";
 import { z } from "zod";
 
+// Get site name from config (defaults to "Denote" if not set)
+const getSiteName = () => getConfig()?.name ?? "Denote";
+
 const server = new McpServer({
-  name: `${config.name} Docs`,
+  name: `${getSiteName()} Docs`,
   version: "1.0.0",
 });
 
@@ -44,7 +47,7 @@ server.resource(
       contents: [{
         uri: uri.href,
         mimeType: "text/plain",
-        text: `# ${config.name} Documentation Index\n\n${listing}`,
+        text: `# ${getSiteName()} Documentation Index\n\n${listing}`,
       }],
     };
   },
@@ -199,7 +202,9 @@ if (useHttp) {
   const transport = new WebStandardStreamableHTTPServerTransport();
   await server.connect(transport);
 
-  console.log(`🦕 ${config.name} MCP server (Streamable HTTP) on port ${port}`);
+  console.log(
+    `🦕 ${getSiteName()} MCP server (Streamable HTTP) on port ${port}`,
+  );
   console.log(`   Endpoint: http://localhost:${port}/mcp`);
 
   Deno.serve({ port }, async (req: Request) => {
@@ -235,12 +240,12 @@ if (useHttp) {
     if (url.pathname === "/" || url.pathname === "/health") {
       return new Response(
         JSON.stringify({
-          name: `${config.name} Docs MCP Server`,
+          name: `${getSiteName()} Docs MCP Server`,
           status: "ok",
           transport: "streamable-http",
           endpoint: "/mcp",
           instructions:
-            `Search and read ${config.name} documentation. Use search_docs to find pages, get_doc to read a specific page, or get_all_docs for full context.`,
+            `Search and read ${getSiteName()} documentation. Use search_docs to find pages, get_doc to read a specific page, or get_all_docs for full context.`,
         }),
         {
           headers: {

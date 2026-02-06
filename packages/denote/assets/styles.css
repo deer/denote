@@ -1,8 +1,3 @@
-@import "tailwindcss";
-
-/* Use class-based dark mode instead of prefers-color-scheme */
-@variant dark (&:where(.dark, .dark *));
-
 /* ========================================
    Denote - Documentation Styles
    ======================================== */

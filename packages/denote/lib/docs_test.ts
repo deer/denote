@@ -1,11 +1,5 @@
-import "../docs.config.ts"; // side-effect: registers default config
-import { setContentDir } from "./config.ts";
-import { dirname, fromFileUrl, join } from "@std/path";
+import "./test_config.ts"; // side-effect: sets up config for tests
 import { assertEquals, assertNotEquals } from "jsr:@std/assert@1";
-
-// Set content directory to docs/content/docs in monorepo
-const __dirname = dirname(fromFileUrl(import.meta.url));
-setContentDir(join(__dirname, "..", "..", "..", "docs", "content", "docs"));
 import {
   buildSearchIndex,
   clearSearchIndexCache,

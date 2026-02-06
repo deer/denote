@@ -21,7 +21,7 @@ Write Markdown. Get beautiful docs. Zero build step.
 
 ```bash
 # Clone and enter the project
-git clone https://github.com/<your-org>/denote.git
+git clone https://github.com/deer/denote.git
 cd denote
 
 # Start the dev server

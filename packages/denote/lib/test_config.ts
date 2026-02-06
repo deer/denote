@@ -1,19 +1,16 @@
 /**
- * Denote Documentation Site Configuration
+ * Shared test configuration for library tests.
  */
-import type { DocsConfig } from "@denote/core";
+import { setConfig, setContentDir } from "./config.ts";
+import { dirname, fromFileUrl, join } from "@std/path";
 
-export const config: DocsConfig = {
+// Set content directory to docs/content/docs in monorepo
+const __dirname = dirname(fromFileUrl(import.meta.url));
+setContentDir(join(__dirname, "..", "..", "..", "docs", "content", "docs"));
+
+// Set test config
+setConfig({
   name: "Denote",
-  logo: {
-    light: "/logo.svg",
-    dark: "/logo-dark.svg",
-  },
-  favicon: "/favicon.ico",
-  colors: {
-    primary: "#6366f1",
-    accent: "#22c55e",
-  },
   navigation: [
     {
       title: "Getting Started",
@@ -40,9 +37,7 @@ export const config: DocsConfig = {
     },
     {
       title: "Deployment",
-      children: [
-        { title: "Deploy Your Site", href: "/docs/deployment" },
-      ],
+      children: [{ title: "Deploy Your Site", href: "/docs/deployment" }],
     },
     {
       title: "Customization",
@@ -52,23 +47,4 @@ export const config: DocsConfig = {
       ],
     },
   ],
-  topNav: [
-    { title: "Documentation", href: "/docs" },
-    { title: "GitHub", href: "https://github.com/deer/denote" },
-  ],
-  footer: {
-    copyright: "© 2026 Denote Contributors",
-    links: [
-      { title: "GitHub", href: "https://github.com/deer/denote" },
-    ],
-  },
-  social: {
-    github: "https://github.com/deer/denote",
-  },
-  search: {
-    enabled: true,
-  },
-  ai: {
-    chatbot: true,
-  },
-};
+});

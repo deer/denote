@@ -253,3 +253,27 @@ export {
   setContentDir,
   setDocsBasePath,
 } from "./lib/config.ts";
+
+/**
+ * Island specifiers for Fresh vite plugin configuration.
+ * Use this when consuming @denote/core as a library:
+ *
+ * ```ts
+ * // vite.config.ts
+ * import { islandSpecifiers } from "@denote/core";
+ * import { fresh } from "@fresh/plugin-vite";
+ *
+ * export default defineConfig({
+ *   plugins: [fresh({ islandSpecifiers })],
+ * });
+ * ```
+ */
+export const islandSpecifiers = [
+  "@denote/core/islands/ThemeToggle.tsx",
+  "@denote/core/islands/MobileMenu.tsx",
+  "@denote/core/islands/Search.tsx",
+  "@denote/core/islands/CollapsibleNav.tsx",
+  "@denote/core/islands/CopyButton.tsx",
+  "@denote/core/islands/ActiveToc.tsx",
+  "@denote/core/islands/AiChat.tsx",
+];

@@ -8,8 +8,8 @@
     "docs"
   ],
   "tasks": {
-    "dev": "cd packages/denote && deno task dev",
-    "build": "cd packages/denote && deno task build",
+    "dev": "cd docs && deno task dev",
+    "build": "cd docs && deno task build",
     "test": "deno test -A",
     "ok": "deno fmt --check && deno lint && deno check && deno task test"
   }
