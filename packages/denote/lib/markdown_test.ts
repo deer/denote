@@ -1,7 +1,7 @@
 /**
  * Markdown parsing tests
  *
- * Tests for frontmatter parsing, TOC extraction, and @deno/gfm rendering.
+ * Tests for frontmatter parsing, TOC extraction, and @deer/gfm rendering.
  */
 import { assertEquals } from "jsr:@std/assert@1";
 import {
@@ -93,7 +93,7 @@ Deno.test("extractToc - empty content", () => {
 });
 
 // ---------------------------------------------------------------------------
-// markdownToHtml tests (@deno/gfm output format)
+// markdownToHtml tests (@deer/gfm output format)
 // ---------------------------------------------------------------------------
 
 Deno.test("markdownToHtml - headings have ids", async () => {
@@ -104,7 +104,7 @@ Deno.test("markdownToHtml - headings have ids", async () => {
 
 Deno.test("markdownToHtml - code blocks with syntax highlighting", async () => {
   const html = await markdownToHtml("```typescript\nconst x = 1;\n```");
-  // @deer/gfm with starry-night uses pl-* classes for syntax tokens
+  // @deer/gfm with lowlight uses hljs-* classes for syntax tokens
   assertEquals(html.includes("language-typescript"), true);
   assertEquals(html.includes("<pre>"), true);
   assertEquals(html.includes("const"), true);

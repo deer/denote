@@ -1,6 +1,7 @@
 import type { PageProps } from "fresh";
 import { define, type State } from "../utils.ts";
 import { getConfig } from "../lib/config.ts";
+import { CSS, HIGHLIGHT_CSS } from "@deer/gfm/style";
 
 /** App wrapper component — exported for programmatic routing */
 export function App({ Component, state }: PageProps<unknown, State>) {
@@ -35,6 +36,9 @@ export function App({ Component, state }: PageProps<unknown, State>) {
         <meta name="twitter:title" content={pageTitle} />
         <meta name="twitter:description" content={pageDescription} />
         {pageImage && <meta name="twitter:image" content={pageImage} />}
+
+        {/* @deer/gfm syntax highlighting styles (CSS vars + hljs token colors) */}
+        <style dangerouslySetInnerHTML={{ __html: CSS + HIGHLIGHT_CSS }} />
 
         {/* Prevent flash of unstyled content */}
         <script

@@ -104,7 +104,7 @@
   margin-bottom: 1.25rem;
 }
 
-/* Links — @deno/gfm outputs plain <a> elements */
+/* Links — @deer/gfm outputs plain <a> elements */
 .doc-content a {
   color: #6366f1;
   text-decoration: underline;
@@ -127,7 +127,7 @@
   color: #c7d2fe;
 }
 
-/* Lists — @deno/gfm outputs plain <ul>/<ol> elements */
+/* Lists — @deer/gfm outputs plain <ul>/<ol> elements */
 .doc-content ul,
 .doc-content ol {
   margin-bottom: 1.25rem;
@@ -159,7 +159,7 @@
   list-style: square;
 }
 
-/* Blockquotes — @deno/gfm outputs plain <blockquote> */
+/* Blockquotes — @deer/gfm outputs plain <blockquote> */
 .doc-content blockquote {
   margin: 1.5rem 0;
   padding: 1rem 1.5rem;
@@ -183,23 +183,24 @@
   margin-top: 0.75rem;
 }
 
-/* Code blocks — @deno/gfm with Prism */
-.doc-content .highlight {
+/* Code blocks — @deer/gfm with lowlight (highlight.js) */
+.doc-content pre:has(> code[class*="language-"]) {
   margin: 1.5rem 0;
   border-radius: 0.75rem;
   overflow: hidden;
   border: 1px solid #e5e7eb;
   position: relative;
   background: #f8fafc;
+  padding: 0;
 }
 
-.dark .doc-content .highlight {
+.dark .doc-content pre:has(> code[class*="language-"]) {
   border-color: #1e293b;
   background: #0f172a;
 }
 
-/* Language badge — extract from class name highlight-source-{lang} */
-.doc-content .highlight[class*="highlight-source-"]::before {
+/* Language badge — extract from class name language-{lang} */
+.doc-content pre:has(> code[class*="language-"])::before {
   position: absolute;
   top: 0.5rem;
   right: 0.75rem;
@@ -214,188 +215,74 @@
 }
 
 /* Language labels */
-.doc-content .highlight-source-ts::before,
-.doc-content .highlight-source-typescript::before {
+.doc-content pre:has(> code.language-ts)::before,
+.doc-content pre:has(> code.language-typescript)::before {
   content: "typescript";
 }
-.doc-content .highlight-source-js::before,
-.doc-content .highlight-source-javascript::before {
+.doc-content pre:has(> code.language-js)::before,
+.doc-content pre:has(> code.language-javascript)::before {
   content: "javascript";
 }
-.doc-content .highlight-source-tsx::before {
+.doc-content pre:has(> code.language-tsx)::before {
   content: "tsx";
 }
-.doc-content .highlight-source-jsx::before {
+.doc-content pre:has(> code.language-jsx)::before {
   content: "jsx";
 }
-.doc-content .highlight-source-json::before {
+.doc-content pre:has(> code.language-json)::before {
   content: "json";
 }
-.doc-content .highlight-source-yaml::before,
-.doc-content .highlight-source-yml::before {
+.doc-content pre:has(> code.language-yaml)::before,
+.doc-content pre:has(> code.language-yml)::before {
   content: "yaml";
 }
-.doc-content .highlight-source-bash::before,
-.doc-content .highlight-source-shell::before,
-.doc-content .highlight-source-sh::before {
+.doc-content pre:has(> code.language-bash)::before,
+.doc-content pre:has(> code.language-shell)::before,
+.doc-content pre:has(> code.language-sh)::before {
   content: "bash";
 }
-.doc-content .highlight-source-css::before {
+.doc-content pre:has(> code.language-css)::before {
   content: "css";
 }
-.doc-content .highlight-source-html::before {
+.doc-content pre:has(> code.language-html)::before {
   content: "html";
 }
-.doc-content .highlight-source-python::before,
-.doc-content .highlight-source-py::before {
+.doc-content pre:has(> code.language-python)::before,
+.doc-content pre:has(> code.language-py)::before {
   content: "python";
 }
-.doc-content .highlight-source-rust::before,
-.doc-content .highlight-source-rs::before {
+.doc-content pre:has(> code.language-rust)::before,
+.doc-content pre:has(> code.language-rs)::before {
   content: "rust";
 }
-.doc-content .highlight-source-go::before {
+.doc-content pre:has(> code.language-go)::before {
   content: "go";
 }
-.doc-content .highlight-source-sql::before {
+.doc-content pre:has(> code.language-sql)::before {
   content: "sql";
 }
-.doc-content .highlight-source-diff::before {
+.doc-content pre:has(> code.language-diff)::before {
   content: "diff";
 }
-.doc-content .highlight-source-toml::before {
+.doc-content pre:has(> code.language-toml)::before {
   content: "toml";
 }
-.doc-content .highlight-source-md::before,
-.doc-content .highlight-source-markdown::before {
+.doc-content pre:has(> code.language-md)::before,
+.doc-content pre:has(> code.language-markdown)::before {
   content: "markdown";
 }
-.doc-content .highlight-source-xml::before {
+.doc-content pre:has(> code.language-xml)::before {
   content: "xml";
 }
 
-.doc-content .highlight pre {
-  margin: 0 !important;
-  padding: 1.25rem !important;
-  padding-top: 2rem !important; /* Space for language badge */
-  border-radius: 0 !important;
-  overflow-x: auto;
-  background: transparent !important;
+/* Override highlight.js theme padding/font for our layout */
+.doc-content pre > code[class*="language-"] {
+  padding: 1.25rem;
+  padding-top: 2rem; /* Space for language badge */
+  background: transparent;
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   font-size: 0.875rem;
   line-height: 1.7;
-}
-
-/* Prism token colors — Light theme */
-.doc-content .highlight .token.comment,
-.doc-content .highlight .token.prolog,
-.doc-content .highlight .token.doctype,
-.doc-content .highlight .token.cdata {
-  color: #6b7280;
-}
-
-.doc-content .highlight .token.punctuation {
-  color: #374151;
-}
-
-.doc-content .highlight .token.property,
-.doc-content .highlight .token.tag,
-.doc-content .highlight .token.boolean,
-.doc-content .highlight .token.number,
-.doc-content .highlight .token.constant,
-.doc-content .highlight .token.symbol,
-.doc-content .highlight .token.deleted {
-  color: #dc2626;
-}
-
-.doc-content .highlight .token.selector,
-.doc-content .highlight .token.attr-name,
-.doc-content .highlight .token.string,
-.doc-content .highlight .token.char,
-.doc-content .highlight .token.builtin,
-.doc-content .highlight .token.inserted {
-  color: #16a34a;
-}
-
-.doc-content .highlight .token.operator,
-.doc-content .highlight .token.entity,
-.doc-content .highlight .token.url,
-.doc-content .highlight .language-css .token.string,
-.doc-content .highlight .style .token.string {
-  color: #ca8a04;
-}
-
-.doc-content .highlight .token.atrule,
-.doc-content .highlight .token.attr-value,
-.doc-content .highlight .token.keyword {
-  color: #7c3aed;
-}
-
-.doc-content .highlight .token.function,
-.doc-content .highlight .token.class-name {
-  color: #2563eb;
-}
-
-.doc-content .highlight .token.regex,
-.doc-content .highlight .token.important,
-.doc-content .highlight .token.variable {
-  color: #ea580c;
-}
-
-/* Prism token colors — Dark theme */
-.dark .doc-content .highlight .token.comment,
-.dark .doc-content .highlight .token.prolog,
-.dark .doc-content .highlight .token.doctype,
-.dark .doc-content .highlight .token.cdata {
-  color: #6b7280;
-}
-
-.dark .doc-content .highlight .token.punctuation {
-  color: #9ca3af;
-}
-
-.dark .doc-content .highlight .token.property,
-.dark .doc-content .highlight .token.tag,
-.dark .doc-content .highlight .token.boolean,
-.dark .doc-content .highlight .token.number,
-.dark .doc-content .highlight .token.constant,
-.dark .doc-content .highlight .token.symbol,
-.dark .doc-content .highlight .token.deleted {
-  color: #f87171;
-}
-
-.dark .doc-content .highlight .token.selector,
-.dark .doc-content .highlight .token.attr-name,
-.dark .doc-content .highlight .token.string,
-.dark .doc-content .highlight .token.char,
-.dark .doc-content .highlight .token.builtin,
-.dark .doc-content .highlight .token.inserted {
-  color: #4ade80;
-}
-
-.dark .doc-content .highlight .token.operator,
-.dark .doc-content .highlight .token.entity,
-.dark .doc-content .highlight .token.url,
-.dark .doc-content .highlight .language-css .token.string,
-.dark .doc-content .highlight .style .token.string {
-  color: #fbbf24;
-}
-
-.dark .doc-content .highlight .token.atrule,
-.dark .doc-content .highlight .token.attr-value,
-.dark .doc-content .highlight .token.keyword {
-  color: #a78bfa;
-}
-
-.dark .doc-content .highlight .token.function,
-.dark .doc-content .highlight .token.class-name {
-  color: #60a5fa;
-}
-
-.dark .doc-content .highlight .token.regex,
-.dark .doc-content .highlight .token.important,
-.dark .doc-content .highlight .token.variable {
-  color: #fb923c;
 }
 
 /* Plain code blocks (no language specified) */
@@ -418,7 +305,7 @@
   color: #e2e8f0;
 }
 
-/* Inline code — @deno/gfm outputs plain <code> elements */
+/* Inline code — @deer/gfm outputs plain <code> elements */
 .doc-content code:not(pre code) {
   padding: 0.125rem 0.375rem;
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
@@ -513,7 +400,7 @@
   border-top-color: #374151;
 }
 
-/* Images — @deno/gfm outputs plain <img> elements */
+/* Images — @deer/gfm outputs plain <img> elements */
 .doc-content img {
   max-width: 100%;
   height: auto;
@@ -532,7 +419,7 @@
 }
 
 /* ========================================
-   GitHub Alerts (@deno/gfm)
+   GitHub Alerts (@deer/gfm)
    ======================================== */
 
 .doc-content .markdown-alert {
@@ -606,7 +493,7 @@
 }
 
 /* ========================================
-   Task Lists (@deno/gfm)
+   Task Lists (@deer/gfm)
    ======================================== */
 
 .doc-content .contains-task-list {
@@ -628,7 +515,7 @@
 }
 
 /* ========================================
-   Footnotes (@deno/gfm)
+   Footnotes (@deer/gfm)
    ======================================== */
 
 .doc-content .footnotes {

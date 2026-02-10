@@ -11,7 +11,9 @@ const copiedIndex = signal(-1);
 
 export function CopyButton() {
   useEffect(() => {
-    const blocks = document.querySelectorAll(".code-block");
+    const blocks = document.querySelectorAll(
+      "pre:has(> code[class*='language-'])",
+    );
 
     blocks.forEach((block, index) => {
       // Skip if already has a copy button
@@ -31,8 +33,8 @@ export function CopyButton() {
       // Style the button
       Object.assign(btn.style, {
         position: "absolute",
-        top: "8px",
-        right: "8px",
+        top: "0.5rem",
+        right: "3.5rem",
         padding: "4px",
         borderRadius: "4px",
         border: "1px solid rgba(128,128,128,0.3)",
