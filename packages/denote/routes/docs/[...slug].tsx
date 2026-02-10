@@ -43,7 +43,7 @@ export async function DocsPage(ctx: PageProps<unknown, State>) {
     );
   }
 
-  const html = markdownToHtml(doc.content);
+  const html = await markdownToHtml(doc.content);
   const searchIndex = await buildSearchIndex();
   const currentPath = `/docs/${slug}`;
   const { prev, next } = getPrevNext(currentPath);

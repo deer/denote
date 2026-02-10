@@ -1,33 +1,33 @@
 // Import Prism core FIRST to set up global before loading language components
 // This is required because language components expect `Prism` global to exist
-import "npm:prismjs@1.30.0";
+// import "npm:prismjs@1.30.0";
 /**
  * Markdown parsing utilities using @deno/gfm
  *
  * Provides frontmatter parsing, TOC extraction, and HTML rendering
  * with GitHub Flavored Markdown support and Prism syntax highlighting.
  */
-import { render } from "@deno/gfm";
+import { render } from "@deer/gfm";
 import { parse as parseYaml } from "jsr:@std/yaml@1";
 
-// Import additional Prism languages for syntax highlighting
-// Uses same version as @deno/gfm's dependency
-// Order matters: some languages depend on others (jsx->tsx, markup->jsx)
-import "npm:prismjs@1.30.0/components/prism-markup.js"; // Required for jsx
-import "npm:prismjs@1.30.0/components/prism-css.js";
-import "npm:prismjs@1.30.0/components/prism-javascript.js"; // Required for jsx, typescript
-import "npm:prismjs@1.30.0/components/prism-typescript.js";
-import "npm:prismjs@1.30.0/components/prism-jsx.js";
-import "npm:prismjs@1.30.0/components/prism-tsx.js";
-import "npm:prismjs@1.30.0/components/prism-bash.js";
-import "npm:prismjs@1.30.0/components/prism-json.js";
-import "npm:prismjs@1.30.0/components/prism-yaml.js";
-import "npm:prismjs@1.30.0/components/prism-python.js";
-import "npm:prismjs@1.30.0/components/prism-rust.js";
-import "npm:prismjs@1.30.0/components/prism-go.js";
-import "npm:prismjs@1.30.0/components/prism-sql.js";
-import "npm:prismjs@1.30.0/components/prism-diff.js";
-import "npm:prismjs@1.30.0/components/prism-toml.js";
+// // Import additional Prism languages for syntax highlighting
+// // Uses same version as @deno/gfm's dependency
+// // Order matters: some d/gflanguages depend on others (jsx->tsx, markup->jsx)
+// import "npm:prismjs@1.30.0/components/prism-markup.js"; // Required for jsx
+// import "npm:prismjs@1.30.0/components/prism-css.js";
+// import "npm:prismjs@1.30.0/components/prism-javascript.js"; // Required for jsx, typescript
+// import "npm:prismjs@1.30.0/components/prism-typescript.js";
+// import "npm:prismjs@1.30.0/components/prism-jsx.js";
+// import "npm:prismjs@1.30.0/components/prism-tsx.js";
+// import "npm:prismjs@1.30.0/components/prism-bash.js";
+// import "npm:prismjs@1.30.0/components/prism-json.js";
+// import "npm:prismjs@1.30.0/components/prism-yaml.js";
+// import "npm:prismjs@1.30.0/components/prism-python.js";
+// import "npm:prismjs@1.30.0/components/prism-rust.js";
+// import "npm:prismjs@1.30.0/components/prism-go.js";
+// import "npm:prismjs@1.30.0/components/prism-sql.js";
+// import "npm:prismjs@1.30.0/components/prism-diff.js";
+// import "npm:prismjs@1.30.0/components/prism-toml.js";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -134,15 +134,16 @@ export function extractToc(content: string): TocItem[] {
 // ---------------------------------------------------------------------------
 
 /**
- * Convert markdown to HTML using @deno/gfm.
+ * Convert markdown to HTML using @deer/gfm.
  *
  * Features:
  * - GitHub Flavored Markdown (tables, task lists, strikethrough, etc.)
  * - Syntax highlighting via Prism
  * - HTML sanitization
  */
-export function markdownToHtml(content: string): string {
-  return render(content, {
+export async function markdownToHtml(content: string): Promise<string> {
+  return await render(content, {
+    highlighter: "lowlight",
     allowMath: true,
   });
 }
