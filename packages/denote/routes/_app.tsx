@@ -1,7 +1,7 @@
 import type { PageProps } from "fresh";
 import { define, type State } from "../utils.ts";
 import { getConfig } from "../lib/config.ts";
-import { CSS, HIGHLIGHT_CSS } from "@deer/gfm/style";
+import { COMBINED_CSS } from "@deer/gfm/style";
 
 /** App wrapper component — exported for programmatic routing */
 export function App({ Component, state }: PageProps<unknown, State>) {
@@ -13,6 +13,18 @@ export function App({ Component, state }: PageProps<unknown, State>) {
     "Documentation powered by Denote";
   const pageUrl = state.pageUrl;
   const pageImage = state.pageImage;
+
+  // Build custom color overrides from config
+  const colorOverrides = config.colors?.primary
+    ? `:root {
+  --gfm-accent-color: ${config.colors.primary};
+  --gfm-accent-hover: color-mix(in srgb, ${config.colors.primary} 85%, black);
+  --gfm-accent-subtle: color-mix(in srgb, ${config.colors.primary} 40%, white);
+}
+.dark {
+  --gfm-accent-subtle: color-mix(in srgb, ${config.colors.primary} 60%, black);
+}`
+    : "";
 
   return (
     <html lang="en" class="scroll-smooth">
@@ -38,7 +50,12 @@ export function App({ Component, state }: PageProps<unknown, State>) {
         {pageImage && <meta name="twitter:image" content={pageImage} />}
 
         {/* @deer/gfm syntax highlighting styles (CSS vars + hljs token colors) */}
-        <style dangerouslySetInnerHTML={{ __html: CSS + HIGHLIGHT_CSS }} />
+        <style dangerouslySetInnerHTML={{ __html: COMBINED_CSS }} />
+
+        {/* Config-driven color overrides */}
+        {colorOverrides && (
+          <style dangerouslySetInnerHTML={{ __html: colorOverrides }} />
+        )}
 
         {/* Prevent flash of unstyled content */}
         <script

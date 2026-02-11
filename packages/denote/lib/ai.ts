@@ -6,6 +6,7 @@
  */
 import { getAllDocs } from "./docs.ts";
 import { getConfig } from "./config.ts";
+import { extractToc } from "@deer/gfm";
 
 /**
  * Generate llms.txt — a standard file that tells AI agents
@@ -99,10 +100,10 @@ export async function getDocsJson(): Promise<object> {
       aiSummary: doc.frontmatter["ai-summary"],
       aiKeywords: doc.frontmatter["ai-keywords"],
       content: doc.content,
-      headings: doc.toc.map((t) => ({
-        level: t.level,
-        title: t.title,
-        id: t.id,
+      headings: extractToc(doc.content).map((t) => ({
+        level: t.depth,
+        title: t.text,
+        id: t.slug,
       })),
     })),
   };

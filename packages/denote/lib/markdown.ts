@@ -1,10 +1,11 @@
 /**
  * Markdown parsing utilities using @deer/gfm
  *
- * Provides frontmatter parsing, TOC extraction, and HTML rendering
- * with GitHub Flavored Markdown support and syntax highlighting via lowlight.
+ * Provides frontmatter parsing and HTML rendering with GitHub Flavored
+ * Markdown support, syntax highlighting via lowlight, and single-pass
+ * TOC extraction via renderWithMeta.
  */
-import { render } from "@deer/gfm";
+import { renderWithMeta } from "@deer/gfm";
 import { parse as parseYaml } from "jsr:@std/yaml@1";
 
 // ---------------------------------------------------------------------------
@@ -26,7 +27,6 @@ export interface DocFrontmatter {
 export interface ParsedDoc {
   frontmatter: DocFrontmatter;
   content: string;
-  toc: TocItem[];
 }
 
 export interface TocItem {
@@ -72,58 +72,38 @@ export function parseFrontmatter(
 }
 
 // ---------------------------------------------------------------------------
-// Table of Contents
-// ---------------------------------------------------------------------------
-
-/**
- * Generate a URL-friendly slug from text
- */
-export function slugify(text: string): string {
-  return text
-    .toLowerCase()
-    .replace(/[^\w\s-]/g, "")
-    .replace(/\s+/g, "-")
-    .replace(/-+/g, "-")
-    .trim();
-}
-
-/**
- * Extract table of contents from markdown content.
- * Parses headings and generates slugified IDs.
- */
-export function extractToc(content: string): TocItem[] {
-  const headingRegex = /^(#{1,6})\s+(.+)$/gm;
-  const toc: TocItem[] = [];
-  let match;
-
-  while ((match = headingRegex.exec(content)) !== null) {
-    const level = match[1].length;
-    const title = match[2].trim();
-    const id = slugify(title);
-
-    toc.push({ id, title, level });
-  }
-
-  return toc;
-}
-
-// ---------------------------------------------------------------------------
 // Rendering
 // ---------------------------------------------------------------------------
 
 /**
- * Convert markdown to HTML using @deer/gfm.
+ * Render markdown to HTML and extract TOC in a single pass using @deer/gfm.
  *
  * Features:
  * - GitHub Flavored Markdown (tables, task lists, strikethrough, etc.)
  * - Syntax highlighting via lowlight (highlight.js)
+ * - Table of contents extracted from rendered heading IDs
  * - HTML sanitization
  */
-export async function markdownToHtml(content: string): Promise<string> {
-  return await render(content, {
+export async function renderDoc(
+  content: string,
+): Promise<{ html: string; toc: TocItem[] }> {
+  const result = await renderWithMeta(content, {
     highlighter: "lowlight",
     allowMath: true,
   });
+
+  // Strip the "user-content-" prefix that rehype-sanitize adds to heading IDs,
+  // so they match the TOC slugs for anchor navigation.
+  const html = result.html.replaceAll('id="user-content-', 'id="');
+
+  return {
+    html,
+    toc: result.toc.map((entry) => ({
+      id: entry.slug,
+      title: entry.text,
+      level: entry.depth,
+    })),
+  };
 }
 
 // ---------------------------------------------------------------------------
@@ -131,15 +111,10 @@ export async function markdownToHtml(content: string): Promise<string> {
 // ---------------------------------------------------------------------------
 
 /**
- * Parse a full document: frontmatter + TOC + body content.
+ * Parse a full document: frontmatter + body content.
+ * Use renderDoc() separately when HTML rendering and TOC are needed.
  */
 export function parseDocument(raw: string): ParsedDoc {
   const { frontmatter, content } = parseFrontmatter(raw);
-  const toc = extractToc(content);
-
-  return {
-    frontmatter,
-    content,
-    toc,
-  };
+  return { frontmatter, content };
 }

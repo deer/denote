@@ -1,7 +1,7 @@
 {
   "version": "5",
   "specifiers": {
-    "jsr:@deer/gfm@0.0.1": "0.0.1",
+    "jsr:@deer/gfm@0.0.3": "0.0.3",
     "jsr:@deno/esbuild-plugin@^1.2.0": "1.2.1",
     "jsr:@deno/loader@~0.3.10": "0.3.11",
     "jsr:@deno/loader@~0.3.2": "0.3.11",
@@ -17,7 +17,7 @@
     "jsr:@std/fmt@^1.0.8": "1.0.9",
     "jsr:@std/fs@^1.0.19": "1.0.22",
     "jsr:@std/html@^1.0.5": "1.0.5",
-    "jsr:@std/http@^1.0.21": "1.0.23",
+    "jsr:@std/http@^1.0.21": "1.0.24",
     "jsr:@std/internal@^1.0.12": "1.0.12",
     "jsr:@std/json@^1.0.2": "1.0.2",
     "jsr:@std/jsonc@^1.0.2": "1.0.2",
@@ -52,8 +52,10 @@
     "npm:preact@^10.27.0": "10.28.3",
     "npm:preact@^10.27.2": "10.28.3",
     "npm:rehype-autolink-headings@^7.1.0": "7.1.0",
+    "npm:rehype-github-alerts@^4.2.0": "4.2.0",
     "npm:rehype-highlight@^7.0.2": "7.0.2",
     "npm:rehype-katex@^7.0.1": "7.0.1",
+    "npm:rehype-raw@7": "7.0.0",
     "npm:rehype-sanitize@6": "6.0.0",
     "npm:rehype-slug@6": "6.0.0",
     "npm:rehype-starry-night@^2.2.0": "2.2.0",
@@ -74,8 +76,8 @@
     "npm:zod@^4.3.6": "4.3.6"
   },
   "jsr": {
-    "@deer/gfm@0.0.1": {
-      "integrity": "d6178d94b4a62a5429a6240a2d6af9b3405896e9e8d1ceeb17678ee1da06ee74",
+    "@deer/gfm@0.0.3": {
+      "integrity": "fdf56dd250fd7fb563cd6347eed2edfb266698f68079769d02ba34b1a2477078",
       "dependencies": [
         "npm:@types/hast",
         "npm:@types/mdast",
@@ -85,8 +87,10 @@
         "npm:hast-util-to-string",
         "npm:mdast-util-to-string",
         "npm:rehype-autolink-headings",
+        "npm:rehype-github-alerts",
         "npm:rehype-highlight",
         "npm:rehype-katex",
+        "npm:rehype-raw",
         "npm:rehype-sanitize",
         "npm:rehype-slug",
         "npm:rehype-starry-night",
@@ -189,6 +193,12 @@
     },
     "@std/http@1.0.23": {
       "integrity": "6634e9e034c589bf35101c1b5ee5bbf052a5987abca20f903e58bdba85c80dee",
+      "dependencies": [
+        "jsr:@std/encoding"
+      ]
+    },
+    "@std/http@1.0.24": {
+      "integrity": "4dd59afd7cfd6e2e96e175b67a5a829b449ae55f08575721ec691e5d85d886d4",
       "dependencies": [
         "jsr:@std/encoding"
       ]
@@ -892,6 +902,12 @@
         "@rollup/pluginutils",
         "preact",
         "vite"
+      ]
+    },
+    "@primer/octicons@19.21.2": {
+      "integrity": "sha512-SRTcpAZtKYh2266VQpAqNkXAQpPvYWk6dxggkHDzwI95NrE5mEzJ7cfFt/bSVbqDffKQ+tm7TEdLHoSjEcggfQ==",
+      "dependencies": [
+        "object-assign"
       ]
     },
     "@rollup/pluginutils@4.2.1": {
@@ -1689,6 +1705,24 @@
         "@types/hast"
       ]
     },
+    "hast-util-raw@9.1.0": {
+      "integrity": "sha512-Y8/SBAHkZGoNkpzqqfCldijcuUKh7/su31kEBp67cFY09Wy0mTRgtsLYsiIxMJxlu0f6AA5SUTbDR8K0rxnbUw==",
+      "dependencies": [
+        "@types/hast",
+        "@types/unist",
+        "@ungap/structured-clone",
+        "hast-util-from-parse5",
+        "hast-util-to-parse5",
+        "html-void-elements",
+        "mdast-util-to-hast",
+        "parse5",
+        "unist-util-position",
+        "unist-util-visit",
+        "vfile",
+        "web-namespaces",
+        "zwitch"
+      ]
+    },
     "hast-util-sanitize@5.0.2": {
       "integrity": "sha512-3yTWghByc50aGS7JlGhk61SPenfE/p1oaFeNwkOOyrscaOkMGrcW9+Cy/QAIOBpZxP1yqDIzFMR0+Np0i0+usg==",
       "dependencies": [
@@ -1710,6 +1744,18 @@
         "property-information",
         "space-separated-tokens",
         "stringify-entities",
+        "zwitch"
+      ]
+    },
+    "hast-util-to-parse5@8.0.1": {
+      "integrity": "sha512-MlWT6Pjt4CG9lFCjiz4BH7l9wmrMkfkJYCxFwKQic8+RTZgWPuWxwAfjJElsXkex7DJjfSJsQIt931ilUgmwdA==",
+      "dependencies": [
+        "@types/hast",
+        "comma-separated-tokens",
+        "devlop",
+        "property-information",
+        "space-separated-tokens",
+        "web-namespaces",
         "zwitch"
       ]
     },
@@ -2477,6 +2523,15 @@
         "unist-util-visit"
       ]
     },
+    "rehype-github-alerts@4.2.0": {
+      "integrity": "sha512-6di6kEu9WUHKLKrkKG2xX6AOuaCMGghg0Wq7MEuM/jBYUPVIq6PJpMe00dxMfU+/YSBtDXhffpDimgDi+BObIQ==",
+      "dependencies": [
+        "@primer/octicons",
+        "hast-util-from-html",
+        "hast-util-is-element",
+        "unist-util-visit"
+      ]
+    },
     "rehype-highlight@7.0.2": {
       "integrity": "sha512-k158pK7wdC2qL3M5NcZROZ2tR/l7zOzjxXd5VGdcfIyoijjQqpHd3JKtYSBDpDZ38UI2WJWuFAtkMDxmx5kstA==",
       "dependencies": [
@@ -2496,6 +2551,14 @@
         "hast-util-to-text",
         "katex",
         "unist-util-visit-parents",
+        "vfile"
+      ]
+    },
+    "rehype-raw@7.0.0": {
+      "integrity": "sha512-/aE8hCfKlQeA8LmyeyQvQF3eBiLRGNlfBJEvWH7ivp9sBqs7TNqBL5X3v157rM4IFETqDnIOO+z5M/biZbo9Ww==",
+      "dependencies": [
+        "@types/hast",
+        "hast-util-raw",
         "vfile"
       ]
     },
@@ -2953,7 +3016,7 @@
       },
       "packages/denote": {
         "dependencies": [
-          "jsr:@deer/gfm@0.0.1",
+          "jsr:@deer/gfm@0.0.3",
           "jsr:@fresh/core@^2.2.0",
           "jsr:@fresh/plugin-vite@^1.0.8",
           "jsr:@std/path@1",
