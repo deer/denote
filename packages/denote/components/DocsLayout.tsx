@@ -94,7 +94,7 @@ export function DocsLayout({
           </header>
 
           {/* Content */}
-          <div class="prose prose-gray dark:prose-invert max-w-none">
+          <div class="max-w-none">
             {children}
           </div>
 

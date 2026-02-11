@@ -191,7 +191,7 @@ content/docs/
 
 ## Extended Markdown Features
 
-Denote uses `@deno/gfm` which supports GitHub Flavored Markdown extensions.
+Denote uses `@deer/gfm` which supports GitHub Flavored Markdown extensions.
 
 ### Task Lists
 

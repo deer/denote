@@ -28,28 +28,45 @@ function Card({ title, children }) {
 }
 ```
 
-## Prose Styles
+## Markdown Content Styling
 
-Documentation content uses Tailwind's Typography plugin for beautiful prose
-styling:
+Documentation content is rendered by `@deer/gfm` and styled via the
+`.markdown-body` class. Denote layers custom overrides on top of the GFM
+defaults in `assets/styles.css`:
 
 ```css
-.doc-content {
-  @apply prose prose-gray dark:prose-invert max-w-none;
+/* Example: customizing heading sizes */
+.markdown-body h1 {
+  font-size: 2.25rem;
+  font-weight: 700;
+}
+
+/* Example: styled blockquotes */
+.markdown-body blockquote {
+  border-left-color: var(--gfm-accent-color);
+  background: var(--gfm-inline-code-bg);
+  border-radius: 0 0.5rem 0.5rem 0;
 }
 ```
 
 ## Code Block Styling
 
-Code blocks are styled with syntax highlighting:
+Code blocks use the `.highlight` wrapper and `.code-header` from `@deer/gfm`,
+with syntax highlighting via lowlight:
 
 ```css
-.code-block {
-  @apply bg-gray-900 dark:bg-gray-950 rounded-lg p-4 overflow-x-auto;
+/* Code block container */
+.markdown-body .highlight {
+  border-radius: 0.75rem;
+  border: 1px solid var(--gfm-border-color);
+  overflow: hidden;
 }
 
-.code-block code {
-  @apply text-sm text-gray-100 font-mono;
+/* Language label + copy button header */
+.markdown-body .code-header {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.75rem;
+  text-transform: uppercase;
 }
 ```
 
@@ -57,9 +74,9 @@ Code blocks are styled with syntax highlighting:
 
 Denote is fully responsive. The layout adapts to different screen sizes:
 
-- **Desktop (lg+)**: Sidebar visible, table of contents on right
-- **Tablet (md-lg)**: Sidebar visible, no table of contents
-- **Mobile (< md)**: Collapsible sidebar, mobile menu
+- **Wide desktop (xl+)**: Sidebar visible, table of contents on right
+- **Desktop (lg-xl)**: Sidebar visible, no table of contents
+- **Mobile (< lg)**: Collapsible mobile menu
 
 ### Breakpoints
 
@@ -67,8 +84,8 @@ Denote is fully responsive. The layout adapts to different screen sizes:
 /* Tailwind default breakpoints */
 sm: 640px
 md: 768px
-lg: 1024px
-xl: 1280px
+lg: 1024px   /* sidebar appears */
+xl: 1280px   /* table of contents appears */
 2xl: 1536px
 ```
 

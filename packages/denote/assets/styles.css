@@ -2,6 +2,39 @@
    Denote - Documentation Styles
    ======================================== */
 
+/* ========================================
+   GFM Theme Variables
+   Override @deer/gfm defaults for Denote's indigo theme.
+   ======================================== */
+
+:root {
+  --gfm-fg-default: #374151;
+  --gfm-fg-heading: #111827;
+  --gfm-fg-muted: #6b7280;
+  --gfm-accent-color: #6366f1;
+  --gfm-accent-hover: #4f46e5;
+  --gfm-accent-subtle: #a5b4fc;
+  --gfm-border-color: #e5e7eb;
+  --gfm-bg-subtle: #f8fafc;
+  --gfm-bg-surface: #f1f5f9;
+  --gfm-inline-code-color: #dc2626;
+  --gfm-inline-code-bg: #f3f4f6;
+}
+
+.dark {
+  --gfm-fg-default: #d1d5db;
+  --gfm-fg-heading: #f9fafb;
+  --gfm-fg-muted: #9ca3af;
+  --gfm-accent-color: #a5b4fc;
+  --gfm-accent-hover: #c7d2fe;
+  --gfm-accent-subtle: #6366f1;
+  --gfm-border-color: #374151;
+  --gfm-bg-subtle: #0f172a;
+  --gfm-bg-surface: #0b1120;
+  --gfm-inline-code-color: #f87171;
+  --gfm-inline-code-bg: #1f2937;
+}
+
 /* Scrollbar styling */
 ::-webkit-scrollbar {
   width: 8px;
@@ -23,64 +56,44 @@
 
 /* Focus styles */
 :focus-visible {
-  outline: 2px solid #6366f1;
+  outline: 2px solid var(--gfm-accent-color);
   outline-offset: 2px;
 }
 
 /* ========================================
-   Document Content Styling
+   Document Content Overrides
+   Layered on top of @deer/gfm .markdown-body base styles.
+   Only overrides where Denote differs from GFM defaults.
    ======================================== */
 
-.doc-content {
-  color: #374151;
+.markdown-body {
   line-height: 1.75;
 }
 
-.dark .doc-content {
-  color: #d1d5db;
-}
-
-/* Headings */
-.doc-content h1,
-.doc-content h2,
-.doc-content h3,
-.doc-content h4,
-.doc-content h5,
-.doc-content h6 {
+/* Headings — larger sizes and bolder weight than GFM defaults */
+.markdown-body h1,
+.markdown-body h2,
+.markdown-body h3,
+.markdown-body h4,
+.markdown-body h5,
+.markdown-body h6 {
   font-weight: 700;
-  color: #111827;
-  margin-top: 2rem;
-  margin-bottom: 1rem;
   line-height: 1.3;
+  scroll-margin-top: 5rem;
 }
 
-.dark .doc-content h1,
-.dark .doc-content h2,
-.dark .doc-content h3,
-.dark .doc-content h4,
-.dark .doc-content h5,
-.dark .doc-content h6 {
-  color: #f9fafb;
-}
-
-.doc-content h1 {
+.markdown-body h1 {
   font-size: 2.25rem;
   margin-top: 0;
 }
-.doc-content h2 {
+.markdown-body h2 {
   font-size: 1.875rem;
-  padding-bottom: 0.5rem;
-  border-bottom: 1px solid #e5e7eb;
 }
-.doc-content h3 {
+.markdown-body h3 {
   font-size: 1.5rem;
 }
-.doc-content h4 {
+.markdown-body h4 {
   font-size: 1.25rem;
-}
-
-.dark .doc-content h2 {
-  border-bottom-color: #374151;
 }
 
 /* Heading anchors */
@@ -95,342 +108,100 @@
 
 .heading-anchor:hover {
   text-decoration: underline;
-  text-decoration-color: #6366f1;
+  text-decoration-color: var(--gfm-accent-color);
   text-underline-offset: 4px;
 }
 
 /* Paragraphs */
-.doc-content p {
+.markdown-body p {
   margin-bottom: 1.25rem;
 }
 
-/* Links — @deno/gfm outputs plain <a> elements */
-.doc-content a {
-  color: #6366f1;
+/* Links — add underline decoration (GFM only sets color) */
+.markdown-body a {
   text-decoration: underline;
   text-underline-offset: 2px;
-  text-decoration-color: #a5b4fc;
+  text-decoration-color: var(--gfm-accent-subtle);
   transition: color 0.15s, text-decoration-color 0.15s;
 }
 
-.doc-content a:hover {
-  color: #4f46e5;
-  text-decoration-color: #6366f1;
+.markdown-body a:hover {
+  text-decoration-color: var(--gfm-accent-color);
 }
 
-.dark .doc-content a {
-  color: #a5b4fc;
-  text-decoration-color: #6366f1;
-}
-
-.dark .doc-content a:hover {
-  color: #c7d2fe;
-}
-
-/* Lists — @deno/gfm outputs plain <ul>/<ol> elements */
-.doc-content ul,
-.doc-content ol {
-  margin-bottom: 1.25rem;
-  padding-left: 1.5rem;
-}
-
-.doc-content ul {
-  list-style: disc;
-}
-
-.doc-content ol {
-  list-style: decimal;
-}
-
-.doc-content li {
+/* Lists */
+.markdown-body li {
   margin-bottom: 0.5rem;
 }
 
-/* Nested lists */
-.doc-content ul ul,
-.doc-content ol ul {
+.markdown-body ul ul,
+.markdown-body ol ul {
   list-style: circle;
-  margin-top: 0.5rem;
-  margin-bottom: 0;
 }
 
-.doc-content ul ul ul,
-.doc-content ol ul ul {
+.markdown-body ul ul ul,
+.markdown-body ol ul ul {
   list-style: square;
 }
 
-/* Blockquotes — @deno/gfm outputs plain <blockquote> */
-.doc-content blockquote {
-  margin: 1.5rem 0;
+/* Blockquotes — Denote adds background, indigo border, radius */
+.markdown-body blockquote {
   padding: 1rem 1.5rem;
-  border-left: 4px solid #6366f1;
-  background: #f3f4f6;
+  border-left-color: var(--gfm-accent-color);
+  background: var(--gfm-inline-code-bg);
   border-radius: 0 0.5rem 0.5rem 0;
-  color: #4b5563;
 }
 
-.dark .doc-content blockquote {
-  background: #1f2937;
-  color: #9ca3af;
-}
-
-/* Remove default margin on blockquote paragraphs */
-.doc-content blockquote p {
+.markdown-body blockquote p {
   margin-bottom: 0;
 }
 
-.doc-content blockquote p + p {
+.markdown-body blockquote p + p {
   margin-top: 0.75rem;
 }
 
-/* Code blocks — @deno/gfm with Prism */
-.doc-content .highlight {
-  margin: 1.5rem 0;
+/* Code blocks — style the .highlight wrapper instead of pre,
+   so we don't conflict with GFM's .code-header+pre radius removal */
+.markdown-body .highlight {
   border-radius: 0.75rem;
+  border: 1px solid var(--gfm-border-color);
   overflow: hidden;
-  border: 1px solid #e5e7eb;
-  position: relative;
-  background: #f8fafc;
+  margin: 1.5rem 0;
 }
 
-.dark .doc-content .highlight {
-  border-color: #1e293b;
-  background: #0f172a;
+.markdown-body .highlight pre {
+  border: none;
+  border-radius: 0;
+  margin: 0;
+  line-height: 1.7;
 }
 
-/* Language badge — extract from class name highlight-source-{lang} */
-.doc-content .highlight[class*="highlight-source-"]::before {
-  position: absolute;
-  top: 0.5rem;
-  right: 0.75rem;
-  padding: 0.125rem 0.5rem;
+/* Code header — extend GFM base with Denote customizations */
+.markdown-body .code-header {
+  justify-content: space-between;
+  border-radius: 0.75rem 0.75rem 0 0;
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   font-weight: 500;
-  color: #9ca3af;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  z-index: 1;
 }
 
-/* Language labels */
-.doc-content .highlight-source-ts::before,
-.doc-content .highlight-source-typescript::before {
-  content: "typescript";
-}
-.doc-content .highlight-source-js::before,
-.doc-content .highlight-source-javascript::before {
-  content: "javascript";
-}
-.doc-content .highlight-source-tsx::before {
-  content: "tsx";
-}
-.doc-content .highlight-source-jsx::before {
-  content: "jsx";
-}
-.doc-content .highlight-source-json::before {
-  content: "json";
-}
-.doc-content .highlight-source-yaml::before,
-.doc-content .highlight-source-yml::before {
-  content: "yaml";
-}
-.doc-content .highlight-source-bash::before,
-.doc-content .highlight-source-shell::before,
-.doc-content .highlight-source-sh::before {
-  content: "bash";
-}
-.doc-content .highlight-source-css::before {
-  content: "css";
-}
-.doc-content .highlight-source-html::before {
-  content: "html";
-}
-.doc-content .highlight-source-python::before,
-.doc-content .highlight-source-py::before {
-  content: "python";
-}
-.doc-content .highlight-source-rust::before,
-.doc-content .highlight-source-rs::before {
-  content: "rust";
-}
-.doc-content .highlight-source-go::before {
-  content: "go";
-}
-.doc-content .highlight-source-sql::before {
-  content: "sql";
-}
-.doc-content .highlight-source-diff::before {
-  content: "diff";
-}
-.doc-content .highlight-source-toml::before {
-  content: "toml";
-}
-.doc-content .highlight-source-md::before,
-.doc-content .highlight-source-markdown::before {
-  content: "markdown";
-}
-.doc-content .highlight-source-xml::before {
-  content: "xml";
-}
-
-.doc-content .highlight pre {
-  margin: 0 !important;
-  padding: 1.25rem !important;
-  padding-top: 2rem !important; /* Space for language badge */
-  border-radius: 0 !important;
-  overflow-x: auto;
-  background: transparent !important;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  font-size: 0.875rem;
-  line-height: 1.7;
-}
-
-/* Prism token colors — Light theme */
-.doc-content .highlight .token.comment,
-.doc-content .highlight .token.prolog,
-.doc-content .highlight .token.doctype,
-.doc-content .highlight .token.cdata {
-  color: #6b7280;
-}
-
-.doc-content .highlight .token.punctuation {
-  color: #374151;
-}
-
-.doc-content .highlight .token.property,
-.doc-content .highlight .token.tag,
-.doc-content .highlight .token.boolean,
-.doc-content .highlight .token.number,
-.doc-content .highlight .token.constant,
-.doc-content .highlight .token.symbol,
-.doc-content .highlight .token.deleted {
-  color: #dc2626;
-}
-
-.doc-content .highlight .token.selector,
-.doc-content .highlight .token.attr-name,
-.doc-content .highlight .token.string,
-.doc-content .highlight .token.char,
-.doc-content .highlight .token.builtin,
-.doc-content .highlight .token.inserted {
-  color: #16a34a;
-}
-
-.doc-content .highlight .token.operator,
-.doc-content .highlight .token.entity,
-.doc-content .highlight .token.url,
-.doc-content .highlight .language-css .token.string,
-.doc-content .highlight .style .token.string {
-  color: #ca8a04;
-}
-
-.doc-content .highlight .token.atrule,
-.doc-content .highlight .token.attr-value,
-.doc-content .highlight .token.keyword {
-  color: #7c3aed;
-}
-
-.doc-content .highlight .token.function,
-.doc-content .highlight .token.class-name {
-  color: #2563eb;
-}
-
-.doc-content .highlight .token.regex,
-.doc-content .highlight .token.important,
-.doc-content .highlight .token.variable {
-  color: #ea580c;
-}
-
-/* Prism token colors — Dark theme */
-.dark .doc-content .highlight .token.comment,
-.dark .doc-content .highlight .token.prolog,
-.dark .doc-content .highlight .token.doctype,
-.dark .doc-content .highlight .token.cdata {
-  color: #6b7280;
-}
-
-.dark .doc-content .highlight .token.punctuation {
+.code-header .copy-btn {
+  padding: 2px;
+  border-radius: 4px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
   color: #9ca3af;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.15s;
 }
 
-.dark .doc-content .highlight .token.property,
-.dark .doc-content .highlight .token.tag,
-.dark .doc-content .highlight .token.boolean,
-.dark .doc-content .highlight .token.number,
-.dark .doc-content .highlight .token.constant,
-.dark .doc-content .highlight .token.symbol,
-.dark .doc-content .highlight .token.deleted {
-  color: #f87171;
-}
-
-.dark .doc-content .highlight .token.selector,
-.dark .doc-content .highlight .token.attr-name,
-.dark .doc-content .highlight .token.string,
-.dark .doc-content .highlight .token.char,
-.dark .doc-content .highlight .token.builtin,
-.dark .doc-content .highlight .token.inserted {
-  color: #4ade80;
-}
-
-.dark .doc-content .highlight .token.operator,
-.dark .doc-content .highlight .token.entity,
-.dark .doc-content .highlight .token.url,
-.dark .doc-content .highlight .language-css .token.string,
-.dark .doc-content .highlight .style .token.string {
-  color: #fbbf24;
-}
-
-.dark .doc-content .highlight .token.atrule,
-.dark .doc-content .highlight .token.attr-value,
-.dark .doc-content .highlight .token.keyword {
-  color: #a78bfa;
-}
-
-.dark .doc-content .highlight .token.function,
-.dark .doc-content .highlight .token.class-name {
-  color: #60a5fa;
-}
-
-.dark .doc-content .highlight .token.regex,
-.dark .doc-content .highlight .token.important,
-.dark .doc-content .highlight .token.variable {
-  color: #fb923c;
-}
-
-/* Plain code blocks (no language specified) */
-.doc-content pre:not(.highlight pre) {
-  margin: 1.5rem 0;
-  padding: 1.25rem;
-  border-radius: 0.75rem;
-  overflow-x: auto;
-  background: #f8fafc;
-  border: 1px solid #e5e7eb;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  font-size: 0.875rem;
-  line-height: 1.7;
-  color: #374151;
-}
-
-.dark .doc-content pre:not(.highlight pre) {
-  background: #0f172a;
-  border-color: #1e293b;
-  color: #e2e8f0;
-}
-
-/* Inline code — @deno/gfm outputs plain <code> elements */
-.doc-content code:not(pre code) {
-  padding: 0.125rem 0.375rem;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  font-size: 0.875em;
-  background: #f3f4f6;
-  border-radius: 0.25rem;
-  color: #dc2626;
-}
-
-.dark .doc-content code:not(pre code) {
-  background: #1f2937;
-  color: #f87171;
+.code-header .copy-btn:hover {
+  color: var(--gfm-fg-default);
 }
 
 /* Tables */
@@ -438,223 +209,50 @@
   margin: 1.5rem 0;
   overflow-x: auto;
   border-radius: 0.5rem;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--gfm-border-color);
 }
 
-.dark .table-wrapper {
-  border-color: #374151;
+.markdown-body table {
+  font-variant: tabular-nums;
 }
 
-.doc-table,
-.doc-content table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.875rem;
-  line-height: 1.5;
-}
-
-.doc-table th,
-.doc-table td,
-.doc-content th,
-.doc-content td {
-  padding: 0.625rem 1rem;
-  text-align: left;
-  border-bottom: 1px solid #e5e7eb;
-}
-
-.dark .doc-table th,
-.dark .doc-table td,
-.dark .doc-content th,
-.dark .doc-content td {
-  border-bottom-color: #374151;
-}
-
-.doc-table th,
-.doc-content th {
-  background: #f9fafb;
-  font-weight: 600;
+.markdown-body th {
+  background: var(--gfm-bg-surface);
   font-size: 0.8125rem;
   text-transform: uppercase;
   letter-spacing: 0.025em;
-  color: #6b7280;
   white-space: nowrap;
 }
 
-.dark .doc-table th,
-.dark .doc-content th {
-  background: #111827;
-  color: #9ca3af;
-}
-
-.doc-table tbody tr:hover,
-.doc-content tbody tr:hover {
-  background: #f9fafb;
-}
-
-.dark .doc-table tbody tr:hover,
-.dark .doc-content tbody tr:hover {
-  background: #111827;
-}
-
-/* Last row no bottom border */
-.doc-table tbody tr:last-child td,
-.doc-content tbody tr:last-child td {
-  border-bottom: none;
-}
-
-/* Horizontal rules */
-.doc-content hr {
-  margin: 2rem 0;
-  border: none;
-  border-top: 1px solid #e5e7eb;
-}
-
-.dark .doc-content hr {
-  border-top-color: #374151;
-}
-
-/* Images — @deno/gfm outputs plain <img> elements */
-.doc-content img {
-  max-width: 100%;
-  height: auto;
-  border-radius: 0.5rem;
-  margin: 1.5rem 0;
+.markdown-body tbody tr:hover {
+  background: var(--gfm-bg-subtle);
 }
 
 /* Strong/Bold */
-.doc-content strong {
-  font-weight: 600;
-  color: #111827;
-}
-
-.dark .doc-content strong {
-  color: #f9fafb;
+.markdown-body strong {
+  color: var(--gfm-fg-heading);
 }
 
 /* ========================================
-   GitHub Alerts (@deno/gfm)
+   Task Lists (@deer/gfm)
    ======================================== */
 
-.doc-content .markdown-alert {
-  padding: 1rem 1rem 1rem 1.25rem;
-  margin: 1.5rem 0;
-  border-left: 4px solid;
-  border-radius: 0.5rem;
-  background-color: #f9fafb;
-}
-
-.dark .doc-content .markdown-alert {
-  background-color: #111827;
-}
-
-.doc-content .markdown-alert-title {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-weight: 600;
-  margin-bottom: 0.5rem;
-}
-
-.doc-content .markdown-alert-title svg {
-  width: 1rem;
-  height: 1rem;
-  flex-shrink: 0;
-}
-
-.doc-content .markdown-alert > p:last-child {
-  margin-bottom: 0;
-}
-
-/* Note - Blue */
-.doc-content .markdown-alert-note {
-  border-left-color: #3b82f6;
-}
-.doc-content .markdown-alert-note .markdown-alert-title {
-  color: #3b82f6;
-}
-
-/* Tip - Green */
-.doc-content .markdown-alert-tip {
-  border-left-color: #22c55e;
-}
-.doc-content .markdown-alert-tip .markdown-alert-title {
-  color: #22c55e;
-}
-
-/* Important - Purple */
-.doc-content .markdown-alert-important {
-  border-left-color: #a855f7;
-}
-.doc-content .markdown-alert-important .markdown-alert-title {
-  color: #a855f7;
-}
-
-/* Warning - Yellow/Amber */
-.doc-content .markdown-alert-warning {
-  border-left-color: #f59e0b;
-}
-.doc-content .markdown-alert-warning .markdown-alert-title {
-  color: #f59e0b;
-}
-
-/* Caution - Red */
-.doc-content .markdown-alert-caution {
-  border-left-color: #ef4444;
-}
-.doc-content .markdown-alert-caution .markdown-alert-title {
-  color: #ef4444;
-}
-
-/* ========================================
-   Task Lists (@deno/gfm)
-   ======================================== */
-
-.doc-content .contains-task-list {
+.markdown-body .contains-task-list {
   list-style: none;
   padding-left: 0;
 }
 
-.doc-content .task-list-item {
+.markdown-body .task-list-item {
   display: flex;
   align-items: flex-start;
   gap: 0.5rem;
 }
 
-.doc-content .task-list-item input[type="checkbox"] {
+.markdown-body .task-list-item input[type="checkbox"] {
   margin-top: 0.25rem;
   width: 1rem;
   height: 1rem;
-  accent-color: #6366f1;
-}
-
-/* ========================================
-   Footnotes (@deno/gfm)
-   ======================================== */
-
-.doc-content .footnotes {
-  margin-top: 3rem;
-  padding-top: 1.5rem;
-  border-top: 1px solid #e5e7eb;
-  font-size: 0.875rem;
-  color: #6b7280;
-}
-
-.dark .doc-content .footnotes {
-  border-top-color: #374151;
-  color: #9ca3af;
-}
-
-.doc-content [data-footnote-ref]::before {
-  content: "[";
-}
-
-.doc-content [data-footnote-ref]::after {
-  content: "]";
-}
-
-.doc-content .data-footnote-backref {
-  font-family: monospace;
-  text-decoration: none;
+  accent-color: var(--gfm-accent-color);
 }
 
 /* ========================================

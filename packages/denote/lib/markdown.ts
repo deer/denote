@@ -1,33 +1,12 @@
-// Import Prism core FIRST to set up global before loading language components
-// This is required because language components expect `Prism` global to exist
-import "npm:prismjs@1.30.0";
 /**
- * Markdown parsing utilities using @deno/gfm
+ * Markdown parsing utilities using @deer/gfm
  *
- * Provides frontmatter parsing, TOC extraction, and HTML rendering
- * with GitHub Flavored Markdown support and Prism syntax highlighting.
+ * Provides frontmatter parsing and HTML rendering with GitHub Flavored
+ * Markdown support, syntax highlighting via lowlight, and single-pass
+ * TOC extraction via renderWithMeta.
  */
-import { render } from "@deno/gfm";
+import { renderWithMeta } from "@deer/gfm";
 import { parse as parseYaml } from "jsr:@std/yaml@1";
-
-// Import additional Prism languages for syntax highlighting
-// Uses same version as @deno/gfm's dependency
-// Order matters: some languages depend on others (jsx->tsx, markup->jsx)
-import "npm:prismjs@1.30.0/components/prism-markup.js"; // Required for jsx
-import "npm:prismjs@1.30.0/components/prism-css.js";
-import "npm:prismjs@1.30.0/components/prism-javascript.js"; // Required for jsx, typescript
-import "npm:prismjs@1.30.0/components/prism-typescript.js";
-import "npm:prismjs@1.30.0/components/prism-jsx.js";
-import "npm:prismjs@1.30.0/components/prism-tsx.js";
-import "npm:prismjs@1.30.0/components/prism-bash.js";
-import "npm:prismjs@1.30.0/components/prism-json.js";
-import "npm:prismjs@1.30.0/components/prism-yaml.js";
-import "npm:prismjs@1.30.0/components/prism-python.js";
-import "npm:prismjs@1.30.0/components/prism-rust.js";
-import "npm:prismjs@1.30.0/components/prism-go.js";
-import "npm:prismjs@1.30.0/components/prism-sql.js";
-import "npm:prismjs@1.30.0/components/prism-diff.js";
-import "npm:prismjs@1.30.0/components/prism-toml.js";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -48,7 +27,6 @@ export interface DocFrontmatter {
 export interface ParsedDoc {
   frontmatter: DocFrontmatter;
   content: string;
-  toc: TocItem[];
 }
 
 export interface TocItem {
@@ -94,57 +72,38 @@ export function parseFrontmatter(
 }
 
 // ---------------------------------------------------------------------------
-// Table of Contents
-// ---------------------------------------------------------------------------
-
-/**
- * Generate a URL-friendly slug from text
- */
-export function slugify(text: string): string {
-  return text
-    .toLowerCase()
-    .replace(/[^\w\s-]/g, "")
-    .replace(/\s+/g, "-")
-    .replace(/-+/g, "-")
-    .trim();
-}
-
-/**
- * Extract table of contents from markdown content.
- * Parses headings and generates slugified IDs.
- */
-export function extractToc(content: string): TocItem[] {
-  const headingRegex = /^(#{1,6})\s+(.+)$/gm;
-  const toc: TocItem[] = [];
-  let match;
-
-  while ((match = headingRegex.exec(content)) !== null) {
-    const level = match[1].length;
-    const title = match[2].trim();
-    const id = slugify(title);
-
-    toc.push({ id, title, level });
-  }
-
-  return toc;
-}
-
-// ---------------------------------------------------------------------------
 // Rendering
 // ---------------------------------------------------------------------------
 
 /**
- * Convert markdown to HTML using @deno/gfm.
+ * Render markdown to HTML and extract TOC in a single pass using @deer/gfm.
  *
  * Features:
  * - GitHub Flavored Markdown (tables, task lists, strikethrough, etc.)
- * - Syntax highlighting via Prism
+ * - Syntax highlighting via lowlight (highlight.js)
+ * - Table of contents extracted from rendered heading IDs
  * - HTML sanitization
  */
-export function markdownToHtml(content: string): string {
-  return render(content, {
+export async function renderDoc(
+  content: string,
+): Promise<{ html: string; toc: TocItem[] }> {
+  const result = await renderWithMeta(content, {
+    highlighter: "lowlight",
     allowMath: true,
   });
+
+  // Strip the "user-content-" prefix that rehype-sanitize adds to heading IDs,
+  // so they match the TOC slugs for anchor navigation.
+  const html = result.html.replaceAll('id="user-content-', 'id="');
+
+  return {
+    html,
+    toc: result.toc.map((entry) => ({
+      id: entry.slug,
+      title: entry.text,
+      level: entry.depth,
+    })),
+  };
 }
 
 // ---------------------------------------------------------------------------
@@ -152,15 +111,10 @@ export function markdownToHtml(content: string): string {
 // ---------------------------------------------------------------------------
 
 /**
- * Parse a full document: frontmatter + TOC + body content.
+ * Parse a full document: frontmatter + body content.
+ * Use renderDoc() separately when HTML rendering and TOC are needed.
  */
 export function parseDocument(raw: string): ParsedDoc {
   const { frontmatter, content } = parseFrontmatter(raw);
-  const toc = extractToc(content);
-
-  return {
-    frontmatter,
-    content,
-    toc,
-  };
+  return { frontmatter, content };
 }

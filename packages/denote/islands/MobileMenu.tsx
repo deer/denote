@@ -115,7 +115,7 @@ function MobileOverlay(
   },
 ) {
   return (
-    <div class="fixed inset-0" style={{ zIndex: 9999 }}>
+    <div class="fixed inset-0 z-50">
       {/* Backdrop */}
       <div
         class="fixed inset-0 bg-black/50 backdrop-blur-sm"
@@ -123,10 +123,7 @@ function MobileOverlay(
       />
 
       {/* Sidebar panel */}
-      <aside
-        class="fixed top-0 left-0 w-72 h-full overflow-y-auto bg-white dark:bg-gray-950 shadow-2xl"
-        style={{ zIndex: 10000 }}
-      >
+      <aside class="fixed top-0 left-0 z-50 w-72 h-full overflow-y-auto bg-white dark:bg-gray-950 shadow-2xl">
         {/* Header */}
         <div class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-800">
           <a href="/" class="flex items-center gap-2 font-semibold">

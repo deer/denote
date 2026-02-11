@@ -17,49 +17,56 @@ this in your `docs.config.ts`:
 export const config: DocsConfig = {
   colors: {
     primary: "#6366f1", // Your primary brand color
-    accent: "#22c55e", // Accent color for highlights
   },
 };
 ```
 
-### Color Variables
+Setting `colors.primary` overrides the accent color used for links, focus rings,
+heading anchors, blockquote borders, and checkboxes — in both light and dark
+modes.
 
-Denote uses CSS custom properties for theming:
+### CSS Variables
+
+Denote uses CSS custom properties (via `@deer/gfm`) for theming. The defaults
+ship with an indigo palette:
 
 ```css
 :root {
-  --color-primary: #6366f1;
-  --color-accent: #22c55e;
-  --color-text: #1f2937;
-  --color-text-muted: #6b7280;
-  --color-background: #ffffff;
-  --color-surface: #f9fafb;
-  --color-border: #e5e7eb;
+  --gfm-fg-default: #374151;
+  --gfm-fg-heading: #111827;
+  --gfm-fg-muted: #6b7280;
+  --gfm-accent-color: #6366f1;
+  --gfm-accent-hover: #4f46e5;
+  --gfm-accent-subtle: #a5b4fc;
+  --gfm-border-color: #e5e7eb;
+  --gfm-bg-subtle: #f8fafc;
+  --gfm-bg-surface: #f1f5f9;
+  --gfm-inline-code-color: #dc2626;
+  --gfm-inline-code-bg: #f3f4f6;
 }
 
 .dark {
-  --color-text: #f9fafb;
-  --color-text-muted: #9ca3af;
-  --color-background: #030712;
-  --color-surface: #111827;
-  --color-border: #1f2937;
+  --gfm-fg-default: #d1d5db;
+  --gfm-fg-heading: #f9fafb;
+  --gfm-fg-muted: #9ca3af;
+  --gfm-accent-color: #a5b4fc;
+  --gfm-accent-hover: #c7d2fe;
+  --gfm-accent-subtle: #6366f1;
+  --gfm-border-color: #374151;
+  --gfm-bg-subtle: #0f172a;
+  --gfm-bg-surface: #0b1120;
+  --gfm-inline-code-color: #f87171;
+  --gfm-inline-code-bg: #1f2937;
 }
 ```
+
+You can override any of these in your project's `styles.css` to fully customize
+the theme beyond just the primary color.
 
 ## Dark Mode
 
 Dark mode is enabled by default and respects the user's system preference. Users
 can also toggle between modes using the theme button in the header.
-
-### Forcing a Theme
-
-To force a specific theme, you can set the `theme` property:
-
-```typescript
-export const config: DocsConfig = {
-  theme: "dark", // or "light" or "system"
-};
-```
 
 ## Typography
 
@@ -71,39 +78,32 @@ Denote uses a modern font stack optimized for readability:
 
 ## Layout
 
-### Sidebar Width
+The layout uses fixed widths via Tailwind utility classes:
 
-Customize the sidebar width in your CSS:
-
-```css
-:root {
-  --sidebar-width: 16rem;
-}
-```
-
-### Content Width
-
-The main content area has a max-width for optimal readability:
-
-```css
-:root {
-  --content-max-width: 48rem;
-}
-```
+- **Sidebar**: `w-64` (16rem), visible at the `lg` breakpoint (1024px+)
+- **Content area**: `max-w-3xl` (48rem) centered in the main column
+- **Table of contents**: `w-64` (16rem) on the right, visible at `xl` (1280px+)
 
 ## Custom CSS
 
 Add custom styles by creating a `static/custom.css` file:
 
 ```css
-/* Custom styles */
-.doc-content h1 {
-  color: var(--color-primary);
+/* Override theme variables */
+:root {
+  --gfm-accent-color: #e11d48;
+  --gfm-accent-hover: #be123c;
+  --gfm-accent-subtle: #fda4af;
 }
 
-.code-block {
+/* Custom markdown styles */
+.markdown-body h1 {
+  color: var(--gfm-fg-heading);
+}
+
+.markdown-body .highlight {
   border-radius: 0.75rem;
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--gfm-border-color);
 }
 ```
 

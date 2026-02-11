@@ -6,7 +6,7 @@ import {
   getDoc,
   getPrevNext,
 } from "../../lib/docs.ts";
-import { markdownToHtml } from "../../lib/markdown.ts";
+import { renderDoc } from "../../lib/markdown.ts";
 import { DocsLayout } from "../../components/DocsLayout.tsx";
 import { Search } from "../../islands/Search.tsx";
 import { CopyButton } from "../../islands/CopyButton.tsx";
@@ -43,7 +43,7 @@ export async function DocsPage(ctx: PageProps<unknown, State>) {
     );
   }
 
-  const html = markdownToHtml(doc.content);
+  const { html, toc } = await renderDoc(doc.content);
   const searchIndex = await buildSearchIndex();
   const currentPath = `/docs/${slug}`;
   const { prev, next } = getPrevNext(currentPath);
@@ -53,7 +53,7 @@ export async function DocsPage(ctx: PageProps<unknown, State>) {
     <DocsLayout
       title={doc.frontmatter.title}
       description={doc.frontmatter.description}
-      toc={doc.toc}
+      toc={toc}
       currentPath={currentPath}
       prev={prev}
       next={next}
@@ -62,7 +62,7 @@ export async function DocsPage(ctx: PageProps<unknown, State>) {
       <Search items={searchIndex} />
       <CopyButton />
       <div
-        class="doc-content"
+        class="markdown-body"
         dangerouslySetInnerHTML={{ __html: html }}
       />
     </DocsLayout>
