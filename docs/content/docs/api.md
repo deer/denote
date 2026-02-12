@@ -5,6 +5,9 @@ description: REST API endpoints for programmatic access to your documentation
 
 # API Reference
 
+> **See also:** [AI Native](/docs/ai-native) explains the design philosophy
+> behind these endpoints and how AI agents use them.
+
 Every Denote site exposes several API endpoints for programmatic access. These
 are available automatically — no configuration required.
 

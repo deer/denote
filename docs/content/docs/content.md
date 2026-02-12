@@ -278,9 +278,13 @@ URLs and email addresses are automatically linked:
 
 ---
 
-## Custom Components (Planned)
+## Custom Components (Roadmap)
 
-These components are on the roadmap but not yet implemented:
+> [!IMPORTANT]
+> The directive-based components below (callouts, tabs, steps, cards) are
+> **planned but not yet implemented**. The syntax is shown here for reference
+> only — it will not render correctly in the current version of Denote. For now,
+> use [GitHub Alerts](#github-alerts) for callout-style content.
 
 ### Callout Blocks (Directive Syntax)
 
@@ -291,12 +295,6 @@ These components are on the roadmap but not yet implemented:
 
 :::tip This is a tip callout. :::
 ```
-
-:::note This is a note callout. :::
-
-:::warning This is a warning callout. :::
-
-:::tip This is a tip callout. :::
 
 ### Tabs
 

@@ -111,6 +111,31 @@ export function denote(options: DenoteOptions): App<unknown> {
     app.use(staticFiles());
   }
 
+  // ── Security headers middleware ──────────────────────────────
+  app.use(async (ctx) => {
+    const resp = await ctx.next();
+    // Security headers
+    resp.headers.set(
+      "Strict-Transport-Security",
+      "max-age=63072000; includeSubDomains; preload",
+    );
+    resp.headers.set("X-Content-Type-Options", "nosniff");
+    resp.headers.set("X-Frame-Options", "DENY");
+    resp.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
+
+    // Cache hashed static assets aggressively
+    const url = new URL(ctx.req.url);
+    const path = url.pathname;
+    if (
+      path.startsWith("/_fresh/") ||
+      /\.[a-f0-9]{8,}\.(js|css|svg|png|jpg|jpeg|webp|woff2?)$/.test(path)
+    ) {
+      resp.headers.set("Cache-Control", "public, max-age=31536000, immutable");
+    }
+
+    return resp;
+  });
+
   // ── Logger middleware ───────────────────────────────────────
   app.use((ctx) => {
     console.log(`${ctx.req.method} ${ctx.req.url}`);

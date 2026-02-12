@@ -70,5 +70,5 @@ Your new page is now live! 🎉
 ## What's Next?
 
 - Learn about [frontmatter options](/docs/content#frontmatter)
-- Explore [MDX components](/docs/components)
+- Explore [built-in components](/docs/components)
 - Customize your [theme](/docs/theming)
