@@ -1,11 +1,11 @@
 {
   "name": "@denote/docs",
-  "exports": "./main.ts",
+  "exports": "./denote.config.ts",
   "tasks": {
-    "dev": "vite",
-    "build": "vite build",
+    "dev": "deno run -A ../packages/denote/cli.ts dev",
+    "build": "deno run -A ../packages/denote/cli.ts build",
     "start": "deno serve -A _fresh/server.js",
-    "ok": "deno fmt --check && deno lint && deno check main.ts"
+    "ok": "deno fmt --check && deno lint && deno check denote.config.ts"
   },
   "imports": {
     "@denote/core": "../packages/denote/mod.ts",
@@ -15,7 +15,7 @@
     "preact": "npm:preact@^10.27.2",
     "@preact/signals": "npm:@preact/signals@^2.5.0",
     "@fresh/plugin-vite": "jsr:@fresh/plugin-vite@^1.0.8",
-    "vite": "npm:vite@^7.1.3",
+    "vite": "npm:vite@^7.3.1",
     "tailwindcss": "npm:tailwindcss@^4.1.10",
     "@tailwindcss/vite": "npm:@tailwindcss/vite@^4.1.12"
   },

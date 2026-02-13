@@ -11,6 +11,7 @@
     "dev": "cd docs && deno task dev",
     "build": "cd docs && deno task build",
     "test": "deno test -A",
-    "ok": "deno fmt --check && deno lint && deno check && deno task test"
+    "ok": "deno fmt --check && deno lint && deno check && deno task test",
+    "cli": "deno run -A packages/denote/cli.ts"
   }
 }

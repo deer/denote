@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "exports": {
     ".": "./mod.ts",
+    "./cli": "./cli.ts",
     "./islands/ThemeToggle.tsx": "./islands/ThemeToggle.tsx",
     "./islands/MobileMenu.tsx": "./islands/MobileMenu.tsx",
     "./islands/Search.tsx": "./islands/Search.tsx",
@@ -42,9 +43,9 @@
     "preact": "npm:preact@^10.27.2",
     "@preact/signals": "npm:@preact/signals@^2.5.0",
     "@fresh/plugin-vite": "jsr:@fresh/plugin-vite@^1.0.8",
-    "@deer/gfm": "jsr:@deer/gfm@0.0.3",
+    "@deer/gfm": "jsr:@deer/gfm@0.0.4",
 
-    "vite": "npm:vite@^7.1.3",
+    "vite": "npm:vite@^7.3.1",
     "tailwindcss": "npm:tailwindcss@^4.1.10",
     "@tailwindcss/vite": "npm:@tailwindcss/vite@^4.1.12",
     "zod": "npm:zod@^4.3.6"
