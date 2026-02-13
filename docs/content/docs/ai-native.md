@@ -16,6 +16,9 @@ ai-keywords:
 
 # AI Native
 
+> **See also:** The [API Reference](/docs/api) documents the specific endpoints
+> (JSON API, llms.txt) mentioned on this page.
+
 Every Denote site is designed to serve two audiences: humans browsing your docs,
 and AI agents consuming your knowledge programmatically.
 

@@ -16,7 +16,7 @@ export function Home() {
         <div class="relative container mx-auto px-4 py-24 sm:py-32 lg:py-40">
           <div class="max-w-4xl mx-auto text-center">
             <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-100 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300 text-sm font-medium mb-8">
-              <span class="text-lg">🦕</span>
+              <span class="text-lg" aria-hidden="true">🦕</span>
               <span>Deno Native • AI Ready • Lightning Fast</span>
             </div>
 
@@ -68,6 +68,17 @@ export function Home() {
                 View on GitHub
               </a>
             </div>
+
+            <p class="mt-8 text-sm text-gray-500 dark:text-gray-400">
+              <span aria-hidden="true">⭐</span> Open source on{" "}
+              <a
+                href={config.social?.github || "#"}
+                class="underline hover:text-gray-900 dark:hover:text-white transition-colors"
+              >
+                GitHub
+              </a>{" "}
+              — MIT Licensed
+            </p>
           </div>
         </div>
       </section>
@@ -79,7 +90,7 @@ export function Home() {
             <div class="grid lg:grid-cols-2 gap-16 items-center">
               <div>
                 <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300 text-sm font-medium mb-6">
-                  🤖 AI Native
+                  <span aria-hidden="true">🤖</span> AI Native
                 </div>
                 <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-4">
                   Your docs are an API for AI
@@ -163,7 +174,10 @@ GET /api/docs        # Structured JSON`}
           <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
             {features.map((feature) => (
               <div class="p-6 rounded-2xl bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 hover:border-indigo-300 dark:hover:border-indigo-700 transition-colors">
-                <div class="w-12 h-12 flex items-center justify-center rounded-xl bg-indigo-100 dark:bg-indigo-900/50 text-2xl mb-4">
+                <div
+                  class="w-12 h-12 flex items-center justify-center rounded-xl bg-indigo-100 dark:bg-indigo-900/50 text-2xl mb-4"
+                  aria-hidden="true"
+                >
                   {feature.icon}
                 </div>
                 <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">
@@ -182,15 +196,36 @@ GET /api/docs        # Structured JSON`}
       <section class="py-24 bg-gradient-to-r from-indigo-600 to-purple-600">
         <div class="container mx-auto px-4 text-center">
           <h2 class="text-3xl sm:text-4xl font-bold text-white mb-4">
-            Your docs deserve an AI strategy
+            Ready to build docs that work everywhere?
           </h2>
           <p class="text-xl text-indigo-100 mb-8 max-w-2xl mx-auto">
-            Get started in minutes. Your users — and their AI agents — will
-            thank you.
+            Set up in minutes. Write Markdown, get a site that humans can read
+            and AI agents can query.
           </p>
-          <div class="inline-flex items-center gap-3 px-6 py-4 bg-black/20 rounded-xl font-mono text-white">
+          <div class="inline-flex items-center gap-3 px-6 py-4 bg-black/20 rounded-xl font-mono text-white mb-6">
             <span class="text-indigo-300">$</span>
             <code>deno run -Ar jsr:@denote/init</code>
+          </div>
+          <div>
+            <a
+              href="/docs/introduction"
+              class="inline-flex items-center gap-2 px-8 py-4 bg-white text-indigo-700 font-semibold rounded-xl shadow-lg hover:bg-indigo-50 transition-all hover:-translate-y-0.5"
+            >
+              Get Started
+              <svg
+                class="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M13 7l5 5m0 0l-5 5m5-5H6"
+                />
+              </svg>
+            </a>
           </div>
         </div>
       </section>
@@ -200,7 +235,7 @@ GET /api/docs        # Structured JSON`}
         <div class="container mx-auto px-4">
           <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
             <div class="flex items-center gap-2 text-gray-600 dark:text-gray-400">
-              <span class="text-xl">🦕</span>
+              <span class="text-xl" aria-hidden="true">🦕</span>
               <span>
                 {config.footer?.copyright ||
                   `© ${new Date().getFullYear()} ${config.name}`}
@@ -257,7 +292,7 @@ const features = [
     icon: "⚡",
     title: "Lightning Fast",
     description:
-      "Server-rendered with Fresh v2's island architecture. Ship zero JS by default, hydrate only what's interactive.",
+      "Server-rendered with Fresh v2's island architecture. Ship minimal JS — only for interactive components like search and theme toggle.",
   },
   {
     icon: "🎨",

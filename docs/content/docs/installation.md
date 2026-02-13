@@ -9,12 +9,12 @@ Get up and running with Denote in minutes.
 
 ## Prerequisites
 
-Before you begin, make sure you have [Deno](https://deno.land) installed on your
+Before you begin, make sure you have [Deno](https://deno.com) installed on your
 system:
 
 ```bash
 # Install Deno (macOS/Linux)
-curl -fsSL https://deno.land/install.sh | sh
+curl -fsSL https://deno.com/install.sh | sh
 
 # Or with Homebrew
 brew install deno

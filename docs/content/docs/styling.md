@@ -5,7 +5,7 @@ description: CSS and Tailwind styling options for your documentation
 
 # Styling
 
-Denote uses Tailwind CSS for styling, giving you full control over your
+Denote uses Tailwind CSS v4 for styling, giving you full control over your
 documentation's appearance.
 
 ## Tailwind CSS
