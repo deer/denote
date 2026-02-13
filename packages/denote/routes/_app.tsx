@@ -12,7 +12,7 @@ export function App({ Component, state }: PageProps<unknown, State>) {
   const pageDescription = state.pageDescription ||
     "Documentation powered by Denote";
   const pageUrl = state.pageUrl;
-  const pageImage = state.pageImage || "/og-image.png";
+  const pageImage = state.pageImage;
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -69,14 +69,14 @@ export function App({ Component, state }: PageProps<unknown, State>) {
         <meta property="og:title" content={pageTitle} />
         <meta property="og:description" content={pageDescription} />
         {pageUrl && <meta property="og:url" content={pageUrl} />}
-        <meta property="og:image" content={pageImage} />
+        {pageImage && <meta property="og:image" content={pageImage} />}
         <meta property="og:site_name" content={config.name} />
 
         {/* Twitter Card */}
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={pageTitle} />
         <meta name="twitter:description" content={pageDescription} />
-        <meta name="twitter:image" content={pageImage} />
+        {pageImage && <meta name="twitter:image" content={pageImage} />}
 
         {/* @deer/gfm syntax highlighting styles (CSS vars + hljs token colors) */}
         <style dangerouslySetInnerHTML={{ __html: COMBINED_CSS }} />

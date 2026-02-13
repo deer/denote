@@ -203,15 +203,16 @@ export function denote(options: DenoteOptions): App<unknown> {
       const docs = await getAllDocs();
       const basePath = getDocsBasePath();
 
+      const today = new Date().toISOString().slice(0, 10);
       const urls = docs.map((doc) => {
         const loc = `${baseUrl}${basePath}/${doc.slug}`;
-        return `  <url><loc>${loc}</loc></url>`;
+        return `  <url><loc>${loc}</loc><lastmod>${today}</lastmod></url>`;
       });
 
       const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>${baseUrl}/</loc></url>
-  <url><loc>${baseUrl}${basePath}</loc></url>
+  <url><loc>${baseUrl}/</loc><lastmod>${today}</lastmod></url>
+  <url><loc>${baseUrl}${basePath}</loc><lastmod>${today}</lastmod></url>
 ${urls.join("\n")}
 </urlset>`;
 

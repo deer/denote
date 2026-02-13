@@ -273,7 +273,7 @@ $$
 
 URLs and email addresses are automatically linked:
 
-- https://denote.dev
+- https://example.com
 - contact@example.com
 
 ---
