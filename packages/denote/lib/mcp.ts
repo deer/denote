@@ -9,7 +9,7 @@ import {
   ResourceTemplate,
 } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { buildSearchIndex, getAllDocs, getDoc } from "./docs.ts";
-import { getConfig } from "./config.ts";
+import { getConfig, getDocsBasePath } from "./config.ts";
 import { z } from "zod";
 
 /** Get site name from config, with fallback */
@@ -23,12 +23,27 @@ export function getSiteName(): string {
 
 /**
  * Create a configured MCP server with documentation tools and resources.
+ *
+ * @param baseUrl Optional base URL of the docs site (e.g. "https://docs.example.com").
+ *   When provided, tool and resource output includes canonical web URLs.
  */
-export function createMcpServer(): McpServer {
+export function createMcpServer(baseUrl?: string): McpServer {
+  const name = getSiteName();
   const server = new McpServer({
-    name: `${getSiteName()} Docs`,
+    name: `${name} Docs`,
     version: "1.0.0",
   });
+
+  /** Build a web URL for a doc slug, or return undefined if no baseUrl */
+  const webUrl = (slug: string): string | undefined =>
+    baseUrl ? `${baseUrl}${docsBasePath}/${slug}` : undefined;
+
+  let docsBasePath: string;
+  try {
+    docsBasePath = getDocsBasePath();
+  } catch {
+    docsBasePath = "/docs";
+  }
 
   // ── Resources ───────────────────────────────────────────────
 
@@ -38,11 +53,14 @@ export function createMcpServer(): McpServer {
     async (uri) => {
       const docs = await getAllDocs();
       const listing = docs
-        .map((d) =>
-          `- ${d.frontmatter.title} (docs://${d.slug}): ${
-            d.frontmatter["ai-summary"] || d.frontmatter.description || ""
-          }`
-        )
+        .map((d) => {
+          const url = webUrl(d.slug);
+          const desc = d.frontmatter["ai-summary"] ||
+            d.frontmatter.description || "";
+          return url
+            ? `- [${d.frontmatter.title}](${url}) (docs://${d.slug}): ${desc}`
+            : `- ${d.frontmatter.title} (docs://${d.slug}): ${desc}`;
+        })
         .join("\n");
 
       return {
@@ -97,6 +115,8 @@ export function createMcpServer(): McpServer {
           `> Keywords: ${doc.frontmatter["ai-keywords"].join(", ")}`,
         );
       }
+      const url = webUrl(slug as string);
+      if (url) meta.push(`> Web: ${url}`);
       const metaBlock = meta.length > 0 ? meta.join("\n") + "\n\n" : "";
 
       return {
@@ -113,7 +133,7 @@ export function createMcpServer(): McpServer {
 
   server.tool(
     "search_docs",
-    "Search the documentation for a query. Returns matching page titles, descriptions, and content snippets.",
+    `Search ${name} documentation by keyword. Returns matching page titles, descriptions, and content snippets with match context. Use this first to find relevant pages before fetching full content with get_doc.`,
     { query: z.string().describe("Search query") },
     async ({ query }: { query: string }) => {
       const index = await buildSearchIndex();
@@ -142,6 +162,8 @@ export function createMcpServer(): McpServer {
       const text = results
         .map((r) => {
           const parts = [`## ${r.title}`, `Slug: ${r.slug}`];
+          const url = webUrl(r.slug);
+          if (url) parts.push(`Web: ${url}`);
           if (r.description) parts.push(r.description);
           if (r.aiSummary) parts.push(`AI Summary: ${r.aiSummary}`);
           if (r.aiKeywords && r.aiKeywords.length > 0) {
@@ -172,7 +194,7 @@ export function createMcpServer(): McpServer {
 
   server.tool(
     "get_doc",
-    "Get the full content of a documentation page by its slug.",
+    `Get the full content of a ${name} documentation page by its slug. Use after search_docs to read the complete page.`,
     {
       slug: z.string().describe(
         "Page slug (e.g. 'introduction', 'installation')",
@@ -189,14 +211,18 @@ export function createMcpServer(): McpServer {
         };
       }
 
+      const meta: string[] = [];
+      if (doc.frontmatter.description) {
+        meta.push(`> ${doc.frontmatter.description}`);
+      }
+      const url = webUrl(slug);
+      if (url) meta.push(`> Web: ${url}`);
+      const metaBlock = meta.length > 0 ? meta.join("\n") + "\n\n" : "";
+
       return {
         content: [{
           type: "text" as const,
-          text: `# ${doc.frontmatter.title}\n\n${
-            doc.frontmatter.description
-              ? `> ${doc.frontmatter.description}\n\n`
-              : ""
-          }${doc.content}`,
+          text: `# ${doc.frontmatter.title}\n\n${metaBlock}${doc.content}`,
         }],
       };
     },
@@ -204,7 +230,7 @@ export function createMcpServer(): McpServer {
 
   server.tool(
     "get_all_docs",
-    "Get the entire documentation as a single text. Warning: may be large for big doc sites. Consider search_docs or get_doc first.",
+    `Get all ${name} documentation as a single text. Warning: may be large. Use search_docs or get_doc first unless you need comprehensive context.`,
     {},
     async () => {
       const docs = await getAllDocs();

@@ -174,12 +174,12 @@ export function denote(options: DenoteOptions): App<unknown> {
       }
     }, 60_000); // check every minute
 
-    const createSessionTransport = async () => {
+    const createSessionTransport = async (baseUrl?: string) => {
       const { createMcpServer } = await import("./lib/mcp.ts");
       const { WebStandardStreamableHTTPServerTransport } = await import(
         "@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js"
       );
-      const server = createMcpServer();
+      const server = createMcpServer(baseUrl);
       const transport = new WebStandardStreamableHTTPServerTransport({
         sessionIdGenerator: () => crypto.randomUUID(),
         onsessioninitialized: (sessionId) => {
@@ -224,7 +224,8 @@ export function denote(options: DenoteOptions): App<unknown> {
         );
       } else {
         // New session (initialize request)
-        transport = await createSessionTransport();
+        const origin = new URL(ctx.req.url).origin;
+        transport = await createSessionTransport(origin);
       }
 
       const response = await transport.handleRequest(ctx.req);

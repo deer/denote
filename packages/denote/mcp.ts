@@ -28,8 +28,10 @@ if (useHttp) {
     WebStandardStreamableHTTPServerTransport
   >();
 
+  const httpBaseUrl = `http://localhost:${port}`;
+
   const createSessionTransport = async () => {
-    const server = createMcpServer();
+    const server = createMcpServer(httpBaseUrl);
     const transport = new WebStandardStreamableHTTPServerTransport({
       sessionIdGenerator: () => crypto.randomUUID(),
       onsessioninitialized: (sessionId) => {

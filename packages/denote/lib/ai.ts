@@ -43,6 +43,19 @@ export async function generateLlmsTxt(baseUrl: string): Promise<string> {
     `- [Structured JSON](${baseUrl}/api/docs): All documentation pages as structured JSON`,
   );
 
+  // Advertise MCP endpoint when enabled
+  if (getConfig().ai?.mcp) {
+    lines.push("");
+    lines.push("## MCP (Model Context Protocol)");
+    lines.push("");
+    lines.push(
+      `For richer AI integration, connect via MCP at \`${baseUrl}/mcp\` (Streamable HTTP transport).`,
+    );
+    lines.push(
+      "Tools: search_docs, get_doc, get_all_docs. Resources: docs://index, docs://{slug}.",
+    );
+  }
+
   return lines.join("\n");
 }
 

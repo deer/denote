@@ -26,8 +26,8 @@ function resourceText(result: Any): string {
 // Helper: spin up a connected client ↔ server pair
 // ---------------------------------------------------------------------------
 
-async function createTestClient() {
-  const server = createMcpServer();
+async function createTestClient(baseUrl?: string) {
+  const server = createMcpServer(baseUrl);
   const [clientTransport, serverTransport] = InMemoryTransport
     .createLinkedPair();
 
@@ -382,6 +382,100 @@ Deno.test(
     const { resourceTemplates } = await client.listResourceTemplates();
     const templates = resourceTemplates.map((t) => t.uriTemplate);
     assertEquals(templates.includes("docs://{slug}"), true);
+
+    await close();
+  },
+);
+
+// ---------------------------------------------------------------------------
+// baseUrl — web URL integration
+// ---------------------------------------------------------------------------
+
+Deno.test(
+  "get_doc - includes web URL when baseUrl is provided",
+  mcpTestOpts,
+  async () => {
+    const { client, close } = await createTestClient(
+      "https://docs.example.com",
+    );
+
+    const result = await client.callTool({
+      name: "get_doc",
+      arguments: { slug: "introduction" },
+    });
+
+    const text = toolText(result);
+    assertStringIncludes(text, "https://docs.example.com/docs/introduction");
+
+    await close();
+  },
+);
+
+Deno.test(
+  "get_doc - omits web URL when no baseUrl",
+  mcpTestOpts,
+  async () => {
+    const { client, close } = await createTestClient();
+
+    const result = await client.callTool({
+      name: "get_doc",
+      arguments: { slug: "introduction" },
+    });
+
+    const text = toolText(result);
+    assertEquals(text.includes("Web:"), false);
+
+    await close();
+  },
+);
+
+Deno.test(
+  "search_docs - includes web URLs when baseUrl is provided",
+  mcpTestOpts,
+  async () => {
+    clearSearchIndexCache();
+    const { client, close } = await createTestClient(
+      "https://docs.example.com",
+    );
+
+    const result = await client.callTool({
+      name: "search_docs",
+      arguments: { query: "installation" },
+    });
+
+    const text = toolText(result);
+    assertStringIncludes(text, "https://docs.example.com/docs/");
+
+    await close();
+  },
+);
+
+Deno.test(
+  "readResource - doc-page includes web URL when baseUrl is provided",
+  mcpTestOpts,
+  async () => {
+    const { client, close } = await createTestClient(
+      "https://docs.example.com",
+    );
+
+    const result = await client.readResource({ uri: "docs://introduction" });
+    const text = resourceText(result);
+    assertStringIncludes(text, "https://docs.example.com/docs/introduction");
+
+    await close();
+  },
+);
+
+Deno.test(
+  "tool descriptions include site name",
+  mcpTestOpts,
+  async () => {
+    const { client, close } = await createTestClient();
+
+    const { tools } = await client.listTools();
+    for (const tool of tools) {
+      assertStringIncludes(tool.description!, "Denote");
+    }
 
     await close();
   },
