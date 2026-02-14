@@ -101,11 +101,12 @@ export async function generateFullDocs(): Promise<string> {
 /**
  * Get all docs as structured JSON for API consumption.
  */
-export async function getDocsJson(): Promise<object> {
+export async function getDocsJson(baseUrl?: string): Promise<object> {
+  const config = getConfig();
   const docs = await getAllDocs();
 
-  return {
-    name: getConfig().name,
+  const result: Record<string, unknown> = {
+    name: config.name,
     pages: docs.map((doc) => ({
       slug: doc.slug,
       title: doc.frontmatter.title,
@@ -120,4 +121,18 @@ export async function getDocsJson(): Promise<object> {
       })),
     })),
   };
+
+  // Progressive disclosure: point consumers to richer access layers
+  if (baseUrl) {
+    result.llmsFullTxt = `${baseUrl}/llms-full.txt`;
+    if (config.ai?.mcp) {
+      result.mcp = {
+        endpoint: `${baseUrl}/mcp`,
+        transport: "Streamable HTTP",
+        tools: ["search_docs", "get_doc", "get_all_docs"],
+      };
+    }
+  }
+
+  return result;
 }

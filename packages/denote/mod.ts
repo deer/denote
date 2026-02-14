@@ -269,9 +269,10 @@ export function denote(options: DenoteOptions): App<unknown> {
     });
   });
 
-  app.get("/api/docs", async () => {
+  app.get("/api/docs", async (ctx) => {
     const { getDocsJson } = await import("./lib/ai.ts");
-    const json = await getDocsJson();
+    const baseUrl = new URL(ctx.req.url).origin;
+    const json = await getDocsJson(baseUrl);
     return new Response(JSON.stringify(json, null, 2), {
       headers: { "Content-Type": "application/json" },
     });
