@@ -30,6 +30,7 @@ import {
   setContentDir,
   setDocsBasePath,
 } from "./lib/config.ts";
+import { ga4Middleware } from "./lib/ga4.ts";
 import type { State } from "./utils.ts";
 
 // Import page components for programmatic routing
@@ -109,6 +110,11 @@ export function denote(options: DenoteOptions): App<unknown> {
   // ── Static files ────────────────────────────────────────────
   if (includeStaticFiles) {
     app.use(staticFiles());
+  }
+
+  // ── GA4 Analytics middleware (opt-in) ────────────────────────
+  if (config.ga4) {
+    app.use(ga4Middleware());
   }
 
   // ── Security headers middleware ──────────────────────────────
