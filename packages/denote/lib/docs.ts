@@ -4,6 +4,7 @@
 import { type ParsedDoc, parseDocument } from "./markdown.ts";
 import type { NavItem } from "../docs.config.ts";
 import { getConfig, getContentDir } from "./config.ts";
+import { resolve } from "jsr:@std/path@1";
 
 export interface DocPage extends ParsedDoc {
   slug: string;
@@ -15,6 +16,16 @@ export interface DocPage extends ParsedDoc {
  */
 export async function getDoc(slug: string): Promise<DocPage | null> {
   const docsDir = getContentDir();
+
+  // Path traversal guard: ensure slug resolves within docsDir
+  const resolvedBase = resolve(docsDir);
+  if (
+    !resolve(docsDir, slug).startsWith(resolvedBase + "/") &&
+    resolve(docsDir, slug) !== resolvedBase
+  ) {
+    return null;
+  }
+
   const paths = [
     `${docsDir}/${slug}.md`,
     `${docsDir}/${slug}/index.md`,

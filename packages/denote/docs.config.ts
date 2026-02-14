@@ -42,6 +42,8 @@ export interface DocsConfig {
   ai?: {
     /** Enable the "Ask AI" chatbot widget on doc pages */
     chatbot?: boolean;
+    /** Enable MCP (Model Context Protocol) endpoint at /mcp */
+    mcp?: boolean;
     /** AI provider for LLM-powered answers (optional — falls back to search) */
     provider?: {
       /** OpenAI-compatible API URL (default: https://api.openai.com/v1/chat/completions) */

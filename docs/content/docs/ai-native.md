@@ -81,15 +81,47 @@ RAG pipelines, embedding generation, or direct context injection:
 The built-in [MCP](https://modelcontextprotocol.io/) server turns your docs into
 tools that AI agents can search and read on demand.
 
-```bash
-# Start the MCP server (stdio for local tools)
-deno task mcp
+Enable it in your config:
 
-# Or HTTP+SSE for remote access
-deno task mcp:http
+```typescript
+// denote.config.ts
+export const config = {
+  // ... other config
+  ai: {
+    mcp: true,
+  },
+};
 ```
 
-## Setting up MCP
+## MCP on your deployed site
+
+When `mcp: true` is set, your **deployed docs site itself becomes an MCP
+endpoint** at `/mcp`. No local setup needed — AI agents connect directly to your
+live docs URL.
+
+This is the key differentiator: your documentation site isn't just web pages,
+it's a live API that any MCP-compatible tool can query.
+
+Point any MCP client to your site's `/mcp` endpoint:
+
+```json
+{
+  "mcpServers": {
+    "my-docs": {
+      "url": "https://docs.example.com/mcp"
+    }
+  }
+}
+```
+
+The endpoint supports Streamable HTTP with full CORS, so it works from any
+origin.
+
+## Local MCP (stdio)
+
+For local development, you can also run the MCP server via stdio transport. This
+is useful for tools like Cursor and Claude Desktop that connect to local MCP
+servers.
 
 ### Cursor
 
@@ -121,27 +153,17 @@ Add to your Claude Desktop config:
 }
 ```
 
-### Any MCP Client
+## Available tools and resources
 
 The MCP server exposes:
 
-- **Tools**: `search_docs`, `get_doc`, `get_all_docs`
-- **Resources**: `docs://index`, `docs://{slug}`
+- **Tools**: `search_docs` (find pages by keyword), `get_doc` (read a single
+  page), `get_all_docs` (full documentation dump)
+- **Resources**: `docs://index` (page listing), `docs://{slug}` (individual
+  pages)
 
-### HTTP Transport (Remote Access)
-
-The MCP server supports Streamable HTTP for remote clients:
-
-```bash
-# Start with HTTP transport
-deno task mcp:http
-
-# Custom port
-deno run -A mcp.ts --http --port 3100
-```
-
-The HTTP endpoint serves at `/mcp` with full CORS support. Point any
-MCP-compatible client to `http://your-server:3100/mcp`.
+All responses include canonical web URLs back to your docs site, so AI agents
+can link users to the source.
 
 ## AI Chatbot Widget
 

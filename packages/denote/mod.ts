@@ -148,6 +148,121 @@ export function denote(options: DenoteOptions): App<unknown> {
     return ctx.next();
   });
 
+  // ── MCP Endpoint ────────────────────────────────────────────
+
+  if (config.ai?.mcp) {
+    // Session-based MCP transport management
+    // Each MCP client session gets its own server+transport pair
+    const MAX_SESSIONS = 100;
+    const SESSION_TTL_MS = 30 * 60 * 1000; // 30 minutes
+
+    type McpTransport =
+      import("@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js").WebStandardStreamableHTTPServerTransport;
+
+    const sessions = new Map<
+      string,
+      { transport: McpTransport; lastActivity: number }
+    >();
+
+    // Periodic cleanup of idle sessions
+    setInterval(() => {
+      const now = Date.now();
+      for (const [id, session] of sessions) {
+        if (now - session.lastActivity > SESSION_TTL_MS) {
+          session.transport.close?.();
+          sessions.delete(id);
+        }
+      }
+    }, 60_000); // check every minute
+
+    const createSessionTransport = async (baseUrl?: string) => {
+      const { createMcpServer } = await import("./lib/mcp.ts");
+      const { WebStandardStreamableHTTPServerTransport } = await import(
+        "@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js"
+      );
+      const server = createMcpServer(baseUrl);
+      const transport = new WebStandardStreamableHTTPServerTransport({
+        sessionIdGenerator: () => crypto.randomUUID(),
+        onsessioninitialized: (sessionId) => {
+          sessions.set(sessionId, { transport, lastActivity: Date.now() });
+        },
+      });
+      transport.onclose = () => {
+        const sid = transport.sessionId;
+        if (sid) sessions.delete(sid);
+      };
+      await server.connect(transport);
+      return transport;
+    };
+
+    const mcpHandler = async (ctx: { req: Request }) => {
+      const { MCP_CORS_HEADERS } = await import("./lib/mcp.ts");
+
+      // CORS preflight
+      if (ctx.req.method === "OPTIONS") {
+        return new Response(null, { status: 204, headers: MCP_CORS_HEADERS });
+      }
+
+      // Route to existing session or create new one
+      const sessionId = ctx.req.headers.get("mcp-session-id");
+      let transport: McpTransport;
+
+      if (sessionId && sessions.has(sessionId)) {
+        const session = sessions.get(sessionId)!;
+        session.lastActivity = Date.now();
+        transport = session.transport;
+      } else if (sessionId) {
+        // Invalid/expired session
+        return new Response(
+          JSON.stringify({ error: "Session not found" }),
+          {
+            status: 404,
+            headers: {
+              "Content-Type": "application/json",
+              ...MCP_CORS_HEADERS,
+            },
+          },
+        );
+      } else {
+        // New session (initialize request)
+        if (sessions.size >= MAX_SESSIONS) {
+          return new Response(
+            JSON.stringify({ error: "Too many sessions" }),
+            {
+              status: 503,
+              headers: {
+                "Content-Type": "application/json",
+                ...MCP_CORS_HEADERS,
+              },
+            },
+          );
+        }
+        const origin = new URL(ctx.req.url).origin;
+        transport = await createSessionTransport(origin);
+      }
+
+      const response = await transport.handleRequest(ctx.req);
+
+      // Add CORS headers
+      for (const [key, value] of Object.entries(MCP_CORS_HEADERS)) {
+        if (!response.headers.has(key)) {
+          response.headers.set(key, value);
+        }
+      }
+      return response;
+    };
+
+    // Intercept all methods on /mcp via global middleware
+    // (Fresh doesn't have app.options(), and MCP needs GET/POST/DELETE/OPTIONS)
+    app.use((ctx) => {
+      const url = new URL(ctx.req.url);
+      if (url.pathname === "/mcp") {
+        return mcpHandler(ctx);
+      }
+      return ctx.next();
+    });
+  }
+
   // ── AI Agent Endpoints ─────────────────────────────────────
 
   app.get("/llms.txt", async (ctx) => {
@@ -167,9 +282,10 @@ export function denote(options: DenoteOptions): App<unknown> {
     });
   });
 
-  app.get("/api/docs", async () => {
+  app.get("/api/docs", async (ctx) => {
     const { getDocsJson } = await import("./lib/ai.ts");
-    const json = await getDocsJson();
+    const baseUrl = new URL(ctx.req.url).origin;
+    const json = await getDocsJson(baseUrl);
     return new Response(JSON.stringify(json, null, 2), {
       headers: { "Content-Type": "application/json" },
     });

@@ -5,3 +5,4 @@ _fresh/
 
 # Denote CLI generated files (marked with @denote-generated)
 # These are regenerated on every `denote dev` / `denote build`
+docs/.denote/
