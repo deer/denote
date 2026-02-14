@@ -13,7 +13,7 @@ import { getConfig } from "./config.ts";
 import { z } from "zod";
 
 /** Get site name from config, with fallback */
-function getSiteName(): string {
+export function getSiteName(): string {
   try {
     return getConfig()?.name ?? "Denote";
   } catch {
@@ -57,7 +57,19 @@ export function createMcpServer(): McpServer {
 
   server.resource(
     "doc-page",
-    new ResourceTemplate("docs://{slug}", { list: undefined }),
+    new ResourceTemplate("docs://{slug}", {
+      list: async () => {
+        const docs = await getAllDocs();
+        return {
+          resources: docs.map((d) => ({
+            uri: `docs://${d.slug}`,
+            name: d.frontmatter.title,
+            description: d.frontmatter["ai-summary"] ||
+              d.frontmatter.description || undefined,
+          })),
+        };
+      },
+    }),
     async (uri, { slug }) => {
       const doc = await getDoc(slug as string);
       if (!doc) {
@@ -135,7 +147,21 @@ export function createMcpServer(): McpServer {
           if (r.aiKeywords && r.aiKeywords.length > 0) {
             parts.push(`Keywords: ${r.aiKeywords.join(", ")}`);
           }
-          parts.push("", `${r.content.slice(0, 300)}...`);
+          // Show snippet around the match position, not just the beginning
+          const contentLower = r.content.toLowerCase();
+          const matchIdx = contentLower.indexOf(q);
+          let snippet: string;
+          if (matchIdx >= 0) {
+            const start = Math.max(0, matchIdx - 100);
+            const end = Math.min(r.content.length, matchIdx + q.length + 200);
+            snippet = (start > 0 ? "..." : "") +
+              r.content.slice(start, end) +
+              (end < r.content.length ? "..." : "");
+          } else {
+            snippet = r.content.slice(0, 300) +
+              (r.content.length > 300 ? "..." : "");
+          }
+          parts.push("", snippet);
           return parts.join("\n");
         })
         .join("\n\n---\n\n");
@@ -178,15 +204,20 @@ export function createMcpServer(): McpServer {
 
   server.tool(
     "get_all_docs",
-    "Get the entire documentation as a single text. Use this when you need comprehensive context about the project.",
+    "Get the entire documentation as a single text. Warning: may be large for big doc sites. Consider search_docs or get_doc first.",
     {},
     async () => {
       const docs = await getAllDocs();
-      const text = docs
+      const body = docs
         .map((d) => `# ${d.frontmatter.title}\n\n${d.content}`)
         .join("\n\n---\n\n");
 
-      return { content: [{ type: "text" as const, text }] };
+      const charCount = body.length;
+      const preamble = `> ${docs.length} documents, ~${
+        Math.round(charCount / 4)
+      } tokens\n\n`;
+
+      return { content: [{ type: "text" as const, text: preamble + body }] };
     },
   );
 

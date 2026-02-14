@@ -151,13 +151,28 @@ export function denote(options: DenoteOptions): App<unknown> {
   // ── MCP Endpoint ────────────────────────────────────────────
 
   if (config.ai?.mcp) {
-    // Lazy-init: create MCP server and transport on first request
     // Session-based MCP transport management
     // Each MCP client session gets its own server+transport pair
+    const SESSION_TTL_MS = 30 * 60 * 1000; // 30 minutes
+
+    type McpTransport =
+      import("@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js").WebStandardStreamableHTTPServerTransport;
+
     const sessions = new Map<
       string,
-      import("@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js").WebStandardStreamableHTTPServerTransport
+      { transport: McpTransport; lastActivity: number }
     >();
+
+    // Periodic cleanup of idle sessions
+    setInterval(() => {
+      const now = Date.now();
+      for (const [id, session] of sessions) {
+        if (now - session.lastActivity > SESSION_TTL_MS) {
+          session.transport.close?.();
+          sessions.delete(id);
+        }
+      }
+    }, 60_000); // check every minute
 
     const createSessionTransport = async () => {
       const { createMcpServer } = await import("./lib/mcp.ts");
@@ -168,7 +183,7 @@ export function denote(options: DenoteOptions): App<unknown> {
       const transport = new WebStandardStreamableHTTPServerTransport({
         sessionIdGenerator: () => crypto.randomUUID(),
         onsessioninitialized: (sessionId) => {
-          sessions.set(sessionId, transport);
+          sessions.set(sessionId, { transport, lastActivity: Date.now() });
         },
       });
       transport.onclose = () => {
@@ -189,10 +204,12 @@ export function denote(options: DenoteOptions): App<unknown> {
 
       // Route to existing session or create new one
       const sessionId = ctx.req.headers.get("mcp-session-id");
-      let transport;
+      let transport: McpTransport;
 
       if (sessionId && sessions.has(sessionId)) {
-        transport = sessions.get(sessionId)!;
+        const session = sessions.get(sessionId)!;
+        session.lastActivity = Date.now();
+        transport = session.transport;
       } else if (sessionId) {
         // Invalid/expired session
         return new Response(
