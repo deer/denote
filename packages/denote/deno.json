@@ -11,7 +11,8 @@
     "./islands/CopyButton.tsx": "./islands/CopyButton.tsx",
     "./islands/ActiveToc.tsx": "./islands/ActiveToc.tsx",
     "./islands/AiChat.tsx": "./islands/AiChat.tsx",
-    "./assets/styles.css": "./assets/styles.css"
+    "./assets/styles.css": "./assets/styles.css",
+    "./ga4": "./lib/ga4.ts"
   },
   "tasks": {
     "test": "deno test --allow-read --allow-net --allow-env",
@@ -44,6 +45,7 @@
     "@preact/signals": "npm:@preact/signals@^2.5.0",
     "@fresh/plugin-vite": "jsr:@fresh/plugin-vite@^1.0.8",
     "@deer/gfm": "jsr:@deer/gfm@0.0.4",
+    "@kitsonk/ga4": "jsr:@kitsonk/ga4@^0.1",
 
     "vite": "npm:vite@^7.3.1",
     "tailwindcss": "npm:tailwindcss@^4.1.10",

@@ -37,6 +37,8 @@ export interface DocsConfig {
   search?: {
     enabled: boolean;
   };
+  /** Enable GA4 analytics. Set GA4_MEASUREMENT_ID env var to activate. */
+  ga4?: boolean;
   ai?: {
     /** Enable the "Ask AI" chatbot widget on doc pages */
     chatbot?: boolean;

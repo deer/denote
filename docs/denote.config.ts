@@ -71,4 +71,5 @@ export const config: DocsConfig = {
   ai: {
     chatbot: true,
   },
+  ga4: true,
 };

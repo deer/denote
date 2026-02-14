@@ -141,6 +141,46 @@ a reference to the sitemap. No configuration needed.
 Each page includes an `og:url` tag with its canonical URL, helping search
 engines avoid duplicate content issues.
 
+## Analytics
+
+Denote has built-in support for Google Analytics 4 (GA4). When enabled, it
+automatically tracks page views and exceptions server-side — no client-side
+script needed.
+
+### Setup
+
+1. Set `ga4: true` in your config:
+
+```typescript
+export const config: DocsConfig = {
+  name: "My Docs",
+  ga4: true,
+  // ...
+};
+```
+
+2. Set the `GA4_MEASUREMENT_ID` environment variable with your GA4 measurement
+   ID (e.g. `G-XXXXXXXXXX`).
+
+That's it. Denote will send `page_view` events for HTML responses and
+`exception` events when errors occur. If the environment variable isn't set,
+you'll see a warning in the console and analytics will be silently disabled.
+
+### How It Works
+
+- **Server-side only** — no tracking scripts are injected into your pages
+- **Non-blocking** — analytics are sent asynchronously after the response
+- **Selective** — only GET/POST requests that serve HTML documents are tracked;
+  static assets (CSS, JS, images, fonts) are automatically skipped
+- **Error tracking** — unhandled errors are reported as GA4 `exception` events
+  with severity info
+
+### Deployment
+
+On **Deno Deploy**, add `GA4_MEASUREMENT_ID` in your project's environment
+variables settings. For **Docker** or **VPS** deployments, set it in your
+environment or `.env` file.
+
 ## Full Example
 
 Here's a complete configuration example:
@@ -181,5 +221,6 @@ export const config: DocsConfig = {
   search: {
     enabled: true,
   },
+  ga4: true,
 };
 ```
