@@ -12,6 +12,9 @@ import { buildSearchIndex, getAllDocs, getDoc } from "./docs.ts";
 import { getConfig, getDocsBasePath } from "./config.ts";
 import { z } from "zod";
 
+/** Allowed slug pattern: lowercase alphanumeric segments separated by / */
+const SLUG_PATTERN = /^[a-z0-9][a-z0-9\-]*(?:\/[a-z0-9][a-z0-9\-]*)*$/;
+
 /** Get site name from config, with fallback */
 export function getSiteName(): string {
   try {
@@ -89,6 +92,17 @@ export function createMcpServer(baseUrl?: string): McpServer {
       },
     }),
     async (uri, { slug }) => {
+      // Validate slug before passing to getDoc
+      if (!SLUG_PATTERN.test(slug as string)) {
+        return {
+          contents: [{
+            uri: uri.href,
+            mimeType: "text/plain",
+            text: `Invalid slug: ${slug}`,
+          }],
+        };
+      }
+
       const doc = await getDoc(slug as string);
       if (!doc) {
         return {
@@ -134,7 +148,7 @@ export function createMcpServer(baseUrl?: string): McpServer {
   server.tool(
     "search_docs",
     `Search ${name} documentation by keyword. Returns matching page titles, descriptions, and content snippets with match context. Use this first to find relevant pages before fetching full content with get_doc.`,
-    { query: z.string().describe("Search query") },
+    { query: z.string().min(1).max(200).describe("Search query") },
     async ({ query }: { query: string }) => {
       const index = await buildSearchIndex();
       const q = query.toLowerCase();
@@ -196,7 +210,7 @@ export function createMcpServer(baseUrl?: string): McpServer {
     "get_doc",
     `Get the full content of a ${name} documentation page by its slug. Use after search_docs to read the complete page.`,
     {
-      slug: z.string().describe(
+      slug: z.string().regex(SLUG_PATTERN).max(200).describe(
         "Page slug (e.g. 'introduction', 'installation')",
       ),
     },

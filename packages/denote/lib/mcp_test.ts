@@ -227,6 +227,33 @@ Deno.test("get_doc - returns existing page", mcpTestOpts, async () => {
 });
 
 Deno.test(
+  "get_doc - rejects path traversal slug via Zod schema",
+  mcpTestOpts,
+  async () => {
+    const { client, close } = await createTestClient();
+
+    const result = await client.callTool({
+      name: "get_doc",
+      arguments: { slug: "../../etc/passwd" },
+    });
+
+    const text = toolText(result);
+    // Zod validation rejects the slug before it reaches getDoc
+    assertEquals(text.includes("# Introduction"), false);
+    assertEquals(text.includes("# Installation"), false);
+    assertEquals(
+      result.isError === true ||
+        text.includes("Invalid") ||
+        text.includes("invalid") ||
+        text.includes("Page not found"),
+      true,
+    );
+
+    await close();
+  },
+);
+
+Deno.test(
   "get_doc - returns not found for missing page",
   mcpTestOpts,
   async () => {

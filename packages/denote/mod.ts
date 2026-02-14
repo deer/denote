@@ -153,6 +153,7 @@ export function denote(options: DenoteOptions): App<unknown> {
   if (config.ai?.mcp) {
     // Session-based MCP transport management
     // Each MCP client session gets its own server+transport pair
+    const MAX_SESSIONS = 100;
     const SESSION_TTL_MS = 30 * 60 * 1000; // 30 minutes
 
     type McpTransport =
@@ -224,6 +225,18 @@ export function denote(options: DenoteOptions): App<unknown> {
         );
       } else {
         // New session (initialize request)
+        if (sessions.size >= MAX_SESSIONS) {
+          return new Response(
+            JSON.stringify({ error: "Too many sessions" }),
+            {
+              status: 503,
+              headers: {
+                "Content-Type": "application/json",
+                ...MCP_CORS_HEADERS,
+              },
+            },
+          );
+        }
         const origin = new URL(ctx.req.url).origin;
         transport = await createSessionTransport(origin);
       }

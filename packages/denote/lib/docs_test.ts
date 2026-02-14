@@ -21,6 +21,16 @@ Deno.test("getDoc - returns null for missing page", async () => {
   assertEquals(doc, null);
 });
 
+Deno.test("getDoc - rejects path traversal with ../", async () => {
+  const doc = await getDoc("../../etc/passwd");
+  assertEquals(doc, null);
+});
+
+Deno.test("getDoc - rejects nested path traversal", async () => {
+  const doc = await getDoc("foo/../../etc/passwd");
+  assertEquals(doc, null);
+});
+
 Deno.test("getAllDocs - returns all doc pages", async () => {
   const docs = await getAllDocs();
   assertEquals(docs.length > 0, true);
