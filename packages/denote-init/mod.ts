@@ -62,9 +62,9 @@ async function scaffold(projectDir: string, projectName: string) {
   // Create deno.json
   const denoJson = {
     tasks: {
-      dev: "deno run -A --watch=static/,content/ jsr:@denote/core",
-      build: "deno run -A jsr:@denote/core build",
-      start: "deno run -A jsr:@denote/core start",
+      dev: "deno run -A jsr:@denote/core/cli dev",
+      build: "deno run -A jsr:@denote/core/cli build",
+      mcp: "deno run -A jsr:@denote/core/cli mcp",
     },
     imports: {
       "@denote/core": "jsr:@denote/core@^0.1.0",
@@ -76,7 +76,7 @@ async function scaffold(projectDir: string, projectName: string) {
   );
   console.log(`  ${green("✓")} deno.json`);
 
-  // Create docs.config.ts
+  // Create denote.config.ts (replaces docs.config.ts + main.ts — users only need config now)
   const docsConfig = `import type { DocsConfig } from "@denote/core";
 
 export const config: DocsConfig = {
@@ -93,27 +93,22 @@ export const config: DocsConfig = {
       ],
     },
   ],
+  topNav: [
+    { title: "Documentation", href: "/docs" },
+  ],
   social: {
     github: "https://github.com/your-org/${projectName}",
   },
   footer: {
     copyright: "© ${new Date().getFullYear()} ${projectName}",
   },
+  search: {
+    enabled: true,
+  },
 };
 `;
-  await Deno.writeTextFile(`${projectDir}/docs.config.ts`, docsConfig);
-  console.log(`  ${green("✓")} docs.config.ts`);
-
-  // Create main.ts
-  const mainTs = `import { denote } from "@denote/core";
-import { config } from "./docs.config.ts";
-
-const app = denote({ config });
-
-app.listen({ port: 8000 });
-`;
-  await Deno.writeTextFile(`${projectDir}/main.ts`, mainTs);
-  console.log(`  ${green("✓")} main.ts`);
+  await Deno.writeTextFile(`${projectDir}/denote.config.ts`, docsConfig);
+  console.log(`  ${green("✓")} denote.config.ts`);
 
   // Create introduction.md
   const introMd = `---
@@ -178,12 +173,13 @@ Open [http://localhost:8000](http://localhost:8000) to see your docs.
 
 \`\`\`
 ${projectName}/
-├── content/docs/     # Your Markdown documentation
-├── static/           # Static assets (images, etc.)
-├── docs.config.ts    # Site configuration
-├── main.ts           # Entry point
-└── deno.json         # Deno configuration
+├── content/docs/       # Your Markdown documentation
+├── static/             # Static assets (images, etc.)
+├── denote.config.ts    # Site configuration
+└── deno.json           # Deno configuration
 \`\`\`
+
+That's it! No build pipeline, no framework boilerplate. Just markdown and config.
 `;
   await Deno.writeTextFile(
     `${projectDir}/content/docs/installation.md`,

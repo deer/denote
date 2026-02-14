@@ -1,7 +1,7 @@
 {
   "version": "5",
   "specifiers": {
-    "jsr:@deer/gfm@0.0.3": "0.0.3",
+    "jsr:@deer/gfm@0.0.4": "0.0.4",
     "jsr:@deno/esbuild-plugin@^1.2.0": "1.2.1",
     "jsr:@deno/loader@~0.3.10": "0.3.11",
     "jsr:@deno/loader@~0.3.2": "0.3.11",
@@ -29,6 +29,7 @@
     "jsr:@std/semver@^1.0.6": "1.0.8",
     "jsr:@std/uuid@^1.0.9": "1.1.0",
     "jsr:@std/yaml@1": "1.0.11",
+    "jsr:@std/yaml@^1.0.11": "1.0.11",
     "npm:@babel/core@^7.28.0": "7.29.0",
     "npm:@babel/preset-react@^7.27.1": "7.28.5_@babel+core@7.29.0",
     "npm:@mjackson/node-fetch-server@0.7": "0.7.0",
@@ -36,14 +37,15 @@
     "npm:@opentelemetry/api@^1.9.0": "1.9.0",
     "npm:@preact/signals@^2.2.1": "2.7.0_preact@10.28.3",
     "npm:@preact/signals@^2.5.0": "2.7.0_preact@10.28.3",
-    "npm:@prefresh/vite@^2.4.8": "2.4.11_preact@10.28.3_vite@7.3.1__yaml@2.8.2__picomatch@4.0.3_yaml@2.8.2",
-    "npm:@tailwindcss/vite@^4.1.12": "4.1.18_vite@7.3.1__yaml@2.8.2__picomatch@4.0.3_yaml@2.8.2",
+    "npm:@prefresh/vite@^2.4.8": "2.4.11_preact@10.28.3_vite@7.3.1__picomatch@4.0.3",
+    "npm:@tailwindcss/vite@^4.1.12": "4.1.18_vite@7.3.1__picomatch@4.0.3",
     "npm:@types/hast@^3.0.4": "3.0.4",
     "npm:@types/mdast@^4.0.4": "4.0.4",
     "npm:@wooorm/starry-night@^3.9.0": "3.9.0",
     "npm:esbuild-wasm@~0.25.11": "0.25.12",
     "npm:esbuild@0.25.7": "0.25.7",
     "npm:esbuild@~0.25.5": "0.25.12",
+    "npm:gemoji@^8.1.0": "8.1.0",
     "npm:github-slugger@2": "2.0.0",
     "npm:hast-util-heading-rank@3": "3.0.0",
     "npm:hast-util-to-string@^3.0.1": "3.0.1",
@@ -60,7 +62,6 @@
     "npm:rehype-slug@6": "6.0.0",
     "npm:rehype-starry-night@^2.2.0": "2.2.0",
     "npm:rehype-stringify@^10.0.1": "10.0.1",
-    "npm:remark-emoji@^5.0.2": "5.0.2",
     "npm:remark-frontmatter@5": "5.0.0",
     "npm:remark-gfm@^4.0.1": "4.0.1",
     "npm:remark-math@6": "6.0.0",
@@ -70,18 +71,20 @@
     "npm:tailwindcss@^4.1.10": "4.1.18",
     "npm:unified@^11.0.5": "11.0.5",
     "npm:unist-util-visit@^5.1.0": "5.1.0",
-    "npm:vite@^7.1.3": "7.3.1_yaml@2.8.2_picomatch@4.0.3",
-    "npm:vite@^7.1.4": "7.3.1_yaml@2.8.2_picomatch@4.0.3",
-    "npm:yaml@^2.8.2": "2.8.2",
+    "npm:vite@*": "7.3.1_picomatch@4.0.3",
+    "npm:vite@^7.1.4": "7.3.1_picomatch@4.0.3",
+    "npm:vite@^7.3.1": "7.3.1_picomatch@4.0.3",
     "npm:zod@^4.3.6": "4.3.6"
   },
   "jsr": {
-    "@deer/gfm@0.0.3": {
-      "integrity": "fdf56dd250fd7fb563cd6347eed2edfb266698f68079769d02ba34b1a2477078",
+    "@deer/gfm@0.0.4": {
+      "integrity": "81f1ecb3b5950e63f1f70cfe7ecb0d4151bc681350d180c8aea01187da6f7f5f",
       "dependencies": [
+        "jsr:@std/yaml@^1.0.11",
         "npm:@types/hast",
         "npm:@types/mdast",
         "npm:@wooorm/starry-night",
+        "npm:gemoji",
         "npm:github-slugger",
         "npm:hast-util-heading-rank",
         "npm:hast-util-to-string",
@@ -95,15 +98,13 @@
         "npm:rehype-slug",
         "npm:rehype-starry-night",
         "npm:rehype-stringify",
-        "npm:remark-emoji",
         "npm:remark-frontmatter",
         "npm:remark-gfm",
         "npm:remark-math",
         "npm:remark-parse",
         "npm:remark-rehype",
         "npm:unified",
-        "npm:unist-util-visit",
-        "npm:yaml"
+        "npm:unist-util-visit"
       ]
     },
     "@deno/esbuild-plugin@1.2.1": {
@@ -892,7 +893,7 @@
     "@prefresh/utils@1.2.1": {
       "integrity": "sha512-vq/sIuN5nYfYzvyayXI4C2QkprfNaHUQ9ZX+3xLD8nL3rWyzpxOm1+K7RtMbhd+66QcaISViK7amjnheQ/4WZw=="
     },
-    "@prefresh/vite@2.4.11_preact@10.28.3_vite@7.3.1__yaml@2.8.2__picomatch@4.0.3_yaml@2.8.2": {
+    "@prefresh/vite@2.4.11_preact@10.28.3_vite@7.3.1__picomatch@4.0.3": {
       "integrity": "sha512-/XjURQqdRiCG3NpMmWqE9kJwrg9IchIOWHzulCfqg2sRe/8oQ1g5De7xrk9lbqPIQLn7ntBkKdqWXIj4E9YXyg==",
       "dependencies": [
         "@babel/core",
@@ -1042,9 +1043,6 @@
       "os": ["win32"],
       "cpu": ["x64"]
     },
-    "@sindresorhus/is@4.6.0": {
-      "integrity": "sha512-t09vSN3MdfsyCHoFcTRCH/iUtG7OJ0CsjzB8cjAmKc/va/kIgeDI/TxsigdncE/4be734m0cvIYwNaV4i2XqAw=="
-    },
     "@tailwindcss/node@4.1.18": {
       "integrity": "sha512-DoR7U1P7iYhw16qJ49fgXUlry1t4CpXeErJHnQ44JgTSKMaZUdf17cfn5mHchfJ4KRBZRFA/Coo+MUF5+gOaCQ==",
       "dependencies": [
@@ -1133,7 +1131,7 @@
         "@tailwindcss/oxide-win32-x64-msvc"
       ]
     },
-    "@tailwindcss/vite@4.1.18_vite@7.3.1__yaml@2.8.2__picomatch@4.0.3_yaml@2.8.2": {
+    "@tailwindcss/vite@4.1.18_vite@7.3.1__picomatch@4.0.3": {
       "integrity": "sha512-jVA+/UpKL1vRLg6Hkao5jldawNmRo7mQYrZtNHMIVpLfLhDml5nMRUo/8MwoX2vNXvnaXNNMedrMfMugAVX1nA==",
       "dependencies": [
         "@tailwindcss/node",
@@ -1264,9 +1262,6 @@
     "ccount@2.0.1": {
       "integrity": "sha512-eyrF0jiFpY+3drT6383f1qhkbGsLSifNAjA61IUjZjmLCWjItY6LB9ft9YhoDgwfmclB2zhu51Lc7+95b8NRAg=="
     },
-    "char-regex@1.0.2": {
-      "integrity": "sha512-kWWXztvZ5SBQV+eRgKFeh8q5sLuZY2+8WUIzlxWVTg+oGwY14qylx1KbKzHd8P6ZYkAg0xyIDU9JMHhyJMZ1jw=="
-    },
     "character-entities-html4@2.1.0": {
       "integrity": "sha512-1v7fgQRj6hnSwFpq1Eu0ynr/CDEw0rXo2B61qXrLNdHZmPKgb7fqS1a2JwF0rISo9q77jDI8VMEHoApn8qDoZA=="
     },
@@ -1352,12 +1347,6 @@
     },
     "electron-to-chromium@1.5.286": {
       "integrity": "sha512-9tfDXhJ4RKFNerfjdCcZfufu49vg620741MNs26a9+bhLThdB+plgMeou98CAaHu/WATj2iHOOHTp1hWtABj2A=="
-    },
-    "emojilib@2.4.0": {
-      "integrity": "sha512-5U0rVMU5Y2n2+ykNLQqMoqklN9ICBT/KsvC1Gz6vqHbz2AXXGkG+Pm5rMWk/8Vjrr/mY9985Hi8DYzn1F09Nyw=="
-    },
-    "emoticon@4.1.0": {
-      "integrity": "sha512-VWZfnxqwNcc51hIy/sbOdEem6D+cVtpPzEEtVAFdaas30+1dgkyaOQ4sQ6Bp0tOMqWO1v+HQfYaoodOkdhK6SQ=="
     },
     "encodeurl@2.0.0": {
       "integrity": "sha512-Q0n9HRi4m6JuGIV1eFlmvJB7ZEVxu93IrMyiMsGC0lrMJMWzRgx6WGquyfQgZVb31vhGgXnfmPNNXmxnOkRBrg=="
@@ -1602,6 +1591,9 @@
     },
     "function-bind@1.1.2": {
       "integrity": "sha512-7XHNxH7qX9xG5mIwxkhumTox/MIRNcOgDrxWsMt2pAr23WHp6MrRlN7FBSFpCpr+oVO0F744iUgR82nJMfG2SA=="
+    },
+    "gemoji@8.1.0": {
+      "integrity": "sha512-HA4Gx59dw2+tn+UAa7XEV4ufUKI4fH1KgcbenVA9YKSj1QJTT0xh5Mwv5HMFNN3l2OtUe3ZIfuRwSyZS5pLIWw=="
     },
     "gensync@1.0.0-beta.2": {
       "integrity": "sha512-3hN7NaskYvMDLQY55gnW3NQ+mesEAepTqlg+VEbj7zzqEMBVNhzcGYYeqFo/TlYz6eQiFcp1HcsCZO+nGgS8zg=="
@@ -2410,15 +2402,6 @@
     "negotiator@1.0.0": {
       "integrity": "sha512-8Ofs/AUQh8MaEcrlq5xOX0CQ9ypTF5dl78mjlMNfOK08fzpgTHQRQPBxcPlEtIw0yRpws+Zo/3r+5WRby7u3Gg=="
     },
-    "node-emoji@2.2.0": {
-      "integrity": "sha512-Z3lTE9pLaJF47NyMhd4ww1yFTAP8YhYI8SleJiHzM46Fgpm5cnNzSl9XfzFNqbaz+VlJrIj3fXQ4DeN1Rjm6cw==",
-      "dependencies": [
-        "@sindresorhus/is",
-        "char-regex",
-        "emojilib",
-        "skin-tone"
-      ]
-    },
     "node-releases@2.0.27": {
       "integrity": "sha512-nmh3lCkYZ3grZvqcCH+fjmQ7X+H0OeZgP40OierEaAptX4XofMh5kwNbWh7lBduUzCcV/8kZ+NDLCwm2iorIlA=="
     },
@@ -2595,16 +2578,6 @@
       "dependencies": [
         "@types/hast",
         "hast-util-to-html",
-        "unified"
-      ]
-    },
-    "remark-emoji@5.0.2": {
-      "integrity": "sha512-IyIqGELcyK5AVdLFafoiNww+Eaw/F+rGrNSXoKucjo95uL267zrddgxGM83GN1wFIb68pyDuAsY3m5t2Cav1pQ==",
-      "dependencies": [
-        "@types/mdast",
-        "emoticon",
-        "mdast-util-find-and-replace",
-        "node-emoji",
         "unified"
       ]
     },
@@ -2792,12 +2765,6 @@
         "side-channel-weakmap"
       ]
     },
-    "skin-tone@2.0.0": {
-      "integrity": "sha512-kUMbT1oBJCpgrnKoSr0o6wPtvRWT9W9UKvGLwfJYO2WuahZRHOpEyL1ckyMGgMWh0UdpmaoFqKKD29WTomNEGA==",
-      "dependencies": [
-        "unicode-emoji-modifier-base"
-      ]
-    },
     "source-map-js@1.2.1": {
       "integrity": "sha512-UXWMKhLOwVKb728IUtQPXxfYU+usdybtUrK/8uGE8CQMvrhOpwvzDBwj0QhSL7MQc7vIsISBG8VQ8+IDQxpfQA=="
     },
@@ -2843,9 +2810,6 @@
         "media-typer",
         "mime-types"
       ]
-    },
-    "unicode-emoji-modifier-base@1.0.0": {
-      "integrity": "sha512-yLSH4py7oFH3oG/9K+XWrz1pSi3dfUrWEnInbxMfArOfc1+33BlGPQtLsOYwvdMy11AwUBetYuaRxSPqgkq+8g=="
     },
     "unified@11.0.5": {
       "integrity": "sha512-xKvGhPWw3k84Qjh8bI3ZeJjqnyadK+GEFtazSfZv/rKeTkTjOJho6mFqh2SM96iIcZokxiOpg78GazTSg8+KHA==",
@@ -2942,7 +2906,7 @@
         "vfile-message"
       ]
     },
-    "vite@7.3.1_yaml@2.8.2_picomatch@4.0.3": {
+    "vite@7.3.1_picomatch@4.0.3": {
       "integrity": "sha512-w+N7Hifpc3gRjZ63vYBXA56dvvRlNWRczTdmCBBa+CotUzAPf5b7YMdMR/8CQoeYE5LX3W4wj6RYTgonm1b9DA==",
       "dependencies": [
         "esbuild@0.27.2",
@@ -3011,12 +2975,12 @@
           "npm:@tailwindcss/vite@^4.1.12",
           "npm:preact@^10.27.2",
           "npm:tailwindcss@^4.1.10",
-          "npm:vite@^7.1.3"
+          "npm:vite@^7.3.1"
         ]
       },
       "packages/denote": {
         "dependencies": [
-          "jsr:@deer/gfm@0.0.3",
+          "jsr:@deer/gfm@0.0.4",
           "jsr:@fresh/core@^2.2.0",
           "jsr:@fresh/plugin-vite@^1.0.8",
           "jsr:@std/path@1",
@@ -3025,7 +2989,7 @@
           "npm:@tailwindcss/vite@^4.1.12",
           "npm:preact@^10.27.2",
           "npm:tailwindcss@^4.1.10",
-          "npm:vite@^7.1.3",
+          "npm:vite@^7.3.1",
           "npm:zod@^4.3.6"
         ]
       }
