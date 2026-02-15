@@ -1,9 +1,9 @@
 ---
-title: Theming
-description: Customize colors, fonts, and dark mode through config alone
+title: Theming & Styling
+description: Customize colors, fonts, layout, and CSS through config alone
 ---
 
-# Theming
+# Theming & Styling
 
 Denote's theming system lets you fully customize the look and feel of your
 documentation site through `docs.config.ts` — no component edits, no CSS
@@ -15,6 +15,16 @@ Denote uses **CSS custom properties** (design tokens) for all visual
 customization. Every surface, text color, border, and shadow references a
 `--denote-*` variable. When you set colors in your config, Denote generates
 overrides that cascade correctly over the defaults.
+
+Components use Tailwind CSS v4 with these CSS variables, so they automatically
+adapt to light mode, dark mode, and any custom theme:
+
+```tsx
+<div class="p-6 rounded-xl bg-[var(--denote-bg-secondary)] border border-[var(--denote-border)]">
+  <h3 class="text-lg font-semibold text-[var(--denote-text)]">{title}</h3>
+  <p class="text-[var(--denote-text-secondary)]">{children}</p>
+</div>;
+```
 
 ## Colors
 
@@ -84,6 +94,40 @@ header. The preference is saved to `localStorage` and respected on subsequent
 visits. If no preference is saved, Denote follows the system preference
 (`prefers-color-scheme`).
 
+### Dark Mode Behavior
+
+Control how dark mode works via the `style` config:
+
+```typescript
+export const config: DocsConfig = {
+  style: {
+    darkMode: "auto", // "auto" | "light" | "dark" | "toggle"
+  },
+};
+```
+
+| Mode     | Behavior                                         |
+| -------- | ------------------------------------------------ |
+| `auto`   | Follow system preference, show toggle (default)  |
+| `light`  | Force light mode, hide toggle                    |
+| `dark`   | Force dark mode, hide toggle                     |
+| `toggle` | Default to dark, show toggle for users to switch |
+
+### When to Use `dark:` Prefixes
+
+For **semantic colors** that don't map to theme tokens (e.g., status badges,
+alerts), Tailwind's `dark:` prefix is still appropriate:
+
+```tsx
+// Semantic: always green for success, not theme-dependent
+<span class="bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300">
+  Active
+</span>;
+```
+
+For **everything else** (backgrounds, text, borders, surfaces), use CSS
+variables. They adapt to any theme automatically — no `dark:` needed.
+
 ## Fonts
 
 Customize the font families used across your site:
@@ -134,6 +178,16 @@ export const config: DocsConfig = {
 };
 ```
 
+### Responsive Breakpoints
+
+Denote is fully responsive:
+
+| Breakpoint         | Layout                                |
+| ------------------ | ------------------------------------- |
+| **xl+** (1280px)   | Sidebar + content + table of contents |
+| **lg–xl** (1024px) | Sidebar + content                     |
+| **< lg**           | Collapsible mobile menu               |
+
 ## Landing Page
 
 By default, Denote shows a landing page at `/`. To skip it and redirect straight
@@ -158,9 +212,7 @@ export const config: DocsConfig = {
 };
 ```
 
-## Style
-
-### Roundedness
+## Roundedness
 
 Control the border radius scale across the entire site:
 
@@ -180,26 +232,7 @@ export const config: DocsConfig = {
 | `lg`   | 0.75rem           | 1rem                 | 1.25rem              |
 | `xl`   | 1rem              | 1.25rem              | 1.5rem               |
 
-### Dark Mode Behavior
-
-Control how dark mode works:
-
-```typescript
-export const config: DocsConfig = {
-  style: {
-    darkMode: "auto", // "auto" | "light" | "dark" | "toggle"
-  },
-};
-```
-
-| Mode     | Behavior                                         |
-| -------- | ------------------------------------------------ |
-| `auto`   | Follow system preference, show toggle (default)  |
-| `light`  | Force light mode, hide toggle                    |
-| `dark`   | Force dark mode, hide toggle                     |
-| `toggle` | Default to dark, show toggle for users to switch |
-
-### Custom CSS
+## Custom CSS
 
 For an escape hatch beyond what the config supports, point to a custom CSS file:
 
@@ -213,6 +246,71 @@ export const config: DocsConfig = {
 
 The file is loaded via a `<link>` tag after all theme styles, so it can override
 any token. Use `html:root` for specificity parity with config-driven overrides.
+
+### Markdown Content
+
+Documentation content is rendered by `@deer/gfm` and styled via the
+`.markdown-body` class. Denote bridges its theme tokens to GFM variables
+automatically (see [GFM Bridge](#gfm-bridge)), so markdown content follows your
+theme. Custom overrides go in your CSS file:
+
+```css
+/* Heading sizes */
+.markdown-body h1 {
+  font-size: 2.25rem;
+  font-weight: 700;
+}
+
+/* Styled blockquotes */
+.markdown-body blockquote {
+  border-left-color: var(--gfm-accent-color);
+  background: var(--gfm-inline-code-bg);
+  border-radius: 0 0.5rem 0.5rem 0;
+}
+```
+
+### Code Blocks
+
+Code blocks use the `.highlight` wrapper and `.code-header` from `@deer/gfm`:
+
+```css
+/* Code block container */
+.markdown-body .highlight {
+  border-radius: 0.75rem;
+  border: 1px solid var(--gfm-border-color);
+  overflow: hidden;
+}
+
+/* Language label + copy button header */
+.markdown-body .code-header {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+}
+```
+
+## Custom Components
+
+Create styled components using theme tokens for automatic dark mode support:
+
+```tsx
+interface ButtonProps {
+  variant?: "primary" | "secondary";
+  children: ComponentChildren;
+}
+
+function Button({ variant = "primary", children }: ButtonProps) {
+  const base = "px-4 py-2 rounded-lg font-medium transition-colors";
+  const variants = {
+    primary:
+      "bg-[var(--denote-primary)] hover:bg-[var(--denote-primary-hover)] text-[var(--denote-text-inverse)]",
+    secondary:
+      "bg-[var(--denote-bg-secondary)] hover:bg-[var(--denote-bg-tertiary)] text-[var(--denote-text)] border border-[var(--denote-border)]",
+  };
+
+  return <button class={`${base} ${variants[variant]}`}>{children}</button>;
+}
+```
 
 ## Design Tokens Reference
 
@@ -262,3 +360,13 @@ content follows your theme without extra configuration:
 | `--denote-border`         | `--gfm-border-color` |
 | `--denote-bg-secondary`   | `--gfm-bg-subtle`    |
 | `--denote-bg-tertiary`    | `--gfm-bg-surface`   |
+
+## Best Practices
+
+1. **Use CSS vars for theme colors** — `bg-[var(--denote-bg)]` adapts to any
+   theme automatically
+2. **Reserve `dark:` for semantics** — status colors, badges, alerts that have
+   fixed meaning regardless of theme
+3. **Use the config first** — most customizations belong in `docs.config.ts`,
+   not custom CSS
+4. **Test both modes** — toggle dark mode to verify contrast and readability
