@@ -91,6 +91,53 @@ export const config: DocsConfig = {
 See the [Theming guide](/docs/theming) for the full list of design tokens and
 how auto-derivation works.
 
+## Layout
+
+Control dimensions and visibility of layout elements:
+
+```typescript
+export const config: DocsConfig = {
+  layout: {
+    sidebarWidth: 280, // Sidebar width in px
+    maxContentWidth: 900, // Content area max width in px
+    headerHeight: 56, // Header height in px
+    tocWidth: 240, // Table of contents width in px
+    toc: false, // Hide table of contents
+    breadcrumbs: false, // Hide breadcrumbs
+    footer: false, // Hide prev/next footer
+  },
+};
+```
+
+## Landing Page
+
+Skip the landing page and redirect to docs:
+
+```typescript
+export const config: DocsConfig = {
+  landing: {
+    enabled: false, // Redirect "/" to first doc page
+    redirectTo: "/docs/quickstart", // Optional custom target
+  },
+};
+```
+
+## Style
+
+Control border radius, dark mode behavior, and custom CSS:
+
+```typescript
+export const config: DocsConfig = {
+  style: {
+    roundedness: "lg", // "none" | "sm" | "md" | "lg" | "xl"
+    darkMode: "auto", // "auto" | "light" | "dark" | "toggle"
+    customCss: "/custom.css", // Custom CSS file loaded after theme tokens
+  },
+};
+```
+
+See the [Theming guide](/docs/theming) for details on each option.
+
 ## Top Navigation
 
 Add links to your header:
@@ -247,6 +294,15 @@ export const config: DocsConfig = {
   },
   search: {
     enabled: true,
+  },
+  layout: {
+    toc: true,
+    breadcrumbs: true,
+    footer: true,
+  },
+  style: {
+    roundedness: "md",
+    darkMode: "auto",
   },
   ga4: true,
 };

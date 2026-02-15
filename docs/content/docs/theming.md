@@ -106,33 +106,148 @@ The `imports` array adds `<link rel="stylesheet">` tags for web font loading.
 Font families are applied via CSS custom properties, so they affect the entire
 site including markdown content.
 
+## Layout
+
+Control the dimensions of major layout sections:
+
+```typescript
+export const config: DocsConfig = {
+  layout: {
+    sidebarWidth: 280, // px (default: 256)
+    maxContentWidth: 900, // px (default: 768)
+    headerHeight: 56, // px (default: 64)
+    tocWidth: 240, // px (default: 256)
+  },
+};
+```
+
+These become CSS custom properties (`--denote-sidebar-width`, etc.) consumed by
+all layout components. You can also toggle visibility of layout elements:
+
+```typescript
+export const config: DocsConfig = {
+  layout: {
+    toc: false, // Hide table of contents sidebar
+    breadcrumbs: false, // Hide breadcrumb navigation
+    footer: false, // Hide prev/next footer navigation
+  },
+};
+```
+
+## Landing Page
+
+By default, Denote shows a landing page at `/`. To skip it and redirect straight
+to your first documentation page:
+
+```typescript
+export const config: DocsConfig = {
+  landing: {
+    enabled: false, // Redirect "/" to first doc page
+  },
+};
+```
+
+You can also specify a custom redirect path:
+
+```typescript
+export const config: DocsConfig = {
+  landing: {
+    enabled: false,
+    redirectTo: "/docs/quickstart", // Custom target
+  },
+};
+```
+
+## Style
+
+### Roundedness
+
+Control the border radius scale across the entire site:
+
+```typescript
+export const config: DocsConfig = {
+  style: {
+    roundedness: "lg", // "none" | "sm" | "md" | "lg" | "xl"
+  },
+};
+```
+
+| Scale  | `--denote-radius` | `--denote-radius-lg` | `--denote-radius-xl` |
+| ------ | ----------------- | -------------------- | -------------------- |
+| `none` | 0                 | 0                    | 0                    |
+| `sm`   | 0.25rem           | 0.375rem             | 0.5rem               |
+| `md`   | 0.5rem            | 0.75rem              | 1rem                 |
+| `lg`   | 0.75rem           | 1rem                 | 1.25rem              |
+| `xl`   | 1rem              | 1.25rem              | 1.5rem               |
+
+### Dark Mode Behavior
+
+Control how dark mode works:
+
+```typescript
+export const config: DocsConfig = {
+  style: {
+    darkMode: "auto", // "auto" | "light" | "dark" | "toggle"
+  },
+};
+```
+
+| Mode     | Behavior                                         |
+| -------- | ------------------------------------------------ |
+| `auto`   | Follow system preference, show toggle (default)  |
+| `light`  | Force light mode, hide toggle                    |
+| `dark`   | Force dark mode, hide toggle                     |
+| `toggle` | Default to dark, show toggle for users to switch |
+
+### Custom CSS
+
+For an escape hatch beyond what the config supports, point to a custom CSS file:
+
+```typescript
+export const config: DocsConfig = {
+  style: {
+    customCss: "/custom.css", // Loaded after all theme tokens
+  },
+};
+```
+
+The file is loaded via a `<link>` tag after all theme styles, so it can override
+any token. Use `html:root` for specificity parity with config-driven overrides.
+
 ## Design Tokens Reference
 
 These are the CSS custom properties that control the theme. All components
 reference these tokens — you never need to edit component files.
 
-| Token                      | Purpose                                 |
-| -------------------------- | --------------------------------------- |
-| `--denote-primary`         | Brand color for links, buttons, accents |
-| `--denote-primary-hover`   | Hover state of primary color            |
-| `--denote-primary-subtle`  | Light tint for backgrounds              |
-| `--denote-primary-text`    | Primary color used for text             |
-| `--denote-accent`          | Secondary accent color                  |
-| `--denote-bg`              | Page background                         |
-| `--denote-bg-secondary`    | Sidebar, card backgrounds               |
-| `--denote-bg-tertiary`     | Code block backgrounds, subtle surfaces |
-| `--denote-surface-overlay` | Modal/overlay backdrop                  |
-| `--denote-text`            | Primary body text                       |
-| `--denote-text-secondary`  | Secondary/subdued text                  |
-| `--denote-text-muted`      | Muted text (timestamps, hints)          |
-| `--denote-text-inverse`    | Text on dark backgrounds                |
-| `--denote-border`          | Default border color                    |
-| `--denote-border-strong`   | Emphasized borders                      |
-| `--denote-shadow-color`    | Box shadow color                        |
-| `--denote-shadow-primary`  | Primary-tinted shadow                   |
-| `--denote-font-body`       | Body text font family                   |
-| `--denote-font-heading`    | Heading font family                     |
-| `--denote-font-mono`       | Monospace font family                   |
+| Token                        | Purpose                                  |
+| ---------------------------- | ---------------------------------------- |
+| `--denote-primary`           | Brand color for links, buttons, accents  |
+| `--denote-primary-hover`     | Hover state of primary color             |
+| `--denote-primary-subtle`    | Light tint for backgrounds               |
+| `--denote-primary-text`      | Primary color used for text              |
+| `--denote-accent`            | Secondary accent color                   |
+| `--denote-bg`                | Page background                          |
+| `--denote-bg-secondary`      | Sidebar, card backgrounds                |
+| `--denote-bg-tertiary`       | Code block backgrounds, subtle surfaces  |
+| `--denote-surface-overlay`   | Modal/overlay backdrop                   |
+| `--denote-text`              | Primary body text                        |
+| `--denote-text-secondary`    | Secondary/subdued text                   |
+| `--denote-text-muted`        | Muted text (timestamps, hints)           |
+| `--denote-text-inverse`      | Text on dark backgrounds                 |
+| `--denote-border`            | Default border color                     |
+| `--denote-border-strong`     | Emphasized borders                       |
+| `--denote-shadow-color`      | Box shadow color                         |
+| `--denote-shadow-primary`    | Primary-tinted shadow                    |
+| `--denote-font-body`         | Body text font family                    |
+| `--denote-font-heading`      | Heading font family                      |
+| `--denote-font-mono`         | Monospace font family                    |
+| `--denote-sidebar-width`     | Sidebar width (default: 256px)           |
+| `--denote-content-max-width` | Max content area width (default: 768px)  |
+| `--denote-header-height`     | Header height (default: 64px)            |
+| `--denote-toc-width`         | Table of contents width (default: 256px) |
+| `--denote-radius`            | Base border radius                       |
+| `--denote-radius-lg`         | Large border radius                      |
+| `--denote-radius-xl`         | Extra-large border radius                |
 
 ## GFM Bridge
 
@@ -147,24 +262,3 @@ content follows your theme without extra configuration:
 | `--denote-border`         | `--gfm-border-color` |
 | `--denote-bg-secondary`   | `--gfm-bg-subtle`    |
 | `--denote-bg-tertiary`    | `--gfm-bg-surface`   |
-
-## Advanced: Custom CSS
-
-For customizations beyond what the config supports, you can add a custom
-stylesheet. Create a CSS file and include it in your app:
-
-```css
-/* Override specific tokens */
-:root {
-  --denote-primary: #e11d48;
-}
-
-/* Add custom markdown styles */
-.markdown-body blockquote {
-  border-left-width: 4px;
-}
-```
-
-Note: config-driven overrides use `html:root` (higher specificity) to ensure
-they always win. If you need to override config values with custom CSS, use
-`html:root` as well.
