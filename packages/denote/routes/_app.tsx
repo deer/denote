@@ -18,7 +18,9 @@ function generateThemeCSS(config: DocsConfig): string {
   const border = c?.border;
   const dk = c?.dark;
 
-  const lines: string[] = [":root {"];
+  // Use `html:root` for higher specificity (0,1,1) so config overrides
+  // always beat the `:root` defaults (0,1,0) in styles.css.
+  const lines: string[] = ["html:root {"];
 
   // Primary color + derived variants
   if (p) {
@@ -81,7 +83,7 @@ function generateThemeCSS(config: DocsConfig): string {
   // Dark mode overrides
   const hasDark = dk || p || a;
   if (hasDark) {
-    lines.push(".dark {");
+    lines.push("html:root.dark {");
     const dp = dk?.primary ||
       (p ? `color-mix(in srgb, ${p} 70%, white)` : undefined);
     const da = dk?.accent ||
