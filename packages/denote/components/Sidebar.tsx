@@ -12,7 +12,7 @@ interface SidebarProps {
 export function Sidebar({ currentPath }: SidebarProps) {
   const config = getConfig();
   return (
-    <aside class="fixed top-16 left-0 z-40 w-64 h-[calc(100vh-4rem)] overflow-y-auto border-r border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 hidden lg:block">
+    <aside class="fixed top-16 left-0 z-40 w-64 h-[calc(100vh-4rem)] overflow-y-auto border-r border-[var(--denote-border)] bg-[var(--denote-bg)] hidden lg:block">
       <CollapsibleNav
         navigation={config.navigation}
         currentPath={currentPath}

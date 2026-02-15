@@ -246,10 +246,10 @@ export function App({ Component, state }: PageProps<unknown, State>) {
           }}
         />
       </head>
-      <body class="antialiased text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-950">
+      <body class="antialiased text-[var(--denote-text)] bg-[var(--denote-bg)]">
         <a
           href="#main-content"
-          class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[100] focus:px-4 focus:py-2 focus:bg-indigo-600 focus:text-white focus:rounded-lg"
+          class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[100] focus:px-4 focus:py-2 focus:bg-[var(--denote-primary)] focus:text-[var(--denote-text-inverse)] focus:rounded-lg"
         >
           Skip to content
         </a>

@@ -111,14 +111,14 @@ function renderInline(text: string) {
       parts.push(
         <a
           href={match[3]}
-          class="text-indigo-600 dark:text-indigo-400 hover:underline"
+          class="text-[var(--denote-primary-text)] hover:underline"
         >
           {match[2]}
         </a>,
       );
     } else if (match[4]) {
       parts.push(
-        <code class="px-1 py-0.5 bg-gray-100 dark:bg-gray-800 rounded text-sm">
+        <code class="px-1 py-0.5 bg-[var(--denote-bg-tertiary)] rounded text-sm">
           {match[4]}
         </code>,
       );
@@ -156,7 +156,7 @@ export function AiChat() {
         <button
           type="button"
           onClick={() => (isOpen.value = true)}
-          class="fixed bottom-6 right-6 z-40 flex items-center gap-2 px-4 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-200 group"
+          class="fixed bottom-6 right-6 z-40 flex items-center gap-2 px-4 py-3 bg-[var(--denote-primary)] hover:bg-[var(--denote-primary-hover)] text-[var(--denote-text-inverse)] rounded-full shadow-lg transition-all duration-200 group"
           aria-label="Ask AI"
         >
           <svg
@@ -179,14 +179,14 @@ export function AiChat() {
       {/* Chat panel */}
       {isOpen.value && (
         <div
-          class="fixed bottom-6 right-6 z-50 w-96 max-w-[calc(100vw-3rem)] bg-white dark:bg-gray-900 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 flex flex-col overflow-hidden"
+          class="fixed bottom-6 right-6 z-50 w-96 max-w-[calc(100vw-3rem)] bg-[var(--denote-bg)] rounded-2xl shadow-2xl border border-[var(--denote-border)] flex flex-col overflow-hidden"
           style={{ maxHeight: "min(600px, calc(100vh - 6rem))" }}
         >
           {/* Header */}
-          <div class="flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
+          <div class="flex items-center justify-between px-4 py-3 border-b border-[var(--denote-border)] bg-[var(--denote-bg-secondary)]">
             <div class="flex items-center gap-2">
               <svg
-                class="w-5 h-5 text-indigo-600 dark:text-indigo-400"
+                class="w-5 h-5 text-[var(--denote-primary-text)]"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -198,7 +198,7 @@ export function AiChat() {
                   d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
                 />
               </svg>
-              <span class="font-semibold text-gray-900 dark:text-white text-sm">
+              <span class="font-semibold text-[var(--denote-text)] text-sm">
                 Ask AI
               </span>
               {mode.value && (
@@ -222,7 +222,7 @@ export function AiChat() {
                     sources.value = [];
                     mode.value = null;
                   }}
-                  class="p-1.5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                  class="p-1.5 text-[var(--denote-text-muted)] hover:text-[var(--denote-text-secondary)] rounded-lg hover:bg-[var(--denote-bg-tertiary)] transition-colors"
                   title="Clear chat"
                 >
                   <svg
@@ -243,7 +243,7 @@ export function AiChat() {
               <button
                 type="button"
                 onClick={() => (isOpen.value = false)}
-                class="p-1.5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                class="p-1.5 text-[var(--denote-text-muted)] hover:text-[var(--denote-text-secondary)] rounded-lg hover:bg-[var(--denote-bg-tertiary)] transition-colors"
                 title="Close"
               >
                 <svg
@@ -268,7 +268,7 @@ export function AiChat() {
             {messages.value.length === 0 && (
               <div class="text-center py-8">
                 <svg
-                  class="w-12 h-12 mx-auto text-gray-300 dark:text-gray-600 mb-3"
+                  class="w-12 h-12 mx-auto text-[var(--denote-border)] mb-3"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -280,7 +280,7 @@ export function AiChat() {
                     d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"
                   />
                 </svg>
-                <p class="text-sm text-gray-500 dark:text-gray-400">
+                <p class="text-sm text-[var(--denote-text-muted)]">
                   Ask a question about the docs
                 </p>
                 <div class="mt-3 flex flex-wrap gap-2 justify-center">
@@ -297,7 +297,7 @@ export function AiChat() {
                           input.value = q;
                           sendMessage();
                         }}
-                        class="text-xs px-3 py-1.5 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                        class="text-xs px-3 py-1.5 bg-[var(--denote-bg-tertiary)] text-[var(--denote-text-secondary)] rounded-full hover:bg-[var(--denote-border)] transition-colors"
                       >
                         {q}
                       </button>
@@ -316,8 +316,8 @@ export function AiChat() {
                 <div
                   class={`max-w-[85%] rounded-2xl px-4 py-2.5 text-sm ${
                     msg.role === "user"
-                      ? "bg-indigo-600 text-white rounded-br-md"
-                      : "bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-bl-md"
+                      ? "bg-[var(--denote-primary)] text-[var(--denote-text-inverse)] rounded-br-md"
+                      : "bg-[var(--denote-bg-tertiary)] text-[var(--denote-text)] rounded-bl-md"
                   }`}
                 >
                   {msg.role === "assistant"
@@ -329,15 +329,15 @@ export function AiChat() {
 
             {loading.value && (
               <div class="flex justify-start">
-                <div class="bg-gray-100 dark:bg-gray-800 rounded-2xl rounded-bl-md px-4 py-3">
+                <div class="bg-[var(--denote-bg-tertiary)] rounded-2xl rounded-bl-md px-4 py-3">
                   <div class="flex gap-1.5">
-                    <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" />
+                    <div class="w-2 h-2 bg-[var(--denote-text-muted)] rounded-full animate-bounce" />
                     <div
-                      class="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
+                      class="w-2 h-2 bg-[var(--denote-text-muted)] rounded-full animate-bounce"
                       style={{ animationDelay: "0.15s" }}
                     />
                     <div
-                      class="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
+                      class="w-2 h-2 bg-[var(--denote-text-muted)] rounded-full animate-bounce"
                       style={{ animationDelay: "0.3s" }}
                     />
                   </div>
@@ -349,7 +349,7 @@ export function AiChat() {
           </div>
 
           {/* Input */}
-          <div class="border-t border-gray-200 dark:border-gray-700 p-3">
+          <div class="border-t border-[var(--denote-border)] p-3">
             <form
               onSubmit={(e) => {
                 e.preventDefault();
@@ -363,13 +363,13 @@ export function AiChat() {
                 placeholder="Ask about the docs..."
                 value={input.value}
                 onInput={(e) => (input.value = e.currentTarget.value)}
-                class="flex-1 px-3 py-2 bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                class="flex-1 px-3 py-2 bg-[var(--denote-bg-tertiary)] text-[var(--denote-text)] placeholder-[var(--denote-text-muted)] rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[var(--denote-primary)]"
                 disabled={loading.value}
               />
               <button
                 type="submit"
                 disabled={loading.value || !input.value.trim()}
-                class="p-2 bg-indigo-600 hover:bg-indigo-700 disabled:bg-gray-300 dark:disabled:bg-gray-700 text-white rounded-xl transition-colors"
+                class="p-2 bg-[var(--denote-primary)] hover:bg-[var(--denote-primary-hover)] disabled:opacity-40 text-[var(--denote-text-inverse)] rounded-xl transition-colors"
               >
                 <svg
                   class="w-4 h-4"
