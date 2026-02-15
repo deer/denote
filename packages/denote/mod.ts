@@ -162,7 +162,7 @@ export function denote(options: DenoteOptions): App<unknown> {
       }
 
       // Stateless: create a fresh server+transport per request.
-      // No session tracking — works reliably on serverless (Deno Deploy).
+      // No session tracking — works reliably on Deno Deploy
       const { WebStandardStreamableHTTPServerTransport } = await import(
         "@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js"
       );
