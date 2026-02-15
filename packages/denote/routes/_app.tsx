@@ -4,144 +4,138 @@ import { getConfig } from "../lib/config.ts";
 import type { DocsConfig } from "../docs.config.ts";
 import { COMBINED_CSS } from "@deer/gfm/style";
 
-/** Generate CSS custom property overrides from DocsConfig */
+/**
+ * Generate CSS custom property overrides from DocsConfig.
+ *
+ * Always emits a `.dark` block with default dark-mode tokens so that dark mode
+ * works out of the box. The tokens.css `.dark` block is imported via Tailwind's
+ * CSS pipeline and can lose to cascade layers; this inline `<style>` ensures
+ * the vars are always applied.
+ */
 function generateThemeCSS(config: DocsConfig): string {
   const c = config.colors;
   const f = config.fonts;
-  if (!c?.primary && !c?.accent && !c?.background && !f?.body) return "";
+  const dk = c?.dark;
 
+  const lines: string[] = [];
+
+  // --- :root overrides (only when config provides values) ---
   const p = c?.primary;
   const a = c?.accent;
   const bg = c?.background;
   const surface = c?.surface;
   const text = c?.text;
   const border = c?.border;
-  const dk = c?.dark;
+  const hasRoot = p || a || bg || surface || text || border || f?.body ||
+    f?.heading || f?.mono;
 
-  const lines: string[] = [":root {"];
-
-  // Primary color + derived variants
-  if (p) {
-    lines.push(`  --denote-primary: ${p};`);
-    lines.push(
-      `  --denote-primary-hover: color-mix(in srgb, ${p} 85%, black);`,
-    );
-    lines.push(
-      `  --denote-primary-subtle: color-mix(in srgb, ${p} 12%, white);`,
-    );
-    lines.push(`  --denote-primary-text: ${p};`);
-    lines.push(
-      `  --denote-shadow-primary: color-mix(in srgb, ${p} 25%, transparent);`,
-    );
-  }
-  if (a) lines.push(`  --denote-accent: ${a};`);
-  if (bg) lines.push(`  --denote-bg: ${bg};`);
-  if (surface) {
-    lines.push(`  --denote-bg-secondary: ${surface};`);
-    lines.push(
-      `  --denote-bg-tertiary: color-mix(in srgb, ${surface} 80%, ${
-        bg || "white"
-      });`,
-    );
-  }
-  if (text) {
-    lines.push(`  --denote-text: ${text};`);
-    lines.push(
-      `  --denote-text-secondary: color-mix(in srgb, ${text} 70%, ${
-        bg || "white"
-      });`,
-    );
-    lines.push(
-      `  --denote-text-muted: color-mix(in srgb, ${text} 45%, ${
-        bg || "white"
-      });`,
-    );
-  }
-  if (border) {
-    lines.push(`  --denote-border: ${border};`);
-    lines.push(
-      `  --denote-border-strong: color-mix(in srgb, ${border} 80%, ${
-        text || "black"
-      });`,
-    );
-  }
-  if (bg) {
-    lines.push(
-      `  --denote-surface-overlay: color-mix(in srgb, ${bg} 80%, transparent);`,
-    );
-  }
-
-  // Font families
-  if (f?.body) lines.push(`  --denote-font-body: ${f.body};`);
-  if (f?.heading) lines.push(`  --denote-font-heading: ${f.heading};`);
-  if (f?.mono) lines.push(`  --denote-font-mono: ${f.mono};`);
-
-  lines.push("}");
-
-  // Dark mode overrides
-  const hasDark = dk || p || a;
-  if (hasDark) {
-    lines.push(".dark {");
-    const dp = dk?.primary ||
-      (p ? `color-mix(in srgb, ${p} 70%, white)` : undefined);
-    const da = dk?.accent ||
-      (a ? `color-mix(in srgb, ${a} 70%, white)` : undefined);
-    const dbg = dk?.background;
-    const ds = dk?.surface;
-    const dt = dk?.text;
-    const dborder = dk?.border;
-
-    if (dp) {
-      lines.push(`  --denote-primary: ${dp};`);
+  if (hasRoot) {
+    lines.push(":root {");
+    if (p) {
+      lines.push(`  --denote-primary: ${p};`);
       lines.push(
-        `  --denote-primary-hover: color-mix(in srgb, ${dp} 80%, white);`,
+        `  --denote-primary-hover: color-mix(in srgb, ${p} 85%, black);`,
       );
       lines.push(
-        `  --denote-primary-subtle: color-mix(in srgb, ${dp} 30%, black);`,
+        `  --denote-primary-subtle: color-mix(in srgb, ${p} 12%, white);`,
       );
-      lines.push(`  --denote-primary-text: ${dp};`);
+      lines.push(`  --denote-primary-text: ${p};`);
       lines.push(
-        `  --denote-shadow-primary: color-mix(in srgb, ${dp} 15%, transparent);`,
+        `  --denote-shadow-primary: color-mix(in srgb, ${p} 25%, transparent);`,
       );
     }
-    if (da) lines.push(`  --denote-accent: ${da};`);
-    if (dbg) {
-      lines.push(`  --denote-bg: ${dbg};`);
+    if (a) lines.push(`  --denote-accent: ${a};`);
+    if (bg) lines.push(`  --denote-bg: ${bg};`);
+    if (surface) {
+      lines.push(`  --denote-bg-secondary: ${surface};`);
       lines.push(
-        `  --denote-surface-overlay: color-mix(in srgb, ${dbg} 80%, transparent);`,
-      );
-    }
-    if (ds) {
-      lines.push(`  --denote-bg-secondary: ${ds};`);
-      lines.push(
-        `  --denote-bg-tertiary: color-mix(in srgb, ${ds} 70%, ${
-          dbg || "black"
+        `  --denote-bg-tertiary: color-mix(in srgb, ${surface} 80%, ${
+          bg || "white"
         });`,
       );
     }
-    if (dt) {
-      lines.push(`  --denote-text: ${dt};`);
+    if (text) {
+      lines.push(`  --denote-text: ${text};`);
       lines.push(
-        `  --denote-text-secondary: color-mix(in srgb, ${dt} 65%, ${
-          dbg || "black"
+        `  --denote-text-secondary: color-mix(in srgb, ${text} 70%, ${
+          bg || "white"
         });`,
       );
       lines.push(
-        `  --denote-text-muted: color-mix(in srgb, ${dt} 40%, ${
-          dbg || "black"
-        });`,
-      );
-    }
-    if (dborder) {
-      lines.push(`  --denote-border: ${dborder};`);
-      lines.push(
-        `  --denote-border-strong: color-mix(in srgb, ${dborder} 70%, ${
-          dt || "white"
+        `  --denote-text-muted: color-mix(in srgb, ${text} 45%, ${
+          bg || "white"
         });`,
       );
     }
+    if (border) {
+      lines.push(`  --denote-border: ${border};`);
+      lines.push(
+        `  --denote-border-strong: color-mix(in srgb, ${border} 80%, ${
+          text || "black"
+        });`,
+      );
+    }
+    if (bg) {
+      lines.push(
+        `  --denote-surface-overlay: color-mix(in srgb, ${bg} 80%, transparent);`,
+      );
+    }
+    if (f?.body) lines.push(`  --denote-font-body: ${f.body};`);
+    if (f?.heading) lines.push(`  --denote-font-heading: ${f.heading};`);
+    if (f?.mono) lines.push(`  --denote-font-mono: ${f.mono};`);
     lines.push("}");
   }
+
+  // --- .dark block (ALWAYS emitted to beat Tailwind v4 cascade layers) ---
+  // Config overrides win; otherwise use the same defaults as tokens.css.
+  const dp = dk?.primary ||
+    (p ? `color-mix(in srgb, ${p} 70%, white)` : "#818cf8");
+  const dpHover = dk?.primary
+    ? `color-mix(in srgb, ${dk.primary} 80%, white)`
+    : (p ? `color-mix(in srgb, ${dp} 80%, white)` : "#a5b4fc");
+  const dpSubtle = dk?.primary
+    ? `color-mix(in srgb, ${dk.primary} 30%, black)`
+    : (p ? `color-mix(in srgb, ${dp} 30%, black)` : "#1e1b4b");
+  const da = dk?.accent ||
+    (a ? `color-mix(in srgb, ${a} 70%, white)` : "#a78bfa");
+  const dbg = dk?.background || "#030712";
+  const dSurface = dk?.surface || "#0a0a0a";
+  const dt = dk?.text || "#f9fafb";
+  const dborder = dk?.border || "#1f2937";
+
+  lines.push(".dark {");
+  lines.push(`  --denote-primary: ${dp};`);
+  lines.push(`  --denote-primary-hover: ${dpHover};`);
+  lines.push(`  --denote-primary-subtle: ${dpSubtle};`);
+  lines.push(`  --denote-primary-text: ${dp};`);
+  lines.push(`  --denote-accent: ${da};`);
+  lines.push(
+    `  --denote-shadow-primary: color-mix(in srgb, ${dp} 15%, transparent);`,
+  );
+  lines.push(`  --denote-bg: ${dbg};`);
+  lines.push(`  --denote-bg-secondary: ${dSurface};`);
+  lines.push(
+    `  --denote-bg-tertiary: color-mix(in srgb, ${dSurface} 70%, ${dbg});`,
+  );
+  lines.push(
+    `  --denote-surface-overlay: color-mix(in srgb, ${dbg} 80%, transparent);`,
+  );
+  lines.push(`  --denote-text: ${dt};`);
+  lines.push(
+    `  --denote-text-secondary: color-mix(in srgb, ${dt} 65%, ${dbg});`,
+  );
+  lines.push(
+    `  --denote-text-muted: color-mix(in srgb, ${dt} 40%, ${dbg});`,
+  );
+  lines.push(`  --denote-text-inverse: #ffffff;`);
+  lines.push(`  --denote-border: ${dborder};`);
+  lines.push(
+    `  --denote-border-strong: color-mix(in srgb, ${dborder} 70%, ${dt});`,
+  );
+  lines.push(
+    `  --denote-shadow-color: rgba(0, 0, 0, 0.3);`,
+  );
+  lines.push("}");
 
   return lines.join("\n");
 }

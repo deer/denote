@@ -39,26 +39,5 @@
     ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 }
 
-.dark {
-  --denote-primary: #818cf8;
-  --denote-primary-hover: #a5b4fc;
-  --denote-primary-subtle: #1e1b4b;
-  --denote-primary-text: #818cf8;
-  --denote-accent: #a78bfa;
-
-  --denote-bg: #030712;
-  --denote-bg-secondary: #0a0a0a;
-  --denote-bg-tertiary: #1f2937;
-  --denote-surface-overlay: rgba(3, 7, 18, 0.8);
-
-  --denote-text: #f9fafb;
-  --denote-text-secondary: #9ca3af;
-  --denote-text-muted: #6b7280;
-  --denote-text-inverse: #ffffff;
-
-  --denote-border: #1f2937;
-  --denote-border-strong: #374151;
-
-  --denote-shadow-color: rgba(0, 0, 0, 0.3);
-  --denote-shadow-primary: rgba(129, 140, 248, 0.15);
-}
+/* Dark mode tokens are injected inline via generateThemeCSS() in _app.tsx
+   to ensure they always win over Tailwind v4 cascade layers. */
