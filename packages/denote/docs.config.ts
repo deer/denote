@@ -59,6 +59,36 @@ export interface DocsConfig {
   search?: {
     enabled: boolean;
   };
+  layout?: {
+    /** Sidebar width in px (default: 256) */
+    sidebarWidth?: number;
+    /** Max content width in px (default: 768 / max-w-3xl) */
+    maxContentWidth?: number;
+    /** Header height in px (default: 64) */
+    headerHeight?: number;
+    /** TOC width in px (default: 256) */
+    tocWidth?: number;
+    /** Show table of contents sidebar (default: true) */
+    toc?: boolean;
+    /** Show breadcrumbs (default: true) */
+    breadcrumbs?: boolean;
+    /** Show footer (default: true) */
+    footer?: boolean;
+  };
+  landing?: {
+    /** Set to false to redirect "/" to first doc page */
+    enabled?: boolean;
+    /** Custom redirect path (default: first nav item with href) */
+    redirectTo?: string;
+  };
+  style?: {
+    /** Border radius scale: none=0, sm=0.25rem, md=0.5rem (default), lg=0.75rem, xl=1rem */
+    roundedness?: "none" | "sm" | "md" | "lg" | "xl";
+    /** Dark mode behavior: auto (system+toggle), light (force light), dark (force dark), toggle (default dark+toggle) */
+    darkMode?: "auto" | "light" | "dark" | "toggle";
+    /** Path to a custom CSS file relative to the docs directory, loaded after all theme tokens */
+    customCss?: string;
+  };
   /** Enable GA4 analytics. Set GA4_MEASUREMENT_ID env var to activate. */
   ga4?: boolean;
   ai?: {

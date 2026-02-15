@@ -4,6 +4,25 @@ import { getConfig } from "../lib/config.ts";
 import { COMBINED_CSS } from "@deer/gfm/style";
 import { generateThemeCSS } from "../lib/theme.ts";
 
+/** Generate the inline dark mode script based on config */
+function darkModeScript(
+  mode?: "auto" | "light" | "dark" | "toggle",
+): string {
+  if (mode === "light") {
+    return `(function(){document.documentElement.classList.remove('dark')})();`;
+  }
+  if (mode === "dark") {
+    return `(function(){document.documentElement.classList.add('dark')})();`;
+  }
+  // "toggle" defaults to dark, "auto" (default) uses system preference
+  const defaultDark = mode === "toggle";
+  return `(function(){
+    var s;try{s=localStorage.getItem('theme')}catch(e){}
+    var p=window.matchMedia('(prefers-color-scheme: dark)').matches;
+    if(s==='dark'||(!s&&(p||${defaultDark}))){document.documentElement.classList.add('dark')}
+  })();`;
+}
+
 /** App wrapper component — exported for programmatic routing */
 export function App({ Component, state }: PageProps<unknown, State>) {
   const config = getConfig();
@@ -86,21 +105,15 @@ export function App({ Component, state }: PageProps<unknown, State>) {
           <style dangerouslySetInnerHTML={{ __html: colorOverrides }} />
         )}
 
+        {/* Custom CSS escape hatch */}
+        {config.style?.customCss && (
+          <link rel="stylesheet" href={config.style.customCss} />
+        )}
+
         {/* Prevent flash of unstyled content */}
         <script
           dangerouslySetInnerHTML={{
-            __html: `
-            (function() {
-              let stored;
-              try {
-                stored = localStorage.getItem('theme');
-              } catch(e) {}
-              let prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-              if (stored === 'dark' || (!stored && prefersDark)) {
-                document.documentElement.classList.add('dark');
-              }
-            })();
-          `,
+            __html: darkModeScript(config.style?.darkMode),
           }}
         />
       </head>

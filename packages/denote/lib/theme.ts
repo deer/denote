@@ -9,7 +9,12 @@ import type { DocsConfig } from "../docs.config.ts";
 export function generateThemeCSS(config: DocsConfig): string {
   const c = config.colors;
   const f = config.fonts;
-  if (!c?.primary && !c?.accent && !c?.background && !f?.body) return "";
+  const hasColors = c?.primary || c?.accent || c?.background || f?.body;
+  const hasLayout = config.layout?.sidebarWidth ||
+    config.layout?.maxContentWidth || config.layout?.headerHeight ||
+    config.layout?.tocWidth;
+  const hasStyle = config.style?.roundedness;
+  if (!hasColors && !hasLayout && !hasStyle) return "";
 
   const p = c?.primary;
   const a = c?.accent;
@@ -22,6 +27,37 @@ export function generateThemeCSS(config: DocsConfig): string {
   // Use `html:root` for higher specificity (0,1,1) so config overrides
   // always beat the `:root` defaults (0,1,0) in styles.css.
   const lines: string[] = ["html:root {"];
+
+  // Layout dimensions
+  const layout = config.layout;
+  if (layout?.sidebarWidth) {
+    lines.push(`  --denote-sidebar-width: ${layout.sidebarWidth}px;`);
+  }
+  if (layout?.maxContentWidth) {
+    lines.push(`  --denote-content-max-width: ${layout.maxContentWidth}px;`);
+  }
+  if (layout?.headerHeight) {
+    lines.push(`  --denote-header-height: ${layout.headerHeight}px;`);
+  }
+  if (layout?.tocWidth) {
+    lines.push(`  --denote-toc-width: ${layout.tocWidth}px;`);
+  }
+
+  // Border radius scale
+  const roundedness = config.style?.roundedness;
+  if (roundedness) {
+    const radiusMap: Record<string, [string, string, string]> = {
+      none: ["0", "0", "0"],
+      sm: ["0.25rem", "0.375rem", "0.5rem"],
+      md: ["0.5rem", "0.75rem", "1rem"],
+      lg: ["0.75rem", "1rem", "1.25rem"],
+      xl: ["1rem", "1.25rem", "1.5rem"],
+    };
+    const [r, rlg, rxl] = radiusMap[roundedness] || radiusMap.md;
+    lines.push(`  --denote-radius: ${r};`);
+    lines.push(`  --denote-radius-lg: ${rlg};`);
+    lines.push(`  --denote-radius-xl: ${rxl};`);
+  }
 
   // Primary color + derived variants
   if (p) {

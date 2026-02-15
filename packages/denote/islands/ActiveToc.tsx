@@ -51,7 +51,14 @@ export function ActiveToc({ items }: ActiveTocProps) {
   if (items.length === 0) return null;
 
   return (
-    <aside class="hidden xl:block fixed top-16 right-0 w-64 h-[calc(100vh-4rem)] overflow-y-auto p-6">
+    <aside
+      class="hidden xl:block fixed right-0 overflow-y-auto p-6"
+      style={{
+        top: "var(--denote-header-height)",
+        width: "var(--denote-toc-width)",
+        height: "calc(100vh - var(--denote-header-height))",
+      }}
+    >
       <div class="text-sm">
         <h4 class="font-semibold text-[var(--denote-text)] mb-4">
           On this page

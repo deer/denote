@@ -14,6 +14,17 @@
    ======================================== */
 
 :root {
+  /* Layout */
+  --denote-sidebar-width: 256px;
+  --denote-content-max-width: 768px;
+  --denote-header-height: 64px;
+  --denote-toc-width: 256px;
+
+  /* Radius */
+  --denote-radius: 0.5rem;
+  --denote-radius-lg: 0.75rem;
+  --denote-radius-xl: 1rem;
+
   /* Brand */
   --denote-primary: #4f46e5;
   --denote-primary-hover: #4338ca;

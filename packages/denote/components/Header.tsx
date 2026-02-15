@@ -18,7 +18,10 @@ export function Header({ showSearch = true, currentPath }: HeaderProps) {
       style={{ backgroundColor: "var(--denote-surface-overlay)" }}
     >
       <div class="container mx-auto px-4">
-        <div class="flex h-16 items-center justify-between">
+        <div
+          class="flex items-center justify-between"
+          style={{ height: "var(--denote-header-height)" }}
+        >
           {/* Logo */}
           <a href="/" class="flex items-center gap-2 font-semibold text-lg">
             <span class="text-2xl">🦕</span>
@@ -66,7 +69,9 @@ export function Header({ showSearch = true, currentPath }: HeaderProps) {
             )}
 
             {/* Theme toggle island */}
-            <ThemeToggle />
+            <ThemeToggle
+              darkMode={config.style?.darkMode}
+            />
 
             {/* GitHub link */}
             {config.social?.github && (
