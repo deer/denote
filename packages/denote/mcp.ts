@@ -21,47 +21,7 @@ const useHttp = args.includes("--http");
 if (useHttp) {
   const portIdx = args.indexOf("--port");
   const port = portIdx !== -1 ? parseInt(args[portIdx + 1]) : 3100;
-
-  // Session-based: each MCP client gets its own server+transport pair
-  const MAX_SESSIONS = 100;
-  const SESSION_TTL_MS = 30 * 60 * 1000; // 30 minutes
-
-  const sessions = new Map<
-    string,
-    {
-      transport: WebStandardStreamableHTTPServerTransport;
-      lastActivity: number;
-    }
-  >();
-
-  // Periodic cleanup of idle sessions
-  setInterval(() => {
-    const now = Date.now();
-    for (const [id, session] of sessions) {
-      if (now - session.lastActivity > SESSION_TTL_MS) {
-        session.transport.close?.();
-        sessions.delete(id);
-      }
-    }
-  }, 60_000); // check every minute
-
   const httpBaseUrl = `http://localhost:${port}`;
-
-  const createSessionTransport = async () => {
-    const server = createMcpServer(httpBaseUrl);
-    const transport = new WebStandardStreamableHTTPServerTransport({
-      sessionIdGenerator: () => crypto.randomUUID(),
-      onsessioninitialized: (sessionId) => {
-        sessions.set(sessionId, { transport, lastActivity: Date.now() });
-      },
-    });
-    transport.onclose = () => {
-      const sid = transport.sessionId;
-      if (sid) sessions.delete(sid);
-    };
-    await server.connect(transport);
-    return transport;
-  };
 
   const name = getSiteName();
   console.log(
@@ -77,41 +37,11 @@ if (useHttp) {
       return new Response(null, { status: 204, headers: MCP_CORS_HEADERS });
     }
 
-    // MCP endpoint
+    // MCP endpoint — stateless: fresh server+transport per request
     if (url.pathname === "/mcp") {
-      const sessionId = req.headers.get("mcp-session-id");
-      let transport;
-
-      if (sessionId && sessions.has(sessionId)) {
-        const session = sessions.get(sessionId)!;
-        session.lastActivity = Date.now();
-        transport = session.transport;
-      } else if (sessionId) {
-        return new Response(
-          JSON.stringify({ error: "Session not found" }),
-          {
-            status: 404,
-            headers: {
-              "Content-Type": "application/json",
-              ...MCP_CORS_HEADERS,
-            },
-          },
-        );
-      } else {
-        if (sessions.size >= MAX_SESSIONS) {
-          return new Response(
-            JSON.stringify({ error: "Too many sessions" }),
-            {
-              status: 503,
-              headers: {
-                "Content-Type": "application/json",
-                ...MCP_CORS_HEADERS,
-              },
-            },
-          );
-        }
-        transport = await createSessionTransport();
-      }
+      const server = createMcpServer(httpBaseUrl);
+      const transport = new WebStandardStreamableHTTPServerTransport({});
+      await server.connect(transport);
 
       const response = await transport.handleRequest(req);
       for (const [key, value] of Object.entries(MCP_CORS_HEADERS)) {
