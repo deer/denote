@@ -13,7 +13,10 @@ interface HeaderProps {
 export function Header({ showSearch = true, currentPath }: HeaderProps) {
   const config = getConfig();
   return (
-    <header class="sticky top-0 z-50 w-full border-b border-gray-200 dark:border-gray-800 bg-white/80 dark:bg-gray-950/80 backdrop-blur-sm">
+    <header
+      class="sticky top-0 z-50 w-full border-b border-[var(--denote-border)] backdrop-blur-sm"
+      style={{ backgroundColor: "var(--denote-surface-overlay)" }}
+    >
       <div class="container mx-auto px-4">
         <div class="flex h-16 items-center justify-between">
           {/* Logo */}
@@ -27,7 +30,7 @@ export function Header({ showSearch = true, currentPath }: HeaderProps) {
             {config.topNav?.map((item) => (
               <a
                 href={item.href}
-                class="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+                class="text-sm text-[var(--denote-text-secondary)] hover:text-[var(--denote-text)] transition-colors"
               >
                 {item.title}
               </a>
@@ -39,7 +42,7 @@ export function Header({ showSearch = true, currentPath }: HeaderProps) {
             {showSearch && (
               <button
                 type="button"
-                class="hidden sm:flex items-center gap-2 px-3 py-1.5 text-sm text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-800 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                class="hidden sm:flex items-center gap-2 px-3 py-1.5 text-sm text-[var(--denote-text-muted)] bg-[var(--denote-bg-tertiary)] rounded-lg hover:bg-[var(--denote-border)] transition-colors"
                 data-search-trigger
               >
                 <svg
@@ -56,7 +59,7 @@ export function Header({ showSearch = true, currentPath }: HeaderProps) {
                   />
                 </svg>
                 <span>Search...</span>
-                <kbd class="hidden lg:inline-flex items-center px-1.5 py-0.5 text-xs font-medium bg-white dark:bg-gray-700 rounded border border-gray-300 dark:border-gray-600">
+                <kbd class="hidden lg:inline-flex items-center px-1.5 py-0.5 text-xs font-medium bg-[var(--denote-bg)] rounded border border-[var(--denote-border-strong)]">
                   ⌘K
                 </kbd>
               </button>
@@ -69,7 +72,7 @@ export function Header({ showSearch = true, currentPath }: HeaderProps) {
             {config.social?.github && (
               <a
                 href={config.social.github}
-                class="p-2 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+                class="p-2 text-[var(--denote-text-muted)] hover:text-[var(--denote-text)] transition-colors"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="GitHub"

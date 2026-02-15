@@ -71,7 +71,7 @@ export function MobileMenu(
       {/* Hamburger button */}
       <button
         type="button"
-        class="p-2 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
+        class="p-2 text-[var(--denote-text-muted)] hover:text-[var(--denote-text)]"
         onClick={() => (isOpen.value = !isOpen.value)}
         aria-label="Toggle menu"
         aria-expanded={isOpen.value}
@@ -123,16 +123,16 @@ function MobileOverlay(
       />
 
       {/* Sidebar panel */}
-      <aside class="fixed top-0 left-0 z-50 w-72 h-full overflow-y-auto bg-white dark:bg-gray-950 shadow-2xl">
+      <aside class="fixed top-0 left-0 z-50 w-72 h-full overflow-y-auto bg-[var(--denote-bg)] shadow-2xl">
         {/* Header */}
-        <div class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-800">
+        <div class="flex items-center justify-between p-4 border-b border-[var(--denote-border)]">
           <a href="/" class="flex items-center gap-2 font-semibold">
             <span class="text-2xl">🦕</span>
             <span>{siteName}</span>
           </a>
           <button
             type="button"
-            class="p-2 text-gray-500 hover:text-gray-900 dark:hover:text-white"
+            class="p-2 text-[var(--denote-text-muted)] hover:text-[var(--denote-text)]"
             onClick={() => (isOpen.value = false)}
             aria-label="Close menu"
           >
@@ -154,13 +154,13 @@ function MobileOverlay(
 
         {/* Top nav links (Documentation, Blog, GitHub etc.) */}
         {topNav && topNav.length > 0 && (
-          <div class="px-4 pt-4 pb-2 border-b border-gray-200 dark:border-gray-800">
+          <div class="px-4 pt-4 pb-2 border-b border-[var(--denote-border)]">
             <div class="space-y-1">
               {topNav.map((item) => (
                 <a
                   href={item.href}
                   onClick={() => (isOpen.value = false)}
-                  class="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition-colors"
+                  class="flex items-center gap-2 px-3 py-2 text-sm font-medium text-[var(--denote-text-secondary)] hover:text-[var(--denote-text)] hover:bg-[var(--denote-bg-tertiary)] rounded-md transition-colors"
                 >
                   {item.title}
                 </a>
@@ -186,11 +186,11 @@ function NavSection(
   if (section.children?.length) {
     return (
       <div class="space-y-2">
-        <div class="flex items-center gap-2 px-2 py-1 text-sm font-semibold text-gray-900 dark:text-white">
+        <div class="flex items-center gap-2 px-2 py-1 text-sm font-semibold text-[var(--denote-text)]">
           {section.icon && <span>{section.icon}</span>}
           <span>{section.title}</span>
         </div>
-        <ul class="space-y-1 ml-2 border-l border-gray-200 dark:border-gray-800">
+        <ul class="space-y-1 ml-2 border-l border-[var(--denote-border)]">
           {section.children.map((child) => (
             <li>
               <NavSection section={child} currentPath={currentPath} />
@@ -208,8 +208,8 @@ function NavSection(
       onClick={() => (isOpen.value = false)}
       class={`flex items-center gap-2 px-3 py-1.5 text-sm rounded-md transition-colors ${
         isActive
-          ? "bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 font-medium"
-          : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800"
+          ? "bg-[var(--denote-primary-subtle)] text-[var(--denote-primary-text)] font-medium"
+          : "text-[var(--denote-text-secondary)] hover:text-[var(--denote-text)] hover:bg-[var(--denote-bg-tertiary)]"
       }`}
     >
       {section.icon && <span>{section.icon}</span>}

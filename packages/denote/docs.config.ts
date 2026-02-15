@@ -19,6 +19,28 @@ export interface DocsConfig {
   colors?: {
     primary: string;
     accent?: string;
+    background?: string;
+    surface?: string;
+    text?: string;
+    border?: string;
+    dark?: {
+      primary?: string;
+      accent?: string;
+      background?: string;
+      surface?: string;
+      text?: string;
+      border?: string;
+    };
+  };
+  fonts?: {
+    /** Body text font family. Include fallbacks. */
+    body?: string;
+    /** Heading font family. Falls back to body if unset. */
+    heading?: string;
+    /** Monospace font for code blocks. */
+    mono?: string;
+    /** Google Fonts or other font import URLs (added as <link> tags in <head>) */
+    imports?: string[];
   };
   navigation: NavItem[];
   topNav?: {

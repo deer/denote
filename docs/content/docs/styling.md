@@ -10,29 +10,46 @@ documentation's appearance.
 
 ## Tailwind CSS
 
-Tailwind is included by default. You can use any Tailwind utility classes in
-your custom components:
+Tailwind is included by default. Use CSS custom properties from the
+[Theming system](/docs/theming) to keep your components theme-aware:
 
 ```typescript
 function Card({ title, children }) {
   return (
-    <div class="p-6 rounded-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 shadow-sm">
-      <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+    <div class="p-6 rounded-xl bg-[var(--denote-bg-secondary)] border border-[var(--denote-border)] shadow-sm">
+      <h3 class="text-lg font-semibold text-[var(--denote-text)] mb-2">
         {title}
       </h3>
-      <p class="text-gray-600 dark:text-gray-400">
-        {children}
-      </p>
+      <p class="text-[var(--denote-text-secondary)]">{children}</p>
     </div>
   );
 }
 ```
 
+This approach ensures your components automatically adapt to light mode, dark
+mode, and any custom theme — without needing `dark:` prefixes.
+
+## When to Use `dark:` Prefixes
+
+For **semantic colors** that don't map to theme tokens (e.g., status badges,
+alerts), Tailwind's `dark:` prefix is still appropriate:
+
+```typescript
+// Semantic: always green for success, not theme-dependent
+<span class="bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300">
+  Active
+</span>;
+```
+
+For **everything else** (backgrounds, text, borders, surfaces), use CSS vars.
+
 ## Markdown Content Styling
 
 Documentation content is rendered by `@deer/gfm` and styled via the
-`.markdown-body` class. Denote layers custom overrides on top of the GFM
-defaults in `assets/styles.css`:
+`.markdown-body` class. Denote bridges its theme tokens to GFM variables
+automatically, so markdown content follows your theme.
+
+Custom overrides go in `assets/styles.css`:
 
 ```css
 /* Example: customizing heading sizes */
@@ -72,36 +89,17 @@ with syntax highlighting via lowlight:
 
 ## Responsive Design
 
-Denote is fully responsive. The layout adapts to different screen sizes:
+Denote is fully responsive:
 
-- **Wide desktop (xl+)**: Sidebar visible, table of contents on right
-- **Desktop (lg-xl)**: Sidebar visible, no table of contents
-- **Mobile (< lg)**: Collapsible mobile menu
-
-### Breakpoints
-
-```css
-/* Tailwind default breakpoints */
-sm: 640px
-md: 768px
-lg: 1024px   /* sidebar appears */
-xl: 1280px   /* table of contents appears */
-2xl: 1536px
-```
-
-## Dark Mode Classes
-
-Use Tailwind's `dark:` prefix for dark mode styles:
-
-```typescript
-<div class="bg-white dark:bg-gray-900 text-gray-900 dark:text-white">
-  This adapts to dark mode!
-</div>;
-```
+| Breakpoint         | Layout                                |
+| ------------------ | ------------------------------------- |
+| **xl+** (1280px)   | Sidebar + content + table of contents |
+| **lg–xl** (1024px) | Sidebar + content                     |
+| **< lg**           | Collapsible mobile menu               |
 
 ## Custom Components
 
-Create styled components for reuse:
+Create styled components using theme tokens for automatic dark mode support:
 
 ```typescript
 // components/Button.tsx
@@ -111,42 +109,23 @@ interface ButtonProps {
 }
 
 export function Button({ variant = "primary", children }: ButtonProps) {
-  const baseClasses = "px-4 py-2 rounded-lg font-medium transition-colors";
-  const variantClasses = {
-    primary: "bg-indigo-600 hover:bg-indigo-700 text-white",
+  const base = "px-4 py-2 rounded-lg font-medium transition-colors";
+  const variants = {
+    primary:
+      "bg-[var(--denote-primary)] hover:bg-[var(--denote-primary-hover)] text-[var(--denote-text-inverse)]",
     secondary:
-      "bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-900 dark:text-white",
+      "bg-[var(--denote-bg-secondary)] hover:bg-[var(--denote-bg-tertiary)] text-[var(--denote-text)] border border-[var(--denote-border)]",
   };
 
-  return (
-    <button class={`${baseClasses} ${variantClasses[variant]}`}>
-      {children}
-    </button>
-  );
-}
-```
-
-## Animation
-
-Add subtle animations for better UX:
-
-```css
-/* Smooth transitions */
-.sidebar-link {
-  @apply transition-colors duration-150;
-}
-
-/* Hover effects */
-.card:hover {
-  @apply -translate-y-0.5 shadow-lg;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  return <button class={`${base} ${variants[variant]}`}>{children}</button>;
 }
 ```
 
 ## Best Practices
 
-1. **Use Tailwind utilities** - Avoid custom CSS when possible
-2. **Support dark mode** - Always test both themes
-3. **Keep it consistent** - Reuse component styles
-4. **Optimize for readability** - Use appropriate contrast ratios
-5. **Test responsively** - Check all breakpoints
+1. **Use CSS vars for theme colors** — `bg-[var(--denote-bg)]` adapts to any
+   theme automatically
+2. **Reserve `dark:` for semantics** — status colors, badges, alerts
+3. **Test both modes** — toggle dark mode to verify contrast and readability
+4. **Use the config first** — most customizations belong in `docs.config.ts`,
+   not custom CSS

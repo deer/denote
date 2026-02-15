@@ -6,28 +6,46 @@ import { Header } from "../components/Header.tsx";
 export function Home() {
   const config = getConfig();
   return (
-    <div class="min-h-screen bg-gradient-to-b from-white to-gray-50 dark:from-gray-950 dark:to-gray-900">
+    <div
+      class="min-h-screen"
+      style={{
+        background:
+          `linear-gradient(to bottom, var(--denote-bg), var(--denote-bg-secondary))`,
+      }}
+    >
       <Header showSearch={false} />
 
       {/* Hero Section */}
       <section class="relative overflow-hidden">
-        <div class="absolute inset-0 bg-gradient-to-r from-indigo-500/10 via-purple-500/10 to-pink-500/10 dark:from-indigo-500/5 dark:via-purple-500/5 dark:to-pink-500/5" />
+        <div
+          class="absolute inset-0"
+          style={{
+            background:
+              `linear-gradient(to right, color-mix(in srgb, var(--denote-primary) 10%, transparent), color-mix(in srgb, var(--denote-accent) 10%, transparent), color-mix(in srgb, var(--denote-accent) 8%, transparent))`,
+          }}
+        />
 
         <div class="relative container mx-auto px-4 py-24 sm:py-32 lg:py-40">
           <div class="max-w-4xl mx-auto text-center">
-            <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-100 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300 text-sm font-medium mb-8">
+            <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium mb-8 bg-[var(--denote-primary-subtle)] text-[var(--denote-primary-text)]">
               <span class="text-lg" aria-hidden="true">🦕</span>
               <span>Deno Native • AI Ready • Lightning Fast</span>
             </div>
 
-            <h1 class="text-5xl sm:text-6xl lg:text-7xl font-bold text-gray-900 dark:text-white mb-6 tracking-tight">
+            <h1 class="text-5xl sm:text-6xl lg:text-7xl font-bold text-[var(--denote-text)] mb-6 tracking-tight">
               Docs for humans{" "}
-              <span class="bg-gradient-to-r from-indigo-500 to-purple-500 bg-clip-text text-transparent">
+              <span
+                class="bg-clip-text text-transparent"
+                style={{
+                  backgroundImage:
+                    `linear-gradient(to right, var(--denote-primary), var(--denote-accent))`,
+                }}
+              >
                 and machines
               </span>
             </h1>
 
-            <p class="text-xl sm:text-2xl text-gray-600 dark:text-gray-400 mb-10 max-w-2xl mx-auto">
+            <p class="text-xl sm:text-2xl text-[var(--denote-text-secondary)] mb-10 max-w-2xl mx-auto">
               The documentation platform that serves your users <em>and</em>
               {" "}
               their AI agents. Built on Deno. Powered by Fresh v2. AI-native
@@ -37,7 +55,11 @@ export function Home() {
             <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
               <a
                 href="/docs/introduction"
-                class="inline-flex items-center gap-2 px-8 py-4 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl shadow-lg shadow-indigo-500/25 transition-all hover:shadow-xl hover:shadow-indigo-500/30 hover:-translate-y-0.5"
+                class="inline-flex items-center gap-2 px-8 py-4 bg-[var(--denote-primary)] hover:bg-[var(--denote-primary-hover)] text-[var(--denote-text-inverse)] font-semibold rounded-xl shadow-lg transition-all hover:shadow-xl hover:-translate-y-0.5"
+                style={{
+                  boxShadow:
+                    `0 10px 25px -5px var(--denote-shadow-primary), 0 8px 10px -6px var(--denote-shadow-primary)`,
+                }}
               >
                 Get Started
                 <svg
@@ -56,7 +78,7 @@ export function Home() {
               </a>
               <a
                 href={config.social?.github || "#"}
-                class="inline-flex items-center gap-2 px-8 py-4 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-900 dark:text-white font-semibold rounded-xl transition-all hover:-translate-y-0.5"
+                class="inline-flex items-center gap-2 px-8 py-4 bg-[var(--denote-bg-tertiary)] hover:bg-[var(--denote-border)] text-[var(--denote-text)] font-semibold rounded-xl transition-all hover:-translate-y-0.5"
               >
                 <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                   <path
@@ -69,11 +91,11 @@ export function Home() {
               </a>
             </div>
 
-            <p class="mt-8 text-sm text-gray-500 dark:text-gray-400">
+            <p class="mt-8 text-sm text-[var(--denote-text-muted)]">
               <span aria-hidden="true">⭐</span> Open source on{" "}
               <a
                 href={config.social?.github || "#"}
-                class="underline hover:text-gray-900 dark:hover:text-white transition-colors"
+                class="underline hover:text-[var(--denote-text)] transition-colors"
               >
                 GitHub
               </a>{" "}
@@ -84,7 +106,7 @@ export function Home() {
       </section>
 
       {/* AI Native Section */}
-      <section class="py-24 bg-white dark:bg-gray-950 border-b border-gray-200 dark:border-gray-800">
+      <section class="py-24 bg-[var(--denote-bg)] border-b border-[var(--denote-border)]">
         <div class="container mx-auto px-4">
           <div class="max-w-5xl mx-auto">
             <div class="grid lg:grid-cols-2 gap-16 items-center">
@@ -92,10 +114,10 @@ export function Home() {
                 <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300 text-sm font-medium mb-6">
                   <span aria-hidden="true">🤖</span> AI Native
                 </div>
-                <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+                <h2 class="text-3xl sm:text-4xl font-bold text-[var(--denote-text)] mb-4">
                   Your docs are an API for AI
                 </h2>
-                <p class="text-lg text-gray-600 dark:text-gray-400 mb-6">
+                <p class="text-lg text-[var(--denote-text-secondary)] mb-6">
                   Every Denote site is a first-class data source for AI agents.
                   Not as an afterthought — as a core feature. Your documentation
                   should be as easy for Claude to read as it is for a developer.
@@ -107,10 +129,10 @@ export function Home() {
                         ✓
                       </span>
                       <div>
-                        <span class="font-medium text-gray-900 dark:text-white">
+                        <span class="font-medium text-[var(--denote-text)]">
                           {f.title}
                         </span>
-                        <span class="text-gray-600 dark:text-gray-400">
+                        <span class="text-[var(--denote-text-secondary)]">
                           — {f.desc}
                         </span>
                       </div>
@@ -160,30 +182,30 @@ GET /api/docs        # Structured JSON`}
       </section>
 
       {/* Features Section */}
-      <section class="py-24 bg-gray-50 dark:bg-gray-900">
+      <section class="py-24 bg-[var(--denote-bg-secondary)]">
         <div class="container mx-auto px-4">
           <div class="max-w-2xl mx-auto text-center mb-16">
-            <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+            <h2 class="text-3xl sm:text-4xl font-bold text-[var(--denote-text)] mb-4">
               Everything you need for great docs
             </h2>
-            <p class="text-lg text-gray-600 dark:text-gray-400">
+            <p class="text-lg text-[var(--denote-text-secondary)]">
               Built for developers, by developers. No compromises.
             </p>
           </div>
 
           <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
             {features.map((feature) => (
-              <div class="p-6 rounded-2xl bg-white dark:bg-gray-950 border border-gray-200 dark:border-gray-800 hover:border-indigo-300 dark:hover:border-indigo-700 transition-colors">
+              <div class="p-6 rounded-2xl bg-[var(--denote-bg)] border border-[var(--denote-border)] hover:border-[var(--denote-primary-text)] transition-colors">
                 <div
-                  class="w-12 h-12 flex items-center justify-center rounded-xl bg-indigo-100 dark:bg-indigo-900/50 text-2xl mb-4"
+                  class="w-12 h-12 flex items-center justify-center rounded-xl bg-[var(--denote-primary-subtle)] text-2xl mb-4"
                   aria-hidden="true"
                 >
                   {feature.icon}
                 </div>
-                <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+                <h3 class="text-xl font-semibold text-[var(--denote-text)] mb-2">
                   {feature.title}
                 </h3>
-                <p class="text-gray-600 dark:text-gray-400">
+                <p class="text-[var(--denote-text-secondary)]">
                   {feature.description}
                 </p>
               </div>
@@ -193,23 +215,36 @@ GET /api/docs        # Structured JSON`}
       </section>
 
       {/* CTA Section */}
-      <section class="py-24 bg-gradient-to-r from-indigo-600 to-purple-600">
+      <section
+        class="py-24"
+        style={{
+          background:
+            `linear-gradient(to right, var(--denote-primary), var(--denote-accent))`,
+        }}
+      >
         <div class="container mx-auto px-4 text-center">
-          <h2 class="text-3xl sm:text-4xl font-bold text-white mb-4">
+          <h2 class="text-3xl sm:text-4xl font-bold text-[var(--denote-text-inverse)] mb-4">
             Ready to build docs that work everywhere?
           </h2>
-          <p class="text-xl text-indigo-100 mb-8 max-w-2xl mx-auto">
+          <p
+            class="text-xl mb-8 max-w-2xl mx-auto"
+            style={{
+              color:
+                "color-mix(in srgb, var(--denote-text-inverse) 85%, transparent)",
+            }}
+          >
             Set up in minutes. Write Markdown, get a site that humans can read
             and AI agents can query.
           </p>
-          <div class="inline-flex items-center gap-3 px-6 py-4 bg-black/20 rounded-xl font-mono text-white mb-6">
-            <span class="text-indigo-300">$</span>
+          <div class="inline-flex items-center gap-3 px-6 py-4 bg-black/20 rounded-xl font-mono text-[var(--denote-text-inverse)] mb-6">
+            <span style={{ opacity: 0.7 }}>$</span>
             <code>deno run -Ar jsr:@denote/init</code>
           </div>
           <div>
             <a
               href="/docs/introduction"
-              class="inline-flex items-center gap-2 px-8 py-4 bg-white text-indigo-700 font-semibold rounded-xl shadow-lg hover:bg-indigo-50 transition-all hover:-translate-y-0.5"
+              class="inline-flex items-center gap-2 px-8 py-4 bg-[var(--denote-bg)] text-[var(--denote-primary-text)] font-semibold rounded-xl shadow-lg transition-all hover:-translate-y-0.5"
+              style={{ hover: "opacity: 0.9" }}
             >
               Get Started
               <svg
@@ -231,10 +266,10 @@ GET /api/docs        # Structured JSON`}
       </section>
 
       {/* Footer */}
-      <footer class="py-12 bg-white dark:bg-gray-950 border-t border-gray-200 dark:border-gray-800">
+      <footer class="py-12 bg-[var(--denote-bg)] border-t border-[var(--denote-border)]">
         <div class="container mx-auto px-4">
           <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div class="flex items-center gap-2 text-gray-600 dark:text-gray-400">
+            <div class="flex items-center gap-2 text-[var(--denote-text-secondary)]">
               <span class="text-xl" aria-hidden="true">🦕</span>
               <span>
                 {config.footer?.copyright ||
@@ -245,7 +280,7 @@ GET /api/docs        # Structured JSON`}
               {config.footer?.links?.map((link) => (
                 <a
                   href={link.href}
-                  class="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+                  class="text-sm text-[var(--denote-text-secondary)] hover:text-[var(--denote-text)] transition-colors"
                 >
                   {link.title}
                 </a>

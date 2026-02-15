@@ -10,10 +10,25 @@ export const config: DocsConfig = {
     dark: "/logo-dark.svg",
   },
   favicon: "/favicon.ico",
-  colors: {
-    primary: "#6366f1",
-    accent: "#22c55e",
-  },
+  // ── Demo theme: uncomment to test config-driven theming ──────────
+  // Warm earthy light mode + deep teal dark mode.
+  // If theming works correctly, EVERY surface/text/border should change.
+  // colors: {
+  //   primary: "#b45309",       // amber-700
+  //   accent: "#059669",        // emerald-600
+  //   background: "#fef3c7",    // warm cream
+  //   surface: "#fde68a",       // amber-200
+  //   text: "#451a03",          // amber-950
+  //   border: "#d97706",        // amber-500
+  //   dark: {
+  //     primary: "#f59e0b",     // amber-400
+  //     accent: "#34d399",      // emerald-400
+  //     background: "#042f2e",  // teal-950
+  //     surface: "#0f766e",     // teal-700
+  //     text: "#ccfbf1",        // teal-100
+  //     border: "#115e59",      // teal-800
+  //   },
+  // },
   navigation: [
     {
       title: "Getting Started",

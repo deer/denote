@@ -86,8 +86,8 @@ function NavSection(
         href={section.href}
         class={`flex items-center gap-2 px-3 py-1.5 text-sm rounded-md transition-colors ${
           isActive
-            ? "bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 font-medium"
-            : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800"
+            ? "bg-[var(--denote-primary-subtle)] text-[var(--denote-primary-text)] font-medium"
+            : "text-[var(--denote-text-secondary)] hover:text-[var(--denote-text)] hover:bg-[var(--denote-bg-tertiary)]"
         }`}
       >
         {section.icon && <span>{section.icon}</span>}
@@ -103,10 +103,10 @@ function NavSection(
       <button
         type="button"
         onClick={() => toggleSection(sectionKey)}
-        class="flex items-center gap-2 px-2 py-1 text-sm font-semibold text-gray-900 dark:text-white w-full text-left group"
+        class="flex items-center gap-2 px-2 py-1 text-sm font-semibold text-[var(--denote-text)] w-full text-left group"
       >
         <svg
-          class={`w-3 h-3 text-gray-400 transition-transform ${
+          class={`w-3 h-3 text-[var(--denote-text-muted)] transition-transform ${
             isCollapsed ? "" : "rotate-90"
           }`}
           fill="none"
@@ -124,7 +124,7 @@ function NavSection(
         <span>{section.title}</span>
       </button>
       {!isCollapsed && (
-        <ul class="space-y-1 ml-2 border-l border-gray-200 dark:border-gray-800">
+        <ul class="space-y-1 ml-2 border-l border-[var(--denote-border)]">
           {section.children!.map((child) => (
             <li key={child.href || child.title}>
               <NavSection

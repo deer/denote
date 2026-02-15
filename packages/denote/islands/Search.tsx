@@ -103,11 +103,11 @@ export function Search({ items }: SearchProps) {
 
       {/* Modal */}
       <div class="relative min-h-screen flex items-start justify-center p-4 pt-[10vh]">
-        <div class="relative w-full max-w-2xl bg-white dark:bg-gray-900 rounded-xl shadow-2xl">
+        <div class="relative w-full max-w-2xl bg-[var(--denote-bg)] rounded-xl shadow-2xl">
           {/* Search input */}
-          <div class="flex items-center border-b border-gray-200 dark:border-gray-700 px-4">
+          <div class="flex items-center border-b border-[var(--denote-border)] px-4">
             <svg
-              class="w-5 h-5 text-gray-400"
+              class="w-5 h-5 text-[var(--denote-text-muted)]"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -122,12 +122,12 @@ export function Search({ items }: SearchProps) {
             <input
               type="text"
               placeholder="Search documentation..."
-              class="flex-1 px-4 py-4 bg-transparent text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none"
+              class="flex-1 px-4 py-4 bg-transparent text-[var(--denote-text)] placeholder-[var(--denote-text-muted)] focus:outline-none"
               value={query.value}
               onInput={(e) => (query.value = e.currentTarget.value)}
               autofocus
             />
-            <kbd class="hidden sm:inline-flex items-center px-2 py-1 text-xs font-medium text-gray-400 bg-gray-100 dark:bg-gray-800 rounded border border-gray-200 dark:border-gray-700">
+            <kbd class="hidden sm:inline-flex items-center px-2 py-1 text-xs font-medium text-[var(--denote-text-muted)] bg-[var(--denote-bg-tertiary)] rounded border border-[var(--denote-border)]">
               ESC
             </kbd>
           </div>
@@ -135,7 +135,7 @@ export function Search({ items }: SearchProps) {
           {/* Results */}
           <div class="max-h-[60vh] overflow-y-auto p-2">
             {query.value.trim() && results.value.length === 0 && (
-              <div class="py-8 text-center text-gray-500 dark:text-gray-400">
+              <div class="py-8 text-center text-[var(--denote-text-muted)]">
                 No results found for "{query.value}"
               </div>
             )}
@@ -145,16 +145,16 @@ export function Search({ items }: SearchProps) {
                 href={`/docs/${item.slug}`}
                 class={`block px-4 py-3 rounded-lg transition-colors ${
                   i === selectedIndex.value
-                    ? "bg-indigo-50 dark:bg-indigo-950"
-                    : "hover:bg-gray-100 dark:hover:bg-gray-800"
+                    ? "bg-[var(--denote-primary-subtle)]"
+                    : "hover:bg-[var(--denote-bg-tertiary)]"
                 }`}
                 onClick={() => (isOpen.value = false)}
               >
-                <div class="font-medium text-gray-900 dark:text-white">
+                <div class="font-medium text-[var(--denote-text)]">
                   {item.title}
                 </div>
                 {item.description && (
-                  <div class="text-sm text-gray-500 dark:text-gray-400 line-clamp-1">
+                  <div class="text-sm text-[var(--denote-text-muted)] line-clamp-1">
                     {item.description}
                   </div>
                 )}
@@ -162,26 +162,26 @@ export function Search({ items }: SearchProps) {
             ))}
 
             {!query.value.trim() && (
-              <div class="py-8 text-center text-gray-500 dark:text-gray-400">
+              <div class="py-8 text-center text-[var(--denote-text-muted)]">
                 Start typing to search...
               </div>
             )}
           </div>
 
           {/* Footer */}
-          <div class="flex items-center justify-between px-4 py-3 border-t border-gray-200 dark:border-gray-700 text-xs text-gray-500 dark:text-gray-400">
+          <div class="flex items-center justify-between px-4 py-3 border-t border-[var(--denote-border)] text-xs text-[var(--denote-text-muted)]">
             <div class="flex items-center gap-4">
               <span class="flex items-center gap-1">
-                <kbd class="px-1.5 py-0.5 bg-gray-100 dark:bg-gray-800 rounded">
+                <kbd class="px-1.5 py-0.5 bg-[var(--denote-bg-tertiary)] rounded">
                   ↑
                 </kbd>
-                <kbd class="px-1.5 py-0.5 bg-gray-100 dark:bg-gray-800 rounded">
+                <kbd class="px-1.5 py-0.5 bg-[var(--denote-bg-tertiary)] rounded">
                   ↓
                 </kbd>
                 to navigate
               </span>
               <span class="flex items-center gap-1">
-                <kbd class="px-1.5 py-0.5 bg-gray-100 dark:bg-gray-800 rounded">
+                <kbd class="px-1.5 py-0.5 bg-[var(--denote-bg-tertiary)] rounded">
                   ↵
                 </kbd>
                 to select

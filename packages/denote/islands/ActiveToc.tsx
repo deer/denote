@@ -53,7 +53,7 @@ export function ActiveToc({ items }: ActiveTocProps) {
   return (
     <aside class="hidden xl:block fixed top-16 right-0 w-64 h-[calc(100vh-4rem)] overflow-y-auto p-6">
       <div class="text-sm">
-        <h4 class="font-semibold text-gray-900 dark:text-white mb-4">
+        <h4 class="font-semibold text-[var(--denote-text)] mb-4">
           On this page
         </h4>
         <nav class="space-y-2">
@@ -67,8 +67,8 @@ export function ActiveToc({ items }: ActiveTocProps) {
                 href={`#${item.id}`}
                 class={`block transition-colors ${
                   isActive
-                    ? "text-indigo-600 dark:text-indigo-400 font-medium"
-                    : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
+                    ? "text-[var(--denote-primary-text)] font-medium"
+                    : "text-[var(--denote-text-secondary)] hover:text-[var(--denote-text)]"
                 }`}
                 style={{ paddingLeft: `${indent}px` }}
               >

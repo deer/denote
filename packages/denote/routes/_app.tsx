@@ -2,6 +2,7 @@ import type { PageProps } from "fresh";
 import { define, type State } from "../utils.ts";
 import { getConfig } from "../lib/config.ts";
 import { COMBINED_CSS } from "@deer/gfm/style";
+import { generateThemeCSS } from "../lib/theme.ts";
 
 /** App wrapper component — exported for programmatic routing */
 export function App({ Component, state }: PageProps<unknown, State>) {
@@ -22,17 +23,9 @@ export function App({ Component, state }: PageProps<unknown, State>) {
     description: pageDescription,
   };
 
-  // Build custom color overrides from config
-  const colorOverrides = config.colors?.primary
-    ? `:root {
-  --gfm-accent-color: ${config.colors.primary};
-  --gfm-accent-hover: color-mix(in srgb, ${config.colors.primary} 85%, black);
-  --gfm-accent-subtle: color-mix(in srgb, ${config.colors.primary} 40%, white);
-}
-.dark {
-  --gfm-accent-subtle: color-mix(in srgb, ${config.colors.primary} 60%, black);
-}`
-    : "";
+  // Build full theme CSS from config
+  const colorOverrides = generateThemeCSS(config);
+  const fontImports = config.fonts?.imports || [];
 
   return (
     <html lang="en" class="scroll-smooth">
@@ -58,6 +51,13 @@ export function App({ Component, state }: PageProps<unknown, State>) {
           media="(prefers-color-scheme: dark)"
         />
         <link rel="manifest" href="/manifest.json" />
+        {fontImports.map((url) => (
+          <link
+            key={url}
+            rel="stylesheet"
+            href={url}
+          />
+        ))}
         {pageUrl && <link rel="canonical" href={pageUrl} />}
         <script
           type="application/ld+json"
@@ -104,10 +104,10 @@ export function App({ Component, state }: PageProps<unknown, State>) {
           }}
         />
       </head>
-      <body class="antialiased text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-950">
+      <body class="antialiased text-[var(--denote-text)] bg-[var(--denote-bg)]">
         <a
           href="#main-content"
-          class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[100] focus:px-4 focus:py-2 focus:bg-indigo-600 focus:text-white focus:rounded-lg"
+          class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[100] focus:px-4 focus:py-2 focus:bg-[var(--denote-primary)] focus:text-[var(--denote-text-inverse)] focus:rounded-lg"
         >
           Skip to content
         </a>

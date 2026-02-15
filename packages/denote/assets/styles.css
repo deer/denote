@@ -3,36 +3,88 @@
    ======================================== */
 
 /* ========================================
-   GFM Theme Variables
-   Override @deer/gfm defaults for Denote's indigo theme.
+   Design Tokens
+   CSS Custom Properties for full theming support.
+   Override via docs.config.ts — no component edits needed.
+
+   Note: These live directly in styles.css (not @import'd) so that
+   Tailwind v4 processes them in the correct cascade layer. An @import
+   gets placed in a lower-priority layer where .dark vars lose to
+   Tailwind utilities.
    ======================================== */
 
 :root {
-  --gfm-fg-default: #374151;
-  --gfm-fg-heading: #111827;
-  --gfm-fg-muted: #6b7280;
-  --gfm-accent-color: #6366f1;
-  --gfm-accent-hover: #4f46e5;
-  --gfm-accent-subtle: #a5b4fc;
-  --gfm-border-color: #e5e7eb;
-  --gfm-bg-subtle: #f8fafc;
-  --gfm-bg-surface: #f1f5f9;
+  /* Brand */
+  --denote-primary: #4f46e5;
+  --denote-primary-hover: #4338ca;
+  --denote-primary-subtle: #eef2ff;
+  --denote-primary-text: #4f46e5;
+  --denote-accent: #7c3aed;
+
+  /* Surfaces */
+  --denote-bg: #ffffff;
+  --denote-bg-secondary: #f9fafb;
+  --denote-bg-tertiary: #f3f4f6;
+  --denote-surface-overlay: rgba(255, 255, 255, 0.8);
+
+  /* Text */
+  --denote-text: #111827;
+  --denote-text-secondary: #4b5563;
+  --denote-text-muted: #9ca3af;
+  --denote-text-inverse: #ffffff;
+
+  /* Borders */
+  --denote-border: #e5e7eb;
+  --denote-border-strong: #d1d5db;
+
+  /* Shadows */
+  --denote-shadow-color: rgba(0, 0, 0, 0.1);
+  --denote-shadow-primary: rgba(79, 70, 229, 0.25);
+
+  /* Fonts */
+  --denote-font-body: system-ui, -apple-system, sans-serif;
+  --denote-font-heading: system-ui, -apple-system, sans-serif;
+  --denote-font-mono:
+    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  /* GFM Bridge */
+  --gfm-fg-default: var(--denote-text-secondary);
+  --gfm-fg-heading: var(--denote-text);
+  --gfm-fg-muted: var(--denote-text-muted);
+  --gfm-accent-color: var(--denote-primary);
+  --gfm-accent-hover: var(--denote-primary-hover);
+  --gfm-accent-subtle: var(--denote-primary-subtle);
+  --gfm-border-color: var(--denote-border);
+  --gfm-bg-subtle: var(--denote-bg-secondary);
+  --gfm-bg-surface: var(--denote-bg-tertiary);
   --gfm-inline-code-color: #dc2626;
-  --gfm-inline-code-bg: #f3f4f6;
+  --gfm-inline-code-bg: var(--denote-bg-tertiary);
 }
 
 .dark {
-  --gfm-fg-default: #d1d5db;
-  --gfm-fg-heading: #f9fafb;
-  --gfm-fg-muted: #9ca3af;
-  --gfm-accent-color: #a5b4fc;
-  --gfm-accent-hover: #c7d2fe;
-  --gfm-accent-subtle: #6366f1;
-  --gfm-border-color: #374151;
-  --gfm-bg-subtle: #0f172a;
-  --gfm-bg-surface: #0b1120;
+  --denote-primary: #818cf8;
+  --denote-primary-hover: #a5b4fc;
+  --denote-primary-subtle: #1e1b4b;
+  --denote-primary-text: #818cf8;
+  --denote-accent: #a78bfa;
+
+  --denote-bg: #030712;
+  --denote-bg-secondary: #0a0a0a;
+  --denote-bg-tertiary: #1f2937;
+  --denote-surface-overlay: rgba(3, 7, 18, 0.8);
+
+  --denote-text: #f9fafb;
+  --denote-text-secondary: #9ca3af;
+  --denote-text-muted: #6b7280;
+  --denote-text-inverse: #ffffff;
+
+  --denote-border: #1f2937;
+  --denote-border-strong: #374151;
+
+  --denote-shadow-color: rgba(0, 0, 0, 0.3);
+  --denote-shadow-primary: rgba(129, 140, 248, 0.15);
+
   --gfm-inline-code-color: #f87171;
-  --gfm-inline-code-bg: #1f2937;
 }
 
 /* Scrollbar styling */
