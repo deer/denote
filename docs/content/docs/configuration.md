@@ -60,11 +60,36 @@ Customize your brand colors:
 ```typescript
 export const config: DocsConfig = {
   colors: {
-    primary: "#6366f1", // Indigo
-    accent: "#22c55e", // Green
+    primary: "#6366f1", // Links, buttons, accents
+    accent: "#22c55e", // Secondary accent
   },
 };
 ```
+
+For full control over surfaces, text, and borders:
+
+```typescript
+export const config: DocsConfig = {
+  colors: {
+    primary: "#6366f1",
+    accent: "#22c55e",
+    background: "#ffffff", // Page background
+    surface: "#f9fafb", // Cards, sidebar
+    text: "#111827", // Body text
+    border: "#e5e7eb", // Borders
+    dark: {
+      primary: "#818cf8",
+      background: "#030712",
+      surface: "#0a0a0a",
+      text: "#f9fafb",
+      border: "#1f2937",
+    },
+  },
+};
+```
+
+See the [Theming guide](/docs/theming) for the full list of design tokens and
+how auto-derivation works.
 
 ## Top Navigation
 
@@ -198,6 +223,8 @@ export const config: DocsConfig = {
   colors: {
     primary: "#0066cc",
     accent: "#00cc66",
+    // background, surface, text, border, dark are also available
+    // See "Theming" docs for full options
   },
   navigation: [
     {
