@@ -31,15 +31,27 @@ export function DocsLayout({
   next,
   breadcrumbs = [],
 }: DocsLayoutProps) {
+  const config = getConfig();
+  const showToc = config.layout?.toc !== false;
+  const showBreadcrumbs = config.layout?.breadcrumbs !== false;
+  const showFooter = config.layout?.footer !== false;
+
   return (
     <div class="min-h-screen bg-[var(--denote-bg)]">
       <Header currentPath={currentPath} />
       <Sidebar currentPath={currentPath} />
 
-      <main class="lg:pl-64 xl:pr-64">
-        <article class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <main
+        class={`lg:[padding-left:var(--denote-sidebar-width)]${
+          showToc ? " xl:[padding-right:var(--denote-toc-width)]" : ""
+        }`}
+      >
+        <article
+          class="mx-auto px-4 sm:px-6 lg:px-8 py-12"
+          style={{ maxWidth: "var(--denote-content-max-width)" }}
+        >
           {/* Breadcrumbs */}
-          {breadcrumbs.length > 1 && (
+          {showBreadcrumbs && breadcrumbs.length > 1 && (
             <nav class="flex items-center gap-1.5 text-sm text-[var(--denote-text-muted)] mb-4">
               {breadcrumbs.map((crumb, i) => (
                 <>
@@ -99,7 +111,7 @@ export function DocsLayout({
           </div>
 
           {/* Prev / Next Navigation */}
-          {(prev || next) && (
+          {showFooter && (prev || next) && (
             <footer class="mt-16 pt-8 border-t border-[var(--denote-border)]">
               <div class="flex justify-between">
                 {prev
@@ -138,7 +150,7 @@ export function DocsLayout({
         </article>
       </main>
 
-      <ActiveToc items={toc} />
+      {showToc && <ActiveToc items={toc} />}
       {getConfig().ai?.chatbot && <AiChat />}
     </div>
   );

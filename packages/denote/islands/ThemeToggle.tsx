@@ -19,13 +19,23 @@ effect(() => {
   localStorage.setItem("theme", isDark.value ? "dark" : "light");
 });
 
-export function ThemeToggle() {
+interface ThemeToggleProps {
+  darkMode?: "auto" | "light" | "dark" | "toggle";
+}
+
+export function ThemeToggle({ darkMode }: ThemeToggleProps) {
+  // Hide toggle when theme is forced
+  if (darkMode === "light" || darkMode === "dark") {
+    return null;
+  }
+
   // Initialize once on first client render
   if (typeof document !== "undefined" && !mounted.value) {
     const stored = localStorage.getItem("theme");
     const prefersDark =
       globalThis.matchMedia("(prefers-color-scheme: dark)").matches;
-    isDark.value = stored === "dark" || (!stored && prefersDark);
+    isDark.value = stored === "dark" ||
+      (!stored && (prefersDark || darkMode === "toggle"));
     mounted.value = true;
   }
 

@@ -62,8 +62,7 @@ export const config: DocsConfig = {
     {
       title: "Customization",
       children: [
-        { title: "Theming", href: "/docs/theming" },
-        { title: "Styling", href: "/docs/styling" },
+        { title: "Theming & Styling", href: "/docs/theming" },
       ],
     },
   ],

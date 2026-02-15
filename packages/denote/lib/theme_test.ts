@@ -225,6 +225,95 @@ Deno.test("generateThemeCSS - dark uses html:root.dark", () => {
   assertEquals(css.includes("\n.dark {"), false);
 });
 
+// --- Layout dimensions ---
+
+Deno.test("generateThemeCSS - layout dimensions as CSS vars", () => {
+  const css = generateThemeCSS(cfg({
+    layout: {
+      sidebarWidth: 300,
+      maxContentWidth: 900,
+      headerHeight: 80,
+      tocWidth: 200,
+    },
+  }));
+  assertStringIncludes(css, "html:root {");
+  assertStringIncludes(css, "--denote-sidebar-width: 300px;");
+  assertStringIncludes(css, "--denote-content-max-width: 900px;");
+  assertStringIncludes(css, "--denote-header-height: 80px;");
+  assertStringIncludes(css, "--denote-toc-width: 200px;");
+});
+
+Deno.test("generateThemeCSS - layout alone triggers CSS generation", () => {
+  const css = generateThemeCSS(cfg({ layout: { sidebarWidth: 280 } }));
+  assertStringIncludes(css, "html:root {");
+  assertStringIncludes(css, "--denote-sidebar-width: 280px;");
+});
+
+Deno.test("generateThemeCSS - layout without colors produces no dark block", () => {
+  const css = generateThemeCSS(cfg({ layout: { sidebarWidth: 280 } }));
+  assertEquals(css.includes("html:root.dark"), false);
+});
+
+Deno.test("generateThemeCSS - partial layout only emits set values", () => {
+  const css = generateThemeCSS(cfg({ layout: { headerHeight: 48 } }));
+  assertStringIncludes(css, "--denote-header-height: 48px;");
+  assertEquals(css.includes("--denote-sidebar-width"), false);
+  assertEquals(css.includes("--denote-toc-width"), false);
+  assertEquals(css.includes("--denote-content-max-width"), false);
+});
+
+// --- Roundedness ---
+
+Deno.test("generateThemeCSS - roundedness none", () => {
+  const css = generateThemeCSS(cfg({ style: { roundedness: "none" } }));
+  assertStringIncludes(css, "--denote-radius: 0;");
+  assertStringIncludes(css, "--denote-radius-lg: 0;");
+  assertStringIncludes(css, "--denote-radius-xl: 0;");
+});
+
+Deno.test("generateThemeCSS - roundedness sm", () => {
+  const css = generateThemeCSS(cfg({ style: { roundedness: "sm" } }));
+  assertStringIncludes(css, "--denote-radius: 0.25rem;");
+  assertStringIncludes(css, "--denote-radius-lg: 0.375rem;");
+  assertStringIncludes(css, "--denote-radius-xl: 0.5rem;");
+});
+
+Deno.test("generateThemeCSS - roundedness md", () => {
+  const css = generateThemeCSS(cfg({ style: { roundedness: "md" } }));
+  assertStringIncludes(css, "--denote-radius: 0.5rem;");
+  assertStringIncludes(css, "--denote-radius-lg: 0.75rem;");
+  assertStringIncludes(css, "--denote-radius-xl: 1rem;");
+});
+
+Deno.test("generateThemeCSS - roundedness lg", () => {
+  const css = generateThemeCSS(cfg({ style: { roundedness: "lg" } }));
+  assertStringIncludes(css, "--denote-radius: 0.75rem;");
+});
+
+Deno.test("generateThemeCSS - roundedness xl", () => {
+  const css = generateThemeCSS(cfg({ style: { roundedness: "xl" } }));
+  assertStringIncludes(css, "--denote-radius: 1rem;");
+  assertStringIncludes(css, "--denote-radius-lg: 1.25rem;");
+  assertStringIncludes(css, "--denote-radius-xl: 1.5rem;");
+});
+
+Deno.test("generateThemeCSS - roundedness alone triggers CSS generation", () => {
+  const css = generateThemeCSS(cfg({ style: { roundedness: "lg" } }));
+  assertStringIncludes(css, "html:root {");
+  assertEquals(css.includes("html:root.dark"), false);
+});
+
+// --- Layout + colors combined ---
+
+Deno.test("generateThemeCSS - layout and colors together", () => {
+  const css = generateThemeCSS(cfg({
+    layout: { sidebarWidth: 320 },
+    colors: { primary: "#ff0000" },
+  }));
+  assertStringIncludes(css, "--denote-sidebar-width: 320px;");
+  assertStringIncludes(css, "--denote-primary: #ff0000;");
+});
+
 // --- No spurious dark block ---
 
 Deno.test("generateThemeCSS - no dark block without primary/accent/dark", () => {

@@ -1,6 +1,35 @@
 import { define } from "../utils.ts";
 import { getConfig } from "../lib/config.ts";
+import type { NavItem } from "../docs.config.ts";
 import { Header } from "../components/Header.tsx";
+
+/** Find the first href in a navigation tree */
+function firstNavHref(items: NavItem[]): string | undefined {
+  for (const item of items) {
+    if (item.href) return item.href;
+    if (item.children) {
+      const found = firstNavHref(item.children);
+      if (found) return found;
+    }
+  }
+  return undefined;
+}
+
+/** Handler to support landing page redirect */
+export const handler = define.handlers({
+  GET(ctx) {
+    const config = getConfig();
+    if (config.landing?.enabled === false) {
+      const target = config.landing?.redirectTo ||
+        firstNavHref(config.navigation) || "/docs";
+      return new Response(null, {
+        status: 302,
+        headers: { Location: target },
+      });
+    }
+    return ctx.render(<Home />);
+  },
+});
 
 /** Home page component — exported for programmatic routing */
 export function Home() {
