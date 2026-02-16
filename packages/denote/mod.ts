@@ -22,7 +22,7 @@
  *     .mountApp("/", docs)
  *     .listen();
  */
-import { App, staticFiles } from "fresh";
+import { App, csp, staticFiles } from "fresh";
 import type { DocsConfig } from "./docs.config.ts";
 import {
   getDocsBasePath,
@@ -152,17 +152,12 @@ export function denote(options: DenoteOptions): App<unknown> {
     });
   });
 
-  // ── Security headers + CSP middleware ─────────────────────────
+  // ── Content Security Policy (Fresh built-in) ─────────────────
+  app.use(csp());
+
+  // ── Security headers middleware ──────────────────────────────
   app.use(async (ctx) => {
-    // Generate a per-request nonce for inline scripts (JSON-LD)
-    const nonceBytes = new Uint8Array(16);
-    crypto.getRandomValues(nonceBytes);
-    const nonce = btoa(String.fromCharCode(...nonceBytes));
-    ctx.state.cspNonce = nonce;
-
     const resp = await ctx.next();
-
-    // Security headers
     resp.headers.set(
       "Strict-Transport-Security",
       "max-age=63072000; includeSubDomains; preload",
@@ -170,23 +165,6 @@ export function denote(options: DenoteOptions): App<unknown> {
     resp.headers.set("X-Content-Type-Options", "nosniff");
     resp.headers.set("X-Frame-Options", "DENY");
     resp.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
-
-    // Content Security Policy (only for HTML responses)
-    const ct = resp.headers.get("Content-Type") || "";
-    if (ct.includes("text/html")) {
-      const csp = [
-        "default-src 'self'",
-        `script-src 'self' 'nonce-${nonce}'`,
-        "style-src 'self' 'unsafe-inline'",
-        "img-src 'self' data:",
-        "font-src 'self'",
-        "connect-src 'self'",
-        "frame-ancestors 'none'",
-        "base-uri 'self'",
-        "form-action 'self'",
-      ].join("; ");
-      resp.headers.set("Content-Security-Policy", csp);
-    }
 
     // Cache hashed static assets aggressively
     const url = new URL(ctx.req.url);

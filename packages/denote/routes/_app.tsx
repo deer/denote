@@ -56,10 +56,9 @@ export function App({ Component, state }: PageProps<unknown, State>) {
         ))}
         {pageUrl && <link rel="canonical" href={pageUrl} />}
 
-        {/* JSON-LD structured data — nonce allows it under strict CSP */}
+        {/* JSON-LD structured data (application/ld+json is not executable — CSP safe) */}
         <script
           type="application/ld+json"
-          nonce={state.cspNonce}
           dangerouslySetInnerHTML={{ __html: jsonLd }}
         />
 
