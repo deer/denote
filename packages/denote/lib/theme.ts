@@ -7,14 +7,6 @@
  */
 import type { DocsConfig } from "../docs.config.ts";
 
-/** Validate a CSS color value to prevent CSS injection */
-export function isValidCssColor(value: string): boolean {
-  return /^(#[0-9a-fA-F]{3,8}|[a-zA-Z]+|(?:rgb|hsl|oklch|oklab|color-mix)\([^;{}]*\))$/
-    .test(
-      value,
-    );
-}
-
 /** Generate CSS custom property overrides from DocsConfig */
 export function generateThemeCSS(config: DocsConfig): string {
   const c = config.colors;
