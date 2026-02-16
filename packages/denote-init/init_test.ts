@@ -214,6 +214,10 @@ Deno.test("scaffold creates expected files", async () => {
   const denoJson = JSON.parse(await readProjectFile(tmp.path, "deno.json"));
   assertEquals(denoJson.tasks.dev, "deno run -A jsr:@denote/core/cli dev");
   assertEquals(denoJson.tasks.build, "deno run -A jsr:@denote/core/cli build");
+  assertEquals(
+    denoJson.tasks.validate,
+    "deno run -A jsr:@denote/core/cli validate",
+  );
   assertEquals(denoJson.tasks.mcp, "deno run -A jsr:@denote/core/cli mcp");
   assert(denoJson.imports["@denote/core"], "Should have @denote/core import");
 

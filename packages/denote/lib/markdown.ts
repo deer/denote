@@ -61,9 +61,16 @@ export function parseFrontmatter(
   try {
     const yaml = match[1];
     const frontmatter = parseYaml(yaml) as DocFrontmatter;
+    if (!frontmatter.title) {
+      console.warn(
+        "Warning: No title found in frontmatter. Using 'Untitled'.",
+      );
+      frontmatter.title = "Untitled";
+    }
     const content = raw.slice(match[0].length);
     return { frontmatter, content };
   } catch {
+    console.warn("Warning: Failed to parse frontmatter YAML. Using defaults.");
     return {
       frontmatter: { title: "Untitled" },
       content: raw,

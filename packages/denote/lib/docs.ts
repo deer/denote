@@ -79,7 +79,11 @@ export async function getAllDocs(): Promise<DocPage[]> {
         }
       }
     } catch {
-      // Directory doesn't exist
+      if (dir === docsDir) {
+        console.warn(
+          `Warning: content directory not found at ${docsDir}. No docs will be served.`,
+        );
+      }
     }
   }
 

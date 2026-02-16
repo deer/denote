@@ -5,7 +5,8 @@
     "dev": "deno run -A ../packages/denote/cli.ts dev",
     "build": "deno run -A ../packages/denote/cli.ts build",
     "start": "deno serve -A _fresh/server.js",
-    "ok": "deno fmt --check && deno lint && deno check denote.config.ts"
+    "ok": "deno fmt --check && deno lint && deno check denote.config.ts",
+    "validate": "deno run -A ../packages/denote/cli.ts validate"
   },
   "imports": {
     "@denote/core": "../packages/denote/mod.ts",

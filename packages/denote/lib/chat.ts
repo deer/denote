@@ -10,6 +10,7 @@ import { generateFullDocs } from "./ai.ts";
 import { getConfig } from "./config.ts";
 
 let _apiKeyWarned = false;
+let _missingKeyWarned = false;
 
 export interface ChatMessage {
   role: "user" | "assistant";
@@ -73,6 +74,13 @@ async function aiChat(
     );
   }
   const apiKey = configApiKey || Deno.env.get("DENOTE_AI_API_KEY") || "";
+
+  if (!apiKey && !_missingKeyWarned) {
+    _missingKeyWarned = true;
+    console.warn(
+      "Warning: AI chat is configured but no API key found. Set DENOTE_AI_API_KEY environment variable.",
+    );
+  }
 
   const response = await fetch(apiUrl, {
     method: "POST",

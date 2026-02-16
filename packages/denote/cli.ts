@@ -28,6 +28,7 @@ ${bold("USAGE")}
 ${bold("COMMANDS")}
   dev              Start development server
   build            Build static site for production
+  validate         Check content, config, and navigation for issues
   mcp [--http]     Start MCP server for AI agents
 
 ${bold("OPTIONS")}
@@ -234,6 +235,16 @@ if (import.meta.main) {
     case "build":
       await buildCommand();
       break;
+
+    case "validate": {
+      const { config } = await loadUserConfig();
+      const { setConfig } = await import("./lib/config.ts");
+      setConfig(config as import("./denote.config.ts").DenoteConfig);
+      const { validateAndPrint } = await import("./lib/validate.ts");
+      const errorCount = await validateAndPrint();
+      Deno.exit(errorCount > 0 ? 1 : 0);
+      break;
+    }
 
     case "mcp": {
       // Delegate to the existing mcp.ts with remaining args
