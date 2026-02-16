@@ -182,6 +182,19 @@ export const config: DenoteConfig = {
 };
 ```
 
+## Edit Link
+
+Show an "Edit this page" link at the bottom of each doc page:
+
+```typescript
+export const config: DenoteConfig = {
+  editUrl: "https://github.com/your-org/your-repo/edit/main/docs/content/docs",
+};
+```
+
+Denote appends `/<slug>.md` automatically. If `editUrl` is not set, no link
+appears.
+
 ## SEO
 
 Denote includes several built-in SEO features that work automatically:
@@ -305,5 +318,6 @@ export const config: DenoteConfig = {
     darkMode: "auto",
   },
   ga4: true,
+  editUrl: "https://github.com/acme/docs/edit/main/docs/content/docs",
 };
 ```
