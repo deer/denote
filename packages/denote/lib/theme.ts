@@ -1,7 +1,9 @@
 /**
  * Theme CSS generation from DocsConfig.
  *
- * Extracted to a separate module for testability.
+ * Extracted to a separate module for testability and CSP compliance.
+ * Instead of inlining styles via dangerouslySetInnerHTML, these functions
+ * generate content served from dedicated routes.
  */
 import type { DocsConfig } from "../docs.config.ts";
 
@@ -183,4 +185,23 @@ export function generateThemeCSS(config: DocsConfig): string {
   }
 
   return lines.join("\n");
+}
+
+/** Generate the dark-mode detection IIFE, respecting darkMode config */
+export function darkModeScript(
+  mode?: "auto" | "light" | "dark" | "toggle",
+): string {
+  if (mode === "light") {
+    return `(function(){document.documentElement.classList.remove('dark')})();`;
+  }
+  if (mode === "dark") {
+    return `(function(){document.documentElement.classList.add('dark')})();`;
+  }
+  // "toggle" defaults to dark, "auto" (default) uses system preference
+  const defaultDark = mode === "toggle";
+  return `(function(){
+    var s;try{s=localStorage.getItem('theme')}catch(e){}
+    var p=window.matchMedia('(prefers-color-scheme: dark)').matches;
+    if(s==='dark'||(!s&&(p||${defaultDark}))){document.documentElement.classList.add('dark')}
+  })();`;
 }

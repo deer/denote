@@ -30,7 +30,10 @@ import {
   setContentDir,
   setDocsBasePath,
 } from "./lib/config.ts";
+import { csp } from "./lib/csp.ts";
 import { ga4Middleware } from "./lib/ga4.ts";
+import { darkModeScript, generateThemeCSS } from "./lib/theme.ts";
+import { COMBINED_CSS } from "@deer/gfm/style";
 import type { State } from "./utils.ts";
 
 // Import page components for programmatic routing
@@ -117,10 +120,79 @@ export function denote(options: DenoteOptions): App<unknown> {
     app.use(ga4Middleware());
   }
 
+  // ── CSP-compliant asset routes ──────────────────────────────
+
+  // Theme detection script (render-blocking to prevent FOUC)
+  app.get("/theme-init.js", () => {
+    return new Response(darkModeScript(config.style?.darkMode), {
+      headers: {
+        "Content-Type": "application/javascript; charset=utf-8",
+        "Cache-Control": "public, max-age=3600",
+      },
+    });
+  });
+
+  // GFM syntax highlighting CSS
+  app.get("/gfm.css", () => {
+    return new Response(COMBINED_CSS, {
+      headers: {
+        "Content-Type": "text/css; charset=utf-8",
+        "Cache-Control": "public, max-age=86400",
+      },
+    });
+  });
+
+  // Config-driven theme override CSS variables (computed once at init)
+  const themeVarsCss = generateThemeCSS(config);
+  app.get("/theme-vars.css", () => {
+    return new Response(themeVarsCss, {
+      headers: {
+        "Content-Type": "text/css; charset=utf-8",
+        "Cache-Control": "public, max-age=3600",
+      },
+    });
+  });
+
+  // ── Content Security Policy ──────────────────────────────────
+  // Build directive overrides based on config (fonts, images, etc.)
+  const cspOverrides: string[] = [
+    // Docs commonly embed external images from GitHub, CDNs, etc.
+    "img-src 'self' data: https:",
+  ];
+
+  // Allow font CDN origins when external font imports are configured
+  const styleSrc = ["'self'", "'unsafe-inline'"];
+  const fontSrc = ["'self'"];
+  for (const url of config.fonts?.imports ?? []) {
+    try {
+      const { origin } = new URL(url);
+      if (!styleSrc.includes(origin)) styleSrc.push(origin);
+      if (
+        origin === "https://fonts.googleapis.com" &&
+        !fontSrc.includes("https://fonts.gstatic.com")
+      ) {
+        fontSrc.push("https://fonts.gstatic.com");
+      }
+    } catch { /* skip invalid URLs */ }
+  }
+  if (config.style?.customCss?.startsWith("http")) {
+    try {
+      const { origin } = new URL(config.style.customCss);
+      if (!styleSrc.includes(origin)) styleSrc.push(origin);
+    } catch { /* skip */ }
+  }
+  if (styleSrc.length > 2) {
+    cspOverrides.push(`style-src ${styleSrc.join(" ")}`);
+  }
+  if (fontSrc.length > 1) {
+    cspOverrides.push(`font-src ${fontSrc.join(" ")}`);
+  }
+
+  app.use(csp({ csp: cspOverrides }));
+
   // ── Security headers middleware ──────────────────────────────
   app.use(async (ctx) => {
     const resp = await ctx.next();
-    // Security headers
     resp.headers.set(
       "Strict-Transport-Security",
       "max-age=63072000; includeSubDomains; preload",

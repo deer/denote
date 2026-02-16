@@ -272,8 +272,7 @@ GET /api/docs        # Structured JSON`}
           <div>
             <a
               href="/docs/introduction"
-              class="inline-flex items-center gap-2 px-8 py-4 bg-[var(--denote-bg)] text-[var(--denote-primary-text)] font-semibold rounded-xl shadow-lg transition-all hover:-translate-y-0.5"
-              style={{ hover: "opacity: 0.9" }}
+              class="inline-flex items-center gap-2 px-8 py-4 bg-[var(--denote-bg)] text-[var(--denote-primary-text)] font-semibold rounded-xl shadow-lg transition-all hover:-translate-y-0.5 hover:opacity-90"
             >
               Get Started
               <svg
