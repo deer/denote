@@ -10,9 +10,12 @@ import { renderDoc } from "../../lib/markdown.ts";
 import { DocsLayout } from "../../components/DocsLayout.tsx";
 import { Search } from "../../islands/Search.tsx";
 import { CopyButton } from "../../islands/CopyButton.tsx";
+import { EditLink } from "../../components/EditLink.tsx";
+import { getConfig } from "../../lib/config.ts";
 
 /** Docs page component — exported for programmatic routing */
 export async function DocsPage(ctx: PageProps<unknown, State>) {
+  const config = getConfig();
   const slugParts = ctx.params.slug;
   const slug = Array.isArray(slugParts)
     ? slugParts.join("/")
@@ -46,6 +49,7 @@ export async function DocsPage(ctx: PageProps<unknown, State>) {
         class="markdown-body"
         dangerouslySetInnerHTML={{ __html: html }}
       />
+      <EditLink editUrl={config.editUrl} slug={slug} />
     </DocsLayout>
   );
 }

@@ -87,4 +87,5 @@ export const config: DenoteConfig = {
     mcp: true,
   },
   ga4: true,
+  editUrl: "https://github.com/deer/denote/edit/main/docs/content/docs",
 };

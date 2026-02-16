@@ -91,6 +91,9 @@ export interface DenoteConfig {
   };
   /** Enable GA4 analytics. Set GA4_MEASUREMENT_ID env var to activate. */
   ga4?: boolean;
+  /** Base URL for "Edit this page" links. Denote appends /<slug>.md automatically.
+   *  Example: "https://github.com/your-org/your-repo/edit/main/docs/content/docs" */
+  editUrl?: string;
   ai?: {
     /** Enable the "Ask AI" chatbot widget on doc pages */
     chatbot?: boolean;

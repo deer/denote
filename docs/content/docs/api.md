@@ -152,3 +152,9 @@ app.get("/api/custom", (ctx) => {
   });
 });
 ```
+
+## Fresh v2
+
+Denote is built on [Fresh v2](https://fresh.deno.dev/docs/). For details on
+routing, middleware, and app configuration, see the
+[Fresh v2 documentation](https://fresh.deno.dev/docs/).
