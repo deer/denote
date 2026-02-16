@@ -11,6 +11,7 @@
     "jsr:@fresh/plugin-vite@^1.0.8": "1.0.8",
     "jsr:@kitsonk/ga4@0.1": "0.1.0",
     "jsr:@luca/cases@1": "1.0.0",
+    "jsr:@std/assert@*": "1.0.18",
     "jsr:@std/assert@1": "1.0.18",
     "jsr:@std/assert@^1.0.17": "1.0.18",
     "jsr:@std/async@^1.0.0-rc.1": "1.1.0",
@@ -22,6 +23,8 @@
     "jsr:@std/fmt@^1.0.7": "1.0.9",
     "jsr:@std/fmt@^1.0.8": "1.0.9",
     "jsr:@std/fmt@~0.225.4": "0.225.6",
+    "jsr:@std/fs@*": "1.0.22",
+    "jsr:@std/fs@1": "1.0.22",
     "jsr:@std/fs@^1.0.19": "1.0.22",
     "jsr:@std/html@^1.0.5": "1.0.5",
     "jsr:@std/http@0.224": "0.224.5",
@@ -32,6 +35,7 @@
     "jsr:@std/media-types@^1.0.0-rc.1": "1.1.0",
     "jsr:@std/media-types@^1.1.0": "1.1.0",
     "jsr:@std/net@~0.224.3": "0.224.5",
+    "jsr:@std/path@*": "1.1.4",
     "jsr:@std/path@1": "1.1.4",
     "jsr:@std/path@1.0.0-rc.2": "1.0.0-rc.2",
     "jsr:@std/path@^1.1.1": "1.1.4",
@@ -144,7 +148,7 @@
         "jsr:@fresh/build-id",
         "jsr:@std/encoding@^1.0.10",
         "jsr:@std/fmt@^1.0.8",
-        "jsr:@std/fs",
+        "jsr:@std/fs@^1.0.19",
         "jsr:@std/html",
         "jsr:@std/http@^1.0.21",
         "jsr:@std/jsonc",
@@ -221,6 +225,7 @@
     "@std/fs@1.0.22": {
       "integrity": "de0f277a58a867147a8a01bc1b181d0dfa80bfddba8c9cf2bacd6747bcec9308",
       "dependencies": [
+        "jsr:@std/internal",
         "jsr:@std/path@^1.1.4"
       ]
     },
@@ -3055,6 +3060,13 @@
           "npm:tailwindcss@^4.1.10",
           "npm:vite@^7.3.1",
           "npm:zod@^4.3.6"
+        ]
+      },
+      "packages/denote-init": {
+        "dependencies": [
+          "jsr:@std/assert@1",
+          "jsr:@std/fs@1",
+          "jsr:@std/path@1"
         ]
       }
     }
