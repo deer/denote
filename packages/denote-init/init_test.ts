@@ -89,6 +89,61 @@ async function patchDenoJson(projectDir: string) {
   );
 }
 
+/**
+ * Full patch: resolve @denote/core locally AND copy all deps from the core
+ * package (fresh, preact, vite, tailwindcss, etc.) plus JSX compilerOptions.
+ * Needed for tests that actually start the dev server.
+ */
+async function patchDenoJsonFull(projectDir: string) {
+  const denoJsonPath = join(projectDir, "deno.json");
+  const config = JSON.parse(await Deno.readTextFile(denoJsonPath));
+  const coreUrl = new URL("./", `file://${DENOTE_CORE_DIR}/`).href;
+
+  config.imports["@denote/core"] = coreUrl + "mod.ts";
+  config.imports["@denote/core/types"] = coreUrl + "docs.config.ts";
+  config.imports["@denote/core/cli"] = new URL("cli.ts", coreUrl).href;
+
+  // Copy ALL deps from core package (fresh, preact, vite, tailwindcss, etc.)
+  const coreDeno = JSON.parse(
+    await Deno.readTextFile(join(DENOTE_CORE_DIR, "deno.json")),
+  );
+  for (const [key, value] of Object.entries(coreDeno.imports)) {
+    config.imports[key] ??= value;
+  }
+
+  // JSX compiler options (required for Fresh/Preact)
+  config.compilerOptions = coreDeno.compilerOptions;
+  config.nodeModulesDir = "auto";
+
+  await Deno.writeTextFile(
+    denoJsonPath,
+    JSON.stringify(config, null, 2) + "\n",
+  );
+}
+
+/** Find a free port by briefly listening on port 0. */
+function getAvailablePort(): number {
+  const listener = Deno.listen({ port: 0 });
+  const port = (listener.addr as Deno.NetAddr).port;
+  listener.close();
+  return port;
+}
+
+/** Poll an HTTP endpoint until it responds or timeout. */
+async function waitForServer(url: string, timeoutMs: number): Promise<void> {
+  const start = Date.now();
+  while (Date.now() - start < timeoutMs) {
+    try {
+      const resp = await fetch(url);
+      await resp.body?.cancel();
+      return;
+    } catch {
+      await new Promise((r) => setTimeout(r, 500));
+    }
+  }
+  throw new Error(`Server did not respond within ${timeoutMs}ms: ${url}`);
+}
+
 /** Run a command in a directory and return the result */
 async function runCommand(
   cwd: string,
@@ -290,4 +345,46 @@ Deno.test("CLI errors on existing non-empty directory", async () => {
 
   assert(result.code !== 0, "Should exit with non-zero code");
   assertStringIncludes(result.stderr, "already exists");
+});
+
+Deno.test({
+  name: "dev server serves scaffolded pages",
+  sanitizeOps: false,
+  sanitizeResources: false,
+  fn: async () => {
+    await using tmp = await useTempDir("denote_init_serve_");
+    await withSuppressedConsole(() =>
+      initProject({ dir: tmp.path, name: "serve-test" })
+    );
+    await patchDenoJsonFull(tmp.path);
+
+    const port = getAvailablePort();
+    const cliPath = resolve(DENOTE_CORE_DIR, "cli.ts");
+
+    const child = new Deno.Command(DENO_BIN, {
+      args: ["run", "-A", cliPath, "dev", "--port", String(port)],
+      cwd: tmp.path,
+      stdout: "piped",
+      stderr: "piped",
+    }).spawn();
+
+    try {
+      await waitForServer(`http://localhost:${port}`, 60_000);
+
+      // Doc page renders with project name
+      const resp = await fetch(`http://localhost:${port}/docs/introduction`);
+      assertEquals(resp.status, 200);
+      const html = await resp.text();
+      assertStringIncludes(html, "serve-test");
+
+      // AI endpoint works
+      const llms = await fetch(`http://localhost:${port}/llms.txt`);
+      assertEquals(llms.status, 200);
+      const llmsText = await llms.text();
+      assertStringIncludes(llmsText, "serve-test");
+    } finally {
+      child.kill();
+      await child.status;
+    }
+  },
 });
