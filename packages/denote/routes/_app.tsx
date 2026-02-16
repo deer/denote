@@ -1,27 +1,6 @@
 import type { PageProps } from "fresh";
 import { define, type State } from "../utils.ts";
 import { getConfig } from "../lib/config.ts";
-import { COMBINED_CSS } from "@deer/gfm/style";
-import { generateThemeCSS } from "../lib/theme.ts";
-
-/** Generate the inline dark mode script based on config */
-function darkModeScript(
-  mode?: "auto" | "light" | "dark" | "toggle",
-): string {
-  if (mode === "light") {
-    return `(function(){document.documentElement.classList.remove('dark')})();`;
-  }
-  if (mode === "dark") {
-    return `(function(){document.documentElement.classList.add('dark')})();`;
-  }
-  // "toggle" defaults to dark, "auto" (default) uses system preference
-  const defaultDark = mode === "toggle";
-  return `(function(){
-    var s;try{s=localStorage.getItem('theme')}catch(e){}
-    var p=window.matchMedia('(prefers-color-scheme: dark)').matches;
-    if(s==='dark'||(!s&&(p||${defaultDark}))){document.documentElement.classList.add('dark')}
-  })();`;
-}
 
 /** App wrapper component — exported for programmatic routing */
 export function App({ Component, state }: PageProps<unknown, State>) {
@@ -34,16 +13,14 @@ export function App({ Component, state }: PageProps<unknown, State>) {
   const pageUrl = state.pageUrl;
   const pageImage = state.pageImage;
 
-  const jsonLd = {
+  const jsonLd = JSON.stringify({
     "@context": "https://schema.org",
     "@type": "WebSite",
     name: config.name,
     url: pageUrl || "/",
     description: pageDescription,
-  };
+  });
 
-  // Build full theme CSS from config
-  const colorOverrides = generateThemeCSS(config);
   const fontImports = config.fonts?.imports || [];
 
   return (
@@ -78,9 +55,12 @@ export function App({ Component, state }: PageProps<unknown, State>) {
           />
         ))}
         {pageUrl && <link rel="canonical" href={pageUrl} />}
+
+        {/* JSON-LD structured data — nonce allows it under strict CSP */}
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+          nonce={state.cspNonce}
+          dangerouslySetInnerHTML={{ __html: jsonLd }}
         />
 
         {/* OpenGraph meta tags */}
@@ -97,25 +77,19 @@ export function App({ Component, state }: PageProps<unknown, State>) {
         <meta name="twitter:description" content={pageDescription} />
         {pageImage && <meta name="twitter:image" content={pageImage} />}
 
-        {/* @deer/gfm syntax highlighting styles (CSS vars + hljs token colors) */}
-        <style dangerouslySetInnerHTML={{ __html: COMBINED_CSS }} />
+        {/* GFM syntax highlighting styles — served from /gfm.css route */}
+        <link rel="stylesheet" href="/gfm.css" />
 
-        {/* Config-driven color overrides */}
-        {colorOverrides && (
-          <style dangerouslySetInnerHTML={{ __html: colorOverrides }} />
-        )}
+        {/* Config-driven theme overrides — served from /theme-vars.css route */}
+        <link rel="stylesheet" href="/theme-vars.css" />
 
         {/* Custom CSS escape hatch */}
         {config.style?.customCss && (
           <link rel="stylesheet" href={config.style.customCss} />
         )}
 
-        {/* Prevent flash of unstyled content */}
-        <script
-          dangerouslySetInnerHTML={{
-            __html: darkModeScript(config.style?.darkMode),
-          }}
-        />
+        {/* Theme detection — external script to prevent FOUC (render-blocking) */}
+        <script src="/theme-init.js" />
       </head>
       <body class="antialiased text-[var(--denote-text)] bg-[var(--denote-bg)]">
         <a

@@ -31,6 +31,8 @@ import {
   setDocsBasePath,
 } from "./lib/config.ts";
 import { ga4Middleware } from "./lib/ga4.ts";
+import { darkModeScript, generateThemeCSS } from "./lib/theme.ts";
+import { COMBINED_CSS } from "@deer/gfm/style";
 import type { State } from "./utils.ts";
 
 // Import page components for programmatic routing
@@ -117,9 +119,49 @@ export function denote(options: DenoteOptions): App<unknown> {
     app.use(ga4Middleware());
   }
 
-  // ── Security headers middleware ──────────────────────────────
+  // ── CSP-compliant asset routes ──────────────────────────────
+
+  // Theme detection script (render-blocking to prevent FOUC)
+  app.get("/theme-init.js", () => {
+    return new Response(darkModeScript(config.style?.darkMode), {
+      headers: {
+        "Content-Type": "application/javascript; charset=utf-8",
+        "Cache-Control": "public, max-age=3600",
+      },
+    });
+  });
+
+  // GFM syntax highlighting CSS
+  app.get("/gfm.css", () => {
+    return new Response(COMBINED_CSS, {
+      headers: {
+        "Content-Type": "text/css; charset=utf-8",
+        "Cache-Control": "public, max-age=86400",
+      },
+    });
+  });
+
+  // Config-driven theme override CSS variables (computed once at init)
+  const themeVarsCss = generateThemeCSS(config);
+  app.get("/theme-vars.css", () => {
+    return new Response(themeVarsCss, {
+      headers: {
+        "Content-Type": "text/css; charset=utf-8",
+        "Cache-Control": "public, max-age=3600",
+      },
+    });
+  });
+
+  // ── Security headers + CSP middleware ─────────────────────────
   app.use(async (ctx) => {
+    // Generate a per-request nonce for inline scripts (JSON-LD)
+    const nonceBytes = new Uint8Array(16);
+    crypto.getRandomValues(nonceBytes);
+    const nonce = btoa(String.fromCharCode(...nonceBytes));
+    ctx.state.cspNonce = nonce;
+
     const resp = await ctx.next();
+
     // Security headers
     resp.headers.set(
       "Strict-Transport-Security",
@@ -128,6 +170,23 @@ export function denote(options: DenoteOptions): App<unknown> {
     resp.headers.set("X-Content-Type-Options", "nosniff");
     resp.headers.set("X-Frame-Options", "DENY");
     resp.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
+
+    // Content Security Policy (only for HTML responses)
+    const ct = resp.headers.get("Content-Type") || "";
+    if (ct.includes("text/html")) {
+      const csp = [
+        "default-src 'self'",
+        `script-src 'self' 'nonce-${nonce}'`,
+        "style-src 'self' 'unsafe-inline'",
+        "img-src 'self' data:",
+        "font-src 'self'",
+        "connect-src 'self'",
+        "frame-ancestors 'none'",
+        "base-uri 'self'",
+        "form-action 'self'",
+      ].join("; ");
+      resp.headers.set("Content-Security-Policy", csp);
+    }
 
     // Cache hashed static assets aggressively
     const url = new URL(ctx.req.url);
