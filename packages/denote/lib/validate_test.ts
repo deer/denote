@@ -15,28 +15,52 @@ const realContentDir = join(
   "docs",
 );
 
-Deno.test("validate - runs without crashing on test config", async () => {
-  // test_config.ts references /docs/styling which doesn't exist as a file,
-  // so validation correctly reports it as a broken nav link.
+/** Restore global state to the defaults used by test_config.ts */
+function restoreTestConfig() {
   setContentDir(realContentDir);
-  const issues = await validate();
-  // Should find the broken /docs/styling link but no other errors
-  const errors = issues.filter((i) => i.severity === "error");
-  assertEquals(errors.length, 1);
-  assertEquals(errors[0].message.includes("styling"), true);
+  // Suppress Zod warnings during restore
+  const origWarn = console.warn;
+  console.warn = () => {};
+  setConfig({
+    name: "Denote",
+    navigation: [
+      {
+        title: "Getting Started",
+        children: [
+          { title: "Introduction", href: "/docs/introduction" },
+        ],
+      },
+    ],
+  });
+  console.warn = origWarn;
+}
+
+Deno.test("validate - runs without crashing on test config", async () => {
+  setContentDir(realContentDir);
+  try {
+    const issues = await validate();
+    // test_config.ts references /docs/styling which doesn't exist as a file,
+    // so validation correctly reports it as a broken nav link.
+    const errors = issues.filter((i) => i.severity === "error");
+    assertEquals(errors.length, 1);
+    assertEquals(errors[0].message.includes("styling"), true);
+  } finally {
+    restoreTestConfig();
+  }
 });
 
 Deno.test("validate - reports missing content directory", async () => {
-  const prev = realContentDir;
   setContentDir("/tmp/denote-nonexistent-dir-" + Math.random());
-  const issues = await validate();
-  setContentDir(prev);
-
-  const errors = issues.filter((i) => i.severity === "error");
-  assertEquals(
-    errors.some((i) => i.message.includes("Content directory")),
-    true,
-  );
+  try {
+    const issues = await validate();
+    const errors = issues.filter((i) => i.severity === "error");
+    assertEquals(
+      errors.some((i) => i.message.includes("Content directory")),
+      true,
+    );
+  } finally {
+    restoreTestConfig();
+  }
 });
 
 Deno.test("validate - reports broken navigation links", async () => {
@@ -47,81 +71,57 @@ Deno.test("validate - reports broken navigation links", async () => {
       { title: "Ghost Page", href: "/docs/this-page-does-not-exist" },
     ],
   });
-
-  const issues = await validate();
-  const errors = issues.filter((i) => i.severity === "error");
-  assertEquals(
-    errors.some((i) => i.message.includes("this-page-does-not-exist")),
-    true,
-  );
-
-  // Restore
-  setConfig({
-    name: "Denote",
-    navigation: [
-      {
-        title: "Getting Started",
-        children: [
-          { title: "Introduction", href: "/docs/introduction" },
-        ],
-      },
-    ],
-  });
+  try {
+    const issues = await validate();
+    const errors = issues.filter((i) => i.severity === "error");
+    assertEquals(
+      errors.some((i) => i.message.includes("this-page-does-not-exist")),
+      true,
+    );
+  } finally {
+    restoreTestConfig();
+  }
 });
 
 Deno.test("validate - reports missing config name", async () => {
   setContentDir(realContentDir);
+  const origWarn = console.warn;
+  console.warn = () => {};
   setConfig(
     // @ts-ignore: intentionally testing empty name
     { name: "", navigation: [{ title: "X", href: "/docs/introduction" }] },
   );
-
-  const issues = await validate();
-  assertEquals(
-    issues.some((i) => i.message.includes("'name' is required")),
-    true,
-  );
-
-  // Restore
-  setConfig({
-    name: "Denote",
-    navigation: [
-      {
-        title: "Getting Started",
-        children: [
-          { title: "Introduction", href: "/docs/introduction" },
-        ],
-      },
-    ],
-  });
+  console.warn = origWarn;
+  try {
+    const issues = await validate();
+    assertEquals(
+      issues.some((i) => i.message.includes("'name' is required")),
+      true,
+    );
+  } finally {
+    restoreTestConfig();
+  }
 });
 
 Deno.test("validate - reports invalid hex color", async () => {
   setContentDir(realContentDir);
+  const origWarn = console.warn;
+  console.warn = () => {};
   setConfig({
     name: "Test",
     navigation: [{ title: "Intro", href: "/docs/introduction" }],
     colors: { primary: "not-a-color" },
   });
-
-  const issues = await validate();
-  assertEquals(
-    issues.some((i) => i.message.includes("not a valid hex color")),
-    true,
-  );
-
-  // Restore
-  setConfig({
-    name: "Denote",
-    navigation: [
-      {
-        title: "Getting Started",
-        children: [
-          { title: "Introduction", href: "/docs/introduction" },
-        ],
-      },
-    ],
-  });
+  console.warn = origWarn;
+  try {
+    const issues = await validate();
+    assertEquals(
+      issues.some((i) => i.message.includes("not a valid hex color")),
+      true,
+    );
+  } finally {
+    restoreTestConfig();
+  }
 });
 
 Deno.test("validate - skips external navigation links", async () => {
@@ -133,24 +133,14 @@ Deno.test("validate - skips external navigation links", async () => {
       { title: "Introduction", href: "/docs/introduction" },
     ],
   });
-
-  const issues = await validate();
-  const errors = issues.filter((i) => i.severity === "error");
-  assertEquals(
-    errors.some((i) => i.message.includes("github.com")),
-    false,
-  );
-
-  // Restore
-  setConfig({
-    name: "Denote",
-    navigation: [
-      {
-        title: "Getting Started",
-        children: [
-          { title: "Introduction", href: "/docs/introduction" },
-        ],
-      },
-    ],
-  });
+  try {
+    const issues = await validate();
+    const errors = issues.filter((i) => i.severity === "error");
+    assertEquals(
+      errors.some((i) => i.message.includes("github.com")),
+      false,
+    );
+  } finally {
+    restoreTestConfig();
+  }
 });

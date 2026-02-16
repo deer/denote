@@ -11,8 +11,12 @@
 import type { DenoteConfig } from "../denote.config.ts";
 import { z } from "zod";
 
+/** Matches 3, 6, or 8-digit hex color strings like #f00, #ff0000, #ff000080 */
+export const HEX_COLOR_REGEX =
+  /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/;
+
 const HEX_COLOR = z.string().regex(
-  /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/,
+  HEX_COLOR_REGEX,
   "Must be a valid hex color (e.g. #ff0000)",
 );
 

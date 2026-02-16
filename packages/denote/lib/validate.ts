@@ -2,7 +2,12 @@
  * Validation utilities for Denote projects.
  * Checks content directory, frontmatter, navigation links, and config.
  */
-import { getConfig, getContentDir, getDocsBasePath } from "./config.ts";
+import {
+  getConfig,
+  getContentDir,
+  getDocsBasePath,
+  HEX_COLOR_REGEX,
+} from "./config.ts";
 import { getAllDocs } from "./docs.ts";
 import type { DenoteConfig, NavItem } from "../denote.config.ts";
 
@@ -10,8 +15,6 @@ export interface ValidationIssue {
   severity: "error" | "warning";
   message: string;
 }
-
-const HEX_COLOR_REGEX = /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/;
 
 function collectNavHrefs(items: NavItem[]): string[] {
   const hrefs: string[] = [];
