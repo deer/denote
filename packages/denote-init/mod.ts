@@ -66,6 +66,7 @@ async function scaffold(projectDir: string, projectName: string) {
     tasks: {
       dev: "deno run -A jsr:@denote/core/cli dev",
       build: "deno run -A jsr:@denote/core/cli build",
+      validate: "deno run -A jsr:@denote/core/cli validate",
       mcp: "deno run -A jsr:@denote/core/cli mcp",
     },
     imports: {

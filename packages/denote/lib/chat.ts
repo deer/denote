@@ -74,6 +74,12 @@ async function aiChat(
   }
   const apiKey = configApiKey || Deno.env.get("DENOTE_AI_API_KEY") || "";
 
+  if (!apiKey) {
+    console.warn(
+      "Warning: AI chat is configured but no API key found. Set DENOTE_AI_API_KEY environment variable.",
+    );
+  }
+
   const response = await fetch(apiUrl, {
     method: "POST",
     headers: {
