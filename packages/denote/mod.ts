@@ -294,6 +294,16 @@ export function denote(options: DenoteOptions): App<unknown> {
   });
 
   app.post("/api/chat", async (ctx) => {
+    const { isAllowed } = await import("./lib/rate-limit.ts");
+    const ip = ctx.req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+      "unknown";
+    if (!isAllowed(ip)) {
+      return new Response(
+        JSON.stringify({ error: "Too many requests. Please try again later." }),
+        { status: 429, headers: { "Content-Type": "application/json" } },
+      );
+    }
+
     const { handleChat } = await import("./lib/chat.ts");
     try {
       const body = await ctx.req.json();

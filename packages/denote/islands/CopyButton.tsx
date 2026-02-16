@@ -11,6 +11,12 @@ const COPY_ICON =
 const CHECK_ICON =
   `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`;
 
+function setIconContent(el: HTMLElement, html: string) {
+  const template = document.createElement("template");
+  template.innerHTML = html;
+  el.replaceChildren(template.content.cloneNode(true));
+}
+
 // Track which button was just copied (by index) and clear after timeout
 const copiedIndex = signal(-1);
 
@@ -32,19 +38,19 @@ export function CopyButton() {
       btn.className = "copy-btn";
       btn.type = "button";
       btn.setAttribute("aria-label", "Copy code");
-      btn.innerHTML = COPY_ICON;
+      setIconContent(btn, COPY_ICON);
 
       btn.addEventListener("click", async () => {
         const text = code.textContent || "";
         try {
           await navigator.clipboard.writeText(text);
           copiedIndex.value = index;
-          btn.innerHTML = CHECK_ICON;
+          setIconContent(btn, CHECK_ICON);
           btn.style.color = "#22c55e";
 
           setTimeout(() => {
             copiedIndex.value = -1;
-            btn.innerHTML = COPY_ICON;
+            setIconContent(btn, COPY_ICON);
             btn.style.color = "";
           }, 2000);
         } catch {

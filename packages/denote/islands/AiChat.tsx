@@ -108,14 +108,27 @@ function renderInline(text: string) {
     if (match[1]) {
       parts.push(<strong>{match[1]}</strong>);
     } else if (match[2] && match[3]) {
-      parts.push(
-        <a
-          href={match[3]}
-          class="text-[var(--denote-primary-text)] hover:underline"
-        >
-          {match[2]}
-        </a>,
-      );
+      if (/^https?:\/\//.test(match[3])) {
+        parts.push(
+          <a
+            href={match[3]}
+            class="text-[var(--denote-primary-text)] hover:underline"
+          >
+            {match[2]}
+          </a>,
+        );
+      } else if (match[3].startsWith("/")) {
+        parts.push(
+          <a
+            href={match[3]}
+            class="text-[var(--denote-primary-text)] hover:underline"
+          >
+            {match[2]}
+          </a>,
+        );
+      } else {
+        parts.push(<>{match[2]}</>);
+      }
     } else if (match[4]) {
       parts.push(
         <code class="px-1 py-0.5 bg-[var(--denote-bg-tertiary)] rounded text-sm">
