@@ -9,6 +9,8 @@ import { buildSearchIndex } from "./docs.ts";
 import { generateFullDocs } from "./ai.ts";
 import { getConfig } from "./config.ts";
 
+let _apiKeyWarned = false;
+
 export interface ChatMessage {
   role: "user" | "assistant";
   content: string;
@@ -63,8 +65,14 @@ async function aiChat(
   const apiUrl = aiConfig.provider.apiUrl ||
     "https://api.openai.com/v1/chat/completions";
   const model = aiConfig.provider.model || "gpt-4o-mini";
-  const apiKey = aiConfig.provider.apiKey ||
-    Deno.env.get("DENOTE_AI_API_KEY") || "";
+  const configApiKey = aiConfig.provider.apiKey;
+  if (configApiKey && !_apiKeyWarned) {
+    _apiKeyWarned = true;
+    console.warn(
+      "Warning: API key found in denote.config.ts. Consider using the DENOTE_AI_API_KEY environment variable instead to avoid committing secrets.",
+    );
+  }
+  const apiKey = configApiKey || Deno.env.get("DENOTE_AI_API_KEY") || "";
 
   const response = await fetch(apiUrl, {
     method: "POST",
