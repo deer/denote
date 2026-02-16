@@ -105,6 +105,74 @@ The Docker image works on any container platform:
 - **Render** — Select "Docker" as the environment
 - **Any Kubernetes cluster** — Use the image in your pod spec
 
+## Fly.io
+
+[Fly.io](https://fly.io) runs Docker containers on a global edge network.
+
+### Quick Start
+
+```bash
+fly launch
+fly deploy
+```
+
+### fly.toml
+
+Create a `fly.toml` in your project root:
+
+```toml
+app = "my-docs"
+primary_region = "iad"
+
+[build]
+
+[http_service]
+  internal_port = 8000
+  force_https = true
+  auto_stop_machines = "stop"
+  auto_start_machines = true
+  min_machines_running = 0
+
+[[http_service.checks]]
+  grace_period = "10s"
+  interval = "30s"
+  method = "GET"
+  path = "/"
+  timeout = "5s"
+```
+
+### Environment Variables
+
+Set environment variables with:
+
+```bash
+fly secrets set MY_VAR=value
+```
+
+## Coolify
+
+[Coolify](https://coolify.io) is a self-hosted PaaS that deploys Docker
+containers.
+
+### Setup
+
+1. In Coolify, create a new **Docker** resource and connect your Git repository
+   (or point to the Docker image).
+
+2. Set the build pack to **Dockerfile** — Coolify will use the included
+   `Dockerfile` automatically.
+
+3. Configure environment variables in the Coolify dashboard under your
+   application's **Environment Variables** tab.
+
+4. Set your custom domain under **Domains** — Coolify handles SSL via Let's
+   Encrypt automatically.
+
+### Docker Compose (Alternative)
+
+If you prefer compose-based deploys, Coolify also supports `docker-compose.yml`.
+Point it at the included compose file and Coolify will manage the stack.
+
 ## VPS / Self-Hosting
 
 For a traditional VPS deployment with Deno installed directly:

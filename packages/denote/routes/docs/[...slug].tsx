@@ -46,6 +46,16 @@ export async function DocsPage(ctx: PageProps<unknown, State>) {
         class="markdown-body"
         dangerouslySetInnerHTML={{ __html: html }}
       />
+      <div class="mt-12 pt-6 border-t border-[var(--denote-border)]">
+        <a
+          href={`https://github.com/deer/denote/edit/main/docs/content/docs/${slug}.md`}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="text-sm text-[var(--denote-text-muted)] hover:text-[var(--denote-primary-text)] transition-colors"
+        >
+          Edit this page on GitHub →
+        </a>
+      </div>
     </DocsLayout>
   );
 }
