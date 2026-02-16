@@ -8,7 +8,8 @@
  *   deno run -Ar jsr:@denote/init .  # Initialize in current directory
  */
 
-export const VERSION = "0.1.0";
+import denoConfig from "./deno.json" with { type: "json" };
+export const VERSION = denoConfig.version;
 
 // ANSI colors
 const bold = (s: string) => `\x1b[1m${s}\x1b[0m`;
@@ -60,6 +61,7 @@ async function scaffold(projectDir: string, projectName: string) {
   }
 
   // Create deno.json
+  const coreSpecifier = "jsr:@denote/core@^0.1.0";
   const denoJson = {
     tasks: {
       dev: "deno run -A jsr:@denote/core/cli dev",
@@ -67,7 +69,7 @@ async function scaffold(projectDir: string, projectName: string) {
       mcp: "deno run -A jsr:@denote/core/cli mcp",
     },
     imports: {
-      "@denote/core": "jsr:@denote/core@^0.1.0",
+      "@denote/core": coreSpecifier,
     },
   };
   await Deno.writeTextFile(
@@ -77,7 +79,7 @@ async function scaffold(projectDir: string, projectName: string) {
   console.log(`  ${green("✓")} deno.json`);
 
   // Create denote.config.ts (replaces docs.config.ts + main.ts — users only need config now)
-  const docsConfig = `import type { DocsConfig } from "@denote/core/types";
+  const docsConfig = `import type { DocsConfig } from "@denote/core";
 
 export const config: DocsConfig = {
   name: "${projectName}",

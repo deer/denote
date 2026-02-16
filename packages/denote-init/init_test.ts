@@ -259,7 +259,10 @@ Deno.test("generated project passes deno lint", async () => {
 
 Deno.test("generated project passes deno check", async () => {
   await using tmp = await useTempDir("denote_init_check_");
-  await scaffoldAndPatch(tmp.path, "check-test");
+  await withSuppressedConsole(() =>
+    initProject({ dir: tmp.path, name: "check-test" })
+  );
+  await patchDenoJsonFull(tmp.path);
 
   const result = await runCommand(tmp.path, [
     DENO_BIN,
