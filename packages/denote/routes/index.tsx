@@ -1,6 +1,6 @@
 import { define } from "../utils.ts";
 import { getConfig } from "../lib/config.ts";
-import type { NavItem } from "../docs.config.ts";
+import type { NavItem } from "../denote.config.ts";
 import { Header } from "../components/Header.tsx";
 
 /** Find the first href in a navigation tree */

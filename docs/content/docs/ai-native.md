@@ -171,7 +171,7 @@ Denote includes a built-in "Ask AI" chat widget that appears on every doc page.
 Enable it in your config:
 
 ```typescript
-// docs.config.ts
+// denote.config.ts
 export const config = {
   // ... other config
   ai: {

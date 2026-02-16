@@ -6,5 +6,5 @@ services:
     volumes:
       # Mount your content directory for live updates
       - ./content:/app/content:ro
-      - ./docs.config.ts:/app/docs.config.ts:ro
+      - ./denote.config.ts:/app/denote.config.ts:ro
     restart: unless-stopped

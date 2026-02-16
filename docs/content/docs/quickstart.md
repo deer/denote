@@ -40,10 +40,10 @@ Pretty simple, right?
 
 ## Step 2: Add to Navigation
 
-Update your `docs.config.ts` to include the new page:
+Update your `denote.config.ts` to include the new page:
 
 ```typescript
-export const config: DocsConfig = {
+export const config: DenoteConfig = {
   name: "My Docs",
   navigation: [
     {

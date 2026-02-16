@@ -5,7 +5,7 @@
 /* ========================================
    Design Tokens
    CSS Custom Properties for full theming support.
-   Override via docs.config.ts — no component edits needed.
+   Override via denote.config.ts — no component edits needed.
 
    Note: These live directly in styles.css (not @import'd) so that
    Tailwind v4 processes them in the correct cascade layer. An @import

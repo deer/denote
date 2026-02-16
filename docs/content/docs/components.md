@@ -15,7 +15,7 @@ islands (client-side JavaScript).
 
 Breadcrumbs appear automatically above each page title, showing the navigation
 path (e.g., **Getting Started > Installation**). They're generated from your
-`docs.config.ts` navigation structure.
+`denote.config.ts` navigation structure.
 
 ### Collapsible Sidebar
 
@@ -26,7 +26,7 @@ in `localStorage` and persist across page loads.
 ### Previous / Next Navigation
 
 Links to the previous and next pages appear at the bottom of each doc page. The
-order is determined by your navigation configuration in `docs.config.ts`.
+order is determined by your navigation configuration in `denote.config.ts`.
 
 ## Interactive Islands
 

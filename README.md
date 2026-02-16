@@ -38,7 +38,7 @@ denote/
 │   ├── introduction.md
 │   ├── installation.md
 │   └── ...
-├── docs.config.ts        # Navigation, branding, colors
+├── denote.config.ts        # Navigation, branding, colors
 ├── components/           # Server-rendered components
 │   ├── Header.tsx
 │   ├── Sidebar.tsx
@@ -93,10 +93,10 @@ Write your documentation here with full Markdown support.
 
 ## Configuration
 
-Edit `docs.config.ts` to customize navigation, branding, and more:
+Edit `denote.config.ts` to customize navigation, branding, and more:
 
 ```typescript
-export const config: DocsConfig = {
+export const config: DenoteConfig = {
   name: "My Docs",
   colors: {
     primary: "#6366f1",

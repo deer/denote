@@ -12,7 +12,8 @@
     "./islands/ActiveToc.tsx": "./islands/ActiveToc.tsx",
     "./islands/AiChat.tsx": "./islands/AiChat.tsx",
     "./assets/styles.css": "./assets/styles.css",
-    "./ga4": "./lib/ga4.ts"
+    "./ga4": "./lib/ga4.ts",
+    "./types": "./denote.config.ts"
   },
   "tasks": {
     "test": "deno test --allow-read --allow-net --allow-env",

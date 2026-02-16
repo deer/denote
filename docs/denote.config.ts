@@ -1,9 +1,9 @@
 /**
  * Denote Documentation Site Configuration
  */
-import type { DocsConfig } from "@denote/core";
+import type { DenoteConfig } from "@denote/core";
 
-export const config: DocsConfig = {
+export const config: DenoteConfig = {
   name: "Denote",
   logo: {
     light: "/logo.svg",

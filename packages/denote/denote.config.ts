@@ -9,7 +9,7 @@ export interface NavItem {
   children?: NavItem[];
 }
 
-export interface DocsConfig {
+export interface DenoteConfig {
   name: string;
   logo?: {
     light?: string;

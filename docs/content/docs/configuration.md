@@ -5,14 +5,14 @@ description: Configure your Denote documentation site
 
 # Configuration
 
-Denote is configured through the `docs.config.ts` file in your project root.
+Denote is configured through the `denote.config.ts` file in your project root.
 
 ## Basic Configuration
 
 ```typescript
-import type { DocsConfig } from "./types.ts";
+import type { DenoteConfig } from "@denote/core";
 
-export const config: DocsConfig = {
+export const config: DenoteConfig = {
   name: "My Documentation",
   logo: {
     light: "/logo.svg",
@@ -27,7 +27,7 @@ export const config: DocsConfig = {
 The navigation structure defines your sidebar and breadcrumbs:
 
 ```typescript
-export const config: DocsConfig = {
+export const config: DenoteConfig = {
   navigation: [
     {
       title: "Getting Started",
@@ -58,7 +58,7 @@ bottom of each doc page and the **breadcrumb trail** shown above the title.
 Customize your brand colors:
 
 ```typescript
-export const config: DocsConfig = {
+export const config: DenoteConfig = {
   colors: {
     primary: "#6366f1", // Links, buttons, accents
     accent: "#22c55e", // Secondary accent
@@ -69,7 +69,7 @@ export const config: DocsConfig = {
 For full control over surfaces, text, and borders:
 
 ```typescript
-export const config: DocsConfig = {
+export const config: DenoteConfig = {
   colors: {
     primary: "#6366f1",
     accent: "#22c55e",
@@ -96,7 +96,7 @@ how auto-derivation works.
 Control dimensions and visibility of layout elements:
 
 ```typescript
-export const config: DocsConfig = {
+export const config: DenoteConfig = {
   layout: {
     sidebarWidth: 280, // Sidebar width in px
     maxContentWidth: 900, // Content area max width in px
@@ -114,7 +114,7 @@ export const config: DocsConfig = {
 Skip the landing page and redirect to docs:
 
 ```typescript
-export const config: DocsConfig = {
+export const config: DenoteConfig = {
   landing: {
     enabled: false, // Redirect "/" to first doc page
     redirectTo: "/docs/quickstart", // Optional custom target
@@ -127,7 +127,7 @@ export const config: DocsConfig = {
 Control border radius, dark mode behavior, and custom CSS:
 
 ```typescript
-export const config: DocsConfig = {
+export const config: DenoteConfig = {
   style: {
     roundedness: "lg", // "none" | "sm" | "md" | "lg" | "xl"
     darkMode: "auto", // "auto" | "light" | "dark" | "toggle"
@@ -143,7 +143,7 @@ See the [Theming guide](/docs/theming) for details on each option.
 Add links to your header:
 
 ```typescript
-export const config: DocsConfig = {
+export const config: DenoteConfig = {
   topNav: [
     { title: "Documentation", href: "/docs" },
     { title: "Blog", href: "/blog" },
@@ -157,7 +157,7 @@ export const config: DocsConfig = {
 Add social media links:
 
 ```typescript
-export const config: DocsConfig = {
+export const config: DenoteConfig = {
   social: {
     github: "https://github.com/<your-org>/<your-repo>",
     twitter: "https://twitter.com/<your-handle>",
@@ -171,7 +171,7 @@ export const config: DocsConfig = {
 Configure your footer:
 
 ```typescript
-export const config: DocsConfig = {
+export const config: DenoteConfig = {
   footer: {
     copyright: "© 2026 Your Organization",
     links: [
@@ -224,7 +224,7 @@ script needed.
 1. Set `ga4: true` in your config:
 
 ```typescript
-export const config: DocsConfig = {
+export const config: DenoteConfig = {
   name: "My Docs",
   ga4: true,
   // ...
@@ -258,9 +258,9 @@ environment or `.env` file.
 Here's a complete configuration example:
 
 ```typescript
-import type { DocsConfig } from "./types.ts";
+import type { DenoteConfig } from "@denote/core";
 
-export const config: DocsConfig = {
+export const config: DenoteConfig = {
   name: "Acme Docs",
   logo: {
     light: "/logo.svg",

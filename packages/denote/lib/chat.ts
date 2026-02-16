@@ -127,7 +127,7 @@ async function searchChat(req: ChatRequest): Promise<ChatResponse> {
     message: {
       role: "assistant",
       content:
-        `Here are the most relevant documentation pages for your question:\n\n${sourceList}\n\nClick a link to read more. For AI-powered answers, configure an AI provider in \`docs.config.ts\`.`,
+        `Here are the most relevant documentation pages for your question:\n\n${sourceList}\n\nClick a link to read more. For AI-powered answers, configure an AI provider in \`denote.config.ts\`.`,
     },
     sources,
     mode: "search",
