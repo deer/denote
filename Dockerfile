@@ -18,7 +18,7 @@ WORKDIR /app
 
 COPY --from=builder /app/_fresh ./_fresh
 COPY --from=builder /app/content ./content
-COPY --from=builder /app/docs.config.ts ./docs.config.ts
+COPY --from=builder /app/denote.config.ts ./denote.config.ts
 COPY --from=builder /app/deno.json ./deno.json
 COPY --from=builder /app/deno.lock ./deno.lock
 COPY --from=builder /app/static ./static

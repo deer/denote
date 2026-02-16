@@ -81,7 +81,7 @@ For easier management, use the included `docker-compose.yml`:
 docker compose up -d
 ```
 
-The default compose file mounts your `content/` directory and `docs.config.ts`
+The default compose file mounts your `content/` directory and `denote.config.ts`
 as read-only volumes, so you can update documentation without rebuilding the
 image.
 
@@ -92,7 +92,7 @@ To serve different content, mount your own directory:
 ```bash
 docker run -p 8000:8000 \
   -v ./my-content:/app/content:ro \
-  -v ./my-config.ts:/app/docs.config.ts:ro \
+  -v ./my-config.ts:/app/denote.config.ts:ro \
   my-docs
 ```
 

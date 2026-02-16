@@ -1,14 +1,14 @@
 /**
- * Theme CSS generation from DocsConfig.
+ * Theme CSS generation from DenoteConfig.
  *
  * Extracted to a separate module for testability and CSP compliance.
  * Instead of inlining styles via dangerouslySetInnerHTML, these functions
  * generate content served from dedicated routes.
  */
-import type { DocsConfig } from "../docs.config.ts";
+import type { DenoteConfig } from "../denote.config.ts";
 
-/** Generate CSS custom property overrides from DocsConfig */
-export function generateThemeCSS(config: DocsConfig): string {
+/** Generate CSS custom property overrides from DenoteConfig */
+export function generateThemeCSS(config: DenoteConfig): string {
   const c = config.colors;
   const f = config.fonts;
   const hasColors = c?.primary || c?.accent || c?.background || f?.body;

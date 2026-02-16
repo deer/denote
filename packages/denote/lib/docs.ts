@@ -2,7 +2,7 @@
  * Documentation loader utilities
  */
 import { type ParsedDoc, parseDocument } from "./markdown.ts";
-import type { NavItem } from "../docs.config.ts";
+import type { NavItem } from "../denote.config.ts";
 import { getConfig, getContentDir } from "./config.ts";
 import { resolve } from "jsr:@std/path@1";
 

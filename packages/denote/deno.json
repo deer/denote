@@ -13,7 +13,7 @@
     "./islands/AiChat.tsx": "./islands/AiChat.tsx",
     "./assets/styles.css": "./assets/styles.css",
     "./ga4": "./lib/ga4.ts",
-    "./types": "./docs.config.ts"
+    "./types": "./denote.config.ts"
   },
   "tasks": {
     "test": "deno test --allow-read --allow-net --allow-env",

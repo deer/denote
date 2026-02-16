@@ -1,10 +1,10 @@
 import { assertEquals, assertStringIncludes } from "jsr:@std/assert@1";
 import { generateThemeCSS } from "./theme.ts";
-import type { DocsConfig } from "../docs.config.ts";
+import type { DenoteConfig } from "../denote.config.ts";
 
 /** Helper: minimal config */
-function cfg(overrides: Partial<DocsConfig> = {}): DocsConfig {
-  return { name: "Test", navigation: [], ...overrides } as DocsConfig;
+function cfg(overrides: Partial<DenoteConfig> = {}): DenoteConfig {
+  return { name: "Test", navigation: [], ...overrides } as DenoteConfig;
 }
 
 // --- Empty / no-op ---

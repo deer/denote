@@ -48,8 +48,6 @@ async function loadUserConfig(): Promise<
   const candidates = [
     "denote.config.ts",
     "denote.config.js",
-    "docs.config.ts",
-    "docs.config.js",
   ];
 
   for (const name of candidates) {
@@ -65,7 +63,9 @@ async function loadUserConfig(): Promise<
 
   console.error(red("Error: No config file found."));
   console.error(`Expected one of: ${candidates.join(", ")}`);
-  console.error(`Run ${cyan("denote init")} to create a new project.`);
+  console.error(
+    `Run ${cyan("deno run -Ar jsr:@denote/init")} to create a new project.`,
+  );
   Deno.exit(1);
 }
 

@@ -78,10 +78,10 @@ async function scaffold(projectDir: string, projectName: string) {
   );
   console.log(`  ${green("✓")} deno.json`);
 
-  // Create denote.config.ts (replaces docs.config.ts + main.ts — users only need config now)
-  const docsConfig = `import type { DocsConfig } from "@denote/core";
+  // Create denote.config.ts
+  const docsConfig = `import type { DenoteConfig } from "@denote/core";
 
-export const config: DocsConfig = {
+export const config: DenoteConfig = {
   name: "${projectName}",
   colors: {
     primary: "#6366f1",

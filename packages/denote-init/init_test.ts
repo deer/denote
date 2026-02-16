@@ -2,8 +2,8 @@
  * Tests for @denote/init scaffolder
  *
  * Design decisions:
- * - mod.ts keeps inline scaffolding (not template/) because it's simpler for
- *   a single-file init tool. template/ exists as a reference/demo project.
+ * - mod.ts keeps inline scaffolding because it's simpler for a single-file
+ *   init tool.
  * - We patch the generated deno.json to resolve @denote/core from the local
  *   workspace since it's not published to JSR yet.
  */
@@ -81,7 +81,7 @@ async function patchDenoJson(projectDir: string) {
   config.imports = config.imports || {};
   const coreUrl = new URL("./", `file://${DENOTE_CORE_DIR}/`).href;
   config.imports["@denote/core"] = coreUrl + "mod.ts";
-  config.imports["@denote/core/types"] = coreUrl + "docs.config.ts";
+  config.imports["@denote/core/types"] = coreUrl + "denote.config.ts";
   config.imports["@denote/core/cli"] = new URL("cli.ts", coreUrl).href;
   await Deno.writeTextFile(
     denoJsonPath,
@@ -100,7 +100,7 @@ async function patchDenoJsonFull(projectDir: string) {
   const coreUrl = new URL("./", `file://${DENOTE_CORE_DIR}/`).href;
 
   config.imports["@denote/core"] = coreUrl + "mod.ts";
-  config.imports["@denote/core/types"] = coreUrl + "docs.config.ts";
+  config.imports["@denote/core/types"] = coreUrl + "denote.config.ts";
   config.imports["@denote/core/cli"] = new URL("cli.ts", coreUrl).href;
 
   // Copy ALL deps from core package (fresh, preact, vite, tailwindcss, etc.)

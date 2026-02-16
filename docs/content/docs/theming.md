@@ -6,7 +6,7 @@ description: Customize colors, fonts, layout, and CSS through config alone
 # Theming & Styling
 
 Denote's theming system lets you fully customize the look and feel of your
-documentation site through `docs.config.ts` — no component edits, no CSS
+documentation site through `denote.config.ts` — no component edits, no CSS
 overrides, no `!important` hacks.
 
 ## How It Works
@@ -28,10 +28,10 @@ adapt to light mode, dark mode, and any custom theme:
 
 ## Colors
 
-Set your brand colors in `docs.config.ts`:
+Set your brand colors in `denote.config.ts`:
 
 ```typescript
-export const config: DocsConfig = {
+export const config: DenoteConfig = {
   colors: {
     primary: "#6366f1", // Links, buttons, accents
     accent: "#22c55e", // Secondary accent color
@@ -42,7 +42,7 @@ export const config: DocsConfig = {
 For full control, you can customize every surface:
 
 ```typescript
-export const config: DocsConfig = {
+export const config: DenoteConfig = {
   colors: {
     primary: "#b45309", // Brand color
     accent: "#059669", // Secondary accent
@@ -63,7 +63,7 @@ Dark mode works out of the box with sensible defaults. To customize dark mode
 colors independently, add a `dark` object:
 
 ```typescript
-export const config: DocsConfig = {
+export const config: DenoteConfig = {
   colors: {
     primary: "#b45309",
     accent: "#059669",
@@ -99,7 +99,7 @@ visits. If no preference is saved, Denote follows the system preference
 Control how dark mode works via the `style` config:
 
 ```typescript
-export const config: DocsConfig = {
+export const config: DenoteConfig = {
   style: {
     darkMode: "auto", // "auto" | "light" | "dark" | "toggle"
   },
@@ -133,7 +133,7 @@ variables. They adapt to any theme automatically — no `dark:` needed.
 Customize the font families used across your site:
 
 ```typescript
-export const config: DocsConfig = {
+export const config: DenoteConfig = {
   fonts: {
     body: '"Source Sans 3", system-ui, sans-serif',
     heading: '"Newsreader", Georgia, serif',
@@ -155,7 +155,7 @@ site including markdown content.
 Control the dimensions of major layout sections:
 
 ```typescript
-export const config: DocsConfig = {
+export const config: DenoteConfig = {
   layout: {
     sidebarWidth: 280, // px (default: 256)
     maxContentWidth: 900, // px (default: 768)
@@ -169,7 +169,7 @@ These become CSS custom properties (`--denote-sidebar-width`, etc.) consumed by
 all layout components. You can also toggle visibility of layout elements:
 
 ```typescript
-export const config: DocsConfig = {
+export const config: DenoteConfig = {
   layout: {
     toc: false, // Hide table of contents sidebar
     breadcrumbs: false, // Hide breadcrumb navigation
@@ -194,7 +194,7 @@ By default, Denote shows a landing page at `/`. To skip it and redirect straight
 to your first documentation page:
 
 ```typescript
-export const config: DocsConfig = {
+export const config: DenoteConfig = {
   landing: {
     enabled: false, // Redirect "/" to first doc page
   },
@@ -204,7 +204,7 @@ export const config: DocsConfig = {
 You can also specify a custom redirect path:
 
 ```typescript
-export const config: DocsConfig = {
+export const config: DenoteConfig = {
   landing: {
     enabled: false,
     redirectTo: "/docs/quickstart", // Custom target
@@ -217,7 +217,7 @@ export const config: DocsConfig = {
 Control the border radius scale across the entire site:
 
 ```typescript
-export const config: DocsConfig = {
+export const config: DenoteConfig = {
   style: {
     roundedness: "lg", // "none" | "sm" | "md" | "lg" | "xl"
   },
@@ -237,7 +237,7 @@ export const config: DocsConfig = {
 For an escape hatch beyond what the config supports, point to a custom CSS file:
 
 ```typescript
-export const config: DocsConfig = {
+export const config: DenoteConfig = {
   style: {
     customCss: "/custom.css", // Loaded after all theme tokens
   },
@@ -367,6 +367,6 @@ content follows your theme without extra configuration:
    theme automatically
 2. **Reserve `dark:` for semantics** — status colors, badges, alerts that have
    fixed meaning regardless of theme
-3. **Use the config first** — most customizations belong in `docs.config.ts`,
+3. **Use the config first** — most customizations belong in `denote.config.ts`,
    not custom CSS
 4. **Test both modes** — toggle dark mode to verify contrast and readability

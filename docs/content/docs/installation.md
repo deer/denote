@@ -35,12 +35,12 @@ This will create a new Denote project with the following structure:
 my-docs/
 ├── content/
 │   └── docs/
-│       └── introduction.md
-├── docs.config.ts
+│       ├── introduction.md
+│       └── installation.md
+├── static/
+├── denote.config.ts
 ├── deno.json
-├── main.ts
-└── routes/
-    └── ...
+└── .gitignore
 ```
 
 ## Start the Development Server
@@ -57,8 +57,7 @@ site.
 ## Project Structure
 
 - `content/docs/` - Your documentation markdown files
-- `docs.config.ts` - Site configuration (navigation, branding, etc.)
-- `routes/` - Fresh routes for custom pages
+- `denote.config.ts` - Site configuration (navigation, branding, etc.)
 - `static/` - Static assets (images, fonts, etc.)
 
 ## Next Steps

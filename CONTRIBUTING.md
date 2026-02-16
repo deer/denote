@@ -54,7 +54,7 @@ Open [http://localhost:8000](http://localhost:8000) to see the site.
 ### Project Structure
 
 - **`content/docs/`** — Markdown documentation files
-- **`docs.config.ts`** — Navigation and site configuration
+- **`denote.config.ts`** — Navigation and site configuration
 - **`components/`** — Server-rendered Preact components
 - **`islands/`** — Client-side interactive components
 - **`lib/`** — Core utilities (markdown parsing, doc loading, syntax
@@ -65,7 +65,7 @@ Open [http://localhost:8000](http://localhost:8000) to see the site.
 
 - Place `.md` files in `content/docs/`
 - Use YAML frontmatter for `title` and `description`
-- Add new pages to the `navigation` array in `docs.config.ts`
+- Add new pages to the `navigation` array in `denote.config.ts`
 - Keep paragraphs on single lines (the markdown parser is regex-based)
 
 ### Tests

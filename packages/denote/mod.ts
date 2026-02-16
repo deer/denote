@@ -3,7 +3,7 @@
  *
  * Usage (standalone):
  *   import { denote } from "./mod.ts";
- *   import { config } from "./docs.config.ts";
+ *   import { config } from "./denote.config.ts";
  *   const app = denote({ config });
  *   app.listen();
  *
@@ -23,7 +23,7 @@
  *     .listen();
  */
 import { App, staticFiles } from "fresh";
-import type { DocsConfig } from "./docs.config.ts";
+import type { DenoteConfig } from "./denote.config.ts";
 import {
   getDocsBasePath,
   setConfig,
@@ -50,7 +50,7 @@ import { handler as docsMiddleware } from "./routes/docs/_middleware.ts";
 
 export interface DenoteOptions {
   /** Denote site configuration (name, navigation, colors, etc.) */
-  config: DocsConfig;
+  config: DenoteConfig;
 
   /** Path to the markdown content directory. Default: "./content/docs" */
   contentDir?: string;
@@ -393,7 +393,7 @@ Sitemap: ${baseUrl}/sitemap.xml
 // Re-exports for library consumers
 // ---------------------------------------------------------------------------
 
-export type { DocsConfig, NavItem } from "./docs.config.ts";
+export type { DenoteConfig, NavItem } from "./denote.config.ts";
 export type { State } from "./utils.ts";
 export {
   getConfig,

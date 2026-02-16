@@ -5,7 +5,7 @@
 import { effect, signal } from "@preact/signals";
 import { useEffect, useRef } from "preact/hooks";
 import { render } from "preact";
-import type { NavItem } from "../docs.config.ts";
+import type { NavItem } from "../denote.config.ts";
 
 const isOpen = signal(false);
 
