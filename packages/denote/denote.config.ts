@@ -14,6 +14,10 @@ export interface DenoteConfig {
   logo?: {
     light?: string;
     dark?: string;
+    /** Text to display in header (overrides config.name for the logo). Lowercase recommended. */
+    text?: string;
+    /** Styled suffix appended in primary color (e.g. ".sh", ".cloud") */
+    suffix?: string;
   };
   favicon?: string;
   colors?: {

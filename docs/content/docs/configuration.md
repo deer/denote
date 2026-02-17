@@ -15,8 +15,10 @@ import type { DenoteConfig } from "@denote/core";
 export const config: DenoteConfig = {
   name: "My Documentation",
   logo: {
-    light: "/logo.svg",
-    dark: "/logo-dark.svg",
+    light: "/logo.svg", // Image logo
+    dark: "/logo-dark.svg", // Dark mode variant
+    text: "mysite", // Text logo (overrides name in header)
+    suffix: ".dev", // Styled suffix in primary color
   },
   favicon: "/favicon.ico",
 };

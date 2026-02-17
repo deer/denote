@@ -24,8 +24,27 @@ export function Header({ showSearch = true, currentPath }: HeaderProps) {
         >
           {/* Logo */}
           <a href="/" class="flex items-center gap-2 font-semibold text-lg">
-            <span class="text-2xl">🦕</span>
-            <span class="hidden sm:inline-block">{config.name}</span>
+            {config.logo?.light
+              ? (
+                <img
+                  src={config.logo.light}
+                  alt={config.name}
+                  class="h-8 w-auto"
+                />
+              )
+              : (
+                <span
+                  class="text-xl font-extrabold tracking-tight text-[var(--denote-text)]"
+                  style={{ fontFamily: "var(--denote-font-heading)" }}
+                >
+                  {config.logo?.text || config.name}
+                  {config.logo?.suffix && (
+                    <span class="text-[var(--denote-primary)]">
+                      {config.logo.suffix}
+                    </span>
+                  )}
+                </span>
+              )}
           </a>
 
           {/* Navigation */}
@@ -95,7 +114,8 @@ export function Header({ showSearch = true, currentPath }: HeaderProps) {
             {/* Mobile menu toggle island */}
             <MobileMenu
               currentPath={currentPath}
-              siteName={config.name}
+              siteName={config.logo?.text || config.name}
+              logoSuffix={config.logo?.suffix}
               navigation={config.navigation}
               topNav={config.topNav}
             />

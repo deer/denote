@@ -18,12 +18,13 @@ effect(() => {
 interface MobileMenuProps {
   currentPath?: string;
   siteName: string;
+  logoSuffix?: string;
   navigation: NavItem[];
   topNav?: { title: string; href: string }[];
 }
 
 export function MobileMenu(
-  { currentPath, siteName, navigation, topNav }: MobileMenuProps,
+  { currentPath, siteName, logoSuffix, navigation, topNav }: MobileMenuProps,
 ) {
   const portalRef = useRef<HTMLDivElement | null>(null);
 
@@ -47,6 +48,7 @@ export function MobileMenu(
             <MobileOverlay
               currentPath={currentPath}
               siteName={siteName}
+              logoSuffix={logoSuffix}
               navigation={navigation}
               topNav={topNav}
             />,
@@ -107,9 +109,10 @@ export function MobileMenu(
 
 /** Overlay rendered via portal — lives outside header stacking context */
 function MobileOverlay(
-  { currentPath, siteName, navigation, topNav }: {
+  { currentPath, siteName, logoSuffix, navigation, topNav }: {
     currentPath?: string;
     siteName: string;
+    logoSuffix?: string;
     navigation: NavItem[];
     topNav?: { title: string; href: string }[];
   },
@@ -126,9 +129,16 @@ function MobileOverlay(
       <aside class="fixed top-0 left-0 z-50 w-72 h-full overflow-y-auto bg-[var(--denote-bg)] shadow-2xl">
         {/* Header */}
         <div class="flex items-center justify-between p-4 border-b border-[var(--denote-border)]">
-          <a href="/" class="flex items-center gap-2 font-semibold">
-            <span class="text-2xl">🦕</span>
-            <span>{siteName}</span>
+          <a
+            href="/"
+            class="flex items-center gap-2 font-extrabold tracking-tight"
+          >
+            <span>
+              {siteName}
+              {logoSuffix && (
+                <span class="text-[var(--denote-primary)]">{logoSuffix}</span>
+              )}
+            </span>
           </a>
           <button
             type="button"

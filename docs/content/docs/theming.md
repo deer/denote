@@ -364,11 +364,16 @@ content follows your theme without extra configuration:
 ## Real-World Example: denote.sh
 
 The [denote.sh](https://denote.sh) documentation site uses the theming system to
-achieve a warm, editorial look — parchment backgrounds, serif headings, and
-light-only mode — all through config alone:
+achieve a warm, editorial look — parchment backgrounds, serif headings, and a
+matching dark mode — all through config alone:
 
 ```typescript
 export const config: DenoteConfig = {
+  name: "Denote",
+  logo: {
+    text: "denote", // Lowercase in header
+    suffix: ".sh", // Rendered in primary color
+  },
   colors: {
     primary: "#2d5016", // forest green
     accent: "#b8860b", // dark goldenrod
@@ -376,6 +381,14 @@ export const config: DenoteConfig = {
     surface: "#f0ebe4", // warm linen
     text: "#2c2c2c", // charcoal
     border: "#d4cec6", // warm gray
+    dark: {
+      primary: "#7ec96a", // vibrant green, readable on dark
+      accent: "#e9b84e", // warm gold
+      background: "#0d1117", // deep dark
+      surface: "#1c2333", // visible separation from bg
+      text: "#e6edf3", // soft white
+      border: "#30363d", // clear borders
+    },
   },
   fonts: {
     heading: '"Newsreader", Georgia, serif',
@@ -386,7 +399,6 @@ export const config: DenoteConfig = {
     ],
   },
   style: {
-    darkMode: "light", // force light mode, hide toggle
     roundedness: "lg",
   },
 };

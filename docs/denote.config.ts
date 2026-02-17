@@ -2,17 +2,17 @@
  * Denote Documentation Site Configuration
  *
  * Themed to match denote.cloud — warm parchment palette with
- * Newsreader (headings) + Source Sans 3 (body), light-only mode.
+ * Newsreader (headings) + Source Sans 3 (body), dark mode support.
  */
 import type { DenoteConfig } from "@denote/core";
 
 export const config: DenoteConfig = {
   name: "Denote",
   logo: {
-    light: "/logo.svg",
-    dark: "/logo-dark.svg",
+    text: "denote",
+    suffix: ".sh",
   },
-  favicon: "/favicon.ico",
+  favicon: "/favicon.svg",
   colors: {
     primary: "#2d5016", // forest green
     accent: "#b8860b", // dark goldenrod
@@ -20,6 +20,14 @@ export const config: DenoteConfig = {
     surface: "#f0ebe4", // warm linen
     text: "#2c2c2c", // charcoal
     border: "#d4cec6", // warm gray
+    dark: {
+      primary: "#7ec96a", // vibrant green, readable on dark
+      accent: "#e9b84e", // warm gold
+      background: "#0d1117", // deep dark
+      surface: "#1c2333", // visible separation from bg
+      text: "#e6edf3", // soft white
+      border: "#30363d", // clear borders
+    },
   },
   fonts: {
     heading: '"Newsreader", Georgia, serif',
@@ -30,7 +38,7 @@ export const config: DenoteConfig = {
     ],
   },
   style: {
-    darkMode: "light",
+    darkMode: "auto",
     roundedness: "lg",
   },
   seo: {

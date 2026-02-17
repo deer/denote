@@ -57,12 +57,11 @@ export function Home() {
         <div class="relative container mx-auto px-4 py-24 sm:py-32 lg:py-40">
           <div class="max-w-4xl mx-auto text-center">
             <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium mb-8 bg-[var(--denote-primary-subtle)] text-[var(--denote-primary-text)]">
-              <span class="text-lg" aria-hidden="true">🦕</span>
-              <span>Deno Native • AI Ready • Lightning Fast</span>
+              <span>Open Source · AI-Native · Self-Hostable</span>
             </div>
 
             <h1 class="text-5xl sm:text-6xl lg:text-7xl font-bold text-[var(--denote-text)] mb-6 tracking-tight">
-              Docs for humans{" "}
+              Documentation that{" "}
               <span
                 class="bg-clip-text text-transparent"
                 style={{
@@ -70,15 +69,14 @@ export function Home() {
                     `linear-gradient(to right, var(--denote-primary), var(--denote-accent))`,
                 }}
               >
-                and machines
-              </span>
+                speaks to machines
+              </span>{" "}
+              <em class="font-light">and humans</em>
             </h1>
 
             <p class="text-xl sm:text-2xl text-[var(--denote-text-secondary)] mb-10 max-w-2xl mx-auto">
-              The documentation platform that serves your users <em>and</em>
-              {" "}
-              their AI agents. Built on Deno. Powered by Fresh v2. AI-native
-              from the ground up.
+              The open-source docs platform with llms.txt, MCP server, and
+              structured JSON API built in. Every AI feature free.
             </p>
 
             <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -121,7 +119,7 @@ export function Home() {
             </div>
 
             <p class="mt-8 text-sm text-[var(--denote-text-muted)]">
-              <span aria-hidden="true">⭐</span> Open source on{" "}
+              Open source on{" "}
               <a
                 href={config.social?.github || "#"}
                 class="underline hover:text-[var(--denote-text)] transition-colors"
@@ -141,7 +139,7 @@ export function Home() {
             <div class="grid lg:grid-cols-2 gap-16 items-center">
               <div>
                 <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-100 dark:bg-emerald-900/50 text-emerald-700 dark:text-emerald-300 text-sm font-medium mb-6">
-                  <span aria-hidden="true">🤖</span> AI Native
+                  AI Native
                 </div>
                 <h2 class="text-3xl sm:text-4xl font-bold text-[var(--denote-text)] mb-4">
                   Your docs are an API for AI
@@ -297,11 +295,10 @@ GET /api/docs        # Structured JSON`}
       <footer class="py-12 bg-[var(--denote-bg)] border-t border-[var(--denote-border)]">
         <div class="container mx-auto px-4">
           <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div class="flex items-center gap-2 text-[var(--denote-text-secondary)]">
-              <span class="text-xl" aria-hidden="true">🦕</span>
+            <div class="text-[var(--denote-text-secondary)]">
               <span>
                 {config.footer?.copyright ||
-                  `© ${new Date().getFullYear()} ${config.name}`}
+                  `\u00A9 ${new Date().getFullYear()} ${config.name}`}
               </span>
             </div>
             <div class="flex items-center gap-6">
