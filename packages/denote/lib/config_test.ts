@@ -97,3 +97,68 @@ Deno.test("setConfig - does not throw on invalid config", () => {
   console.warn = origWarn;
   // If we got here, setConfig didn't throw — that's the assertion
 });
+
+// ---------------------------------------------------------------------------
+// SEO config validation
+// ---------------------------------------------------------------------------
+
+Deno.test("setConfig - accepts valid seo config without warnings", () => {
+  const warnings: string[] = [];
+  const origWarn = console.warn;
+  console.warn = (msg: string) => warnings.push(msg);
+
+  setConfig({
+    name: "Test",
+    navigation: [{ title: "X", href: "/docs/x" }],
+    seo: {
+      url: "https://denote.sh",
+      ogImage: "https://denote.sh/og.png",
+      ogImageWidth: 1200,
+      ogImageHeight: 630,
+      locale: "en",
+      jsonLdType: "WebSite",
+    },
+  });
+
+  console.warn = origWarn;
+  assertEquals(
+    warnings.filter((w) => w.includes("Config validation")).length,
+    0,
+  );
+});
+
+Deno.test("setConfig - warns on invalid seo.url", () => {
+  const warnings: string[] = [];
+  const origWarn = console.warn;
+  console.warn = (msg: string) => warnings.push(msg);
+
+  setConfig({
+    name: "Test",
+    navigation: [{ title: "X", href: "/docs/x" }],
+    seo: { url: "not-a-url" },
+  });
+
+  console.warn = origWarn;
+  assertEquals(
+    warnings.some((w) => w.includes("seo.url")),
+    true,
+  );
+});
+
+Deno.test("setConfig - warns on invalid seo.ogImage", () => {
+  const warnings: string[] = [];
+  const origWarn = console.warn;
+  console.warn = (msg: string) => warnings.push(msg);
+
+  setConfig({
+    name: "Test",
+    navigation: [{ title: "X", href: "/docs/x" }],
+    seo: { ogImage: "not-a-url" },
+  });
+
+  console.warn = origWarn;
+  assertEquals(
+    warnings.some((w) => w.includes("seo.ogImage")),
+    true,
+  );
+});

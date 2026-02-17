@@ -1,6 +1,7 @@
 import type { PageProps } from "fresh";
 import { define, type State } from "../utils.ts";
 import { getConfig } from "../lib/config.ts";
+import { buildJsonLd } from "../lib/seo.ts";
 
 /** App wrapper component — exported for programmatic routing */
 export function App({ Component, state }: PageProps<unknown, State>) {
@@ -11,20 +12,31 @@ export function App({ Component, state }: PageProps<unknown, State>) {
   const pageDescription = state.pageDescription ||
     "Documentation powered by Denote";
   const pageUrl = state.pageUrl;
-  const pageImage = state.pageImage;
+  const pageImage = state.pageImage || config.seo?.ogImage;
 
-  const jsonLd = JSON.stringify({
-    "@context": "https://schema.org",
-    "@type": "WebSite",
-    name: config.name,
-    url: pageUrl || "/",
-    description: pageDescription,
-  });
+  const jsonLd = JSON.stringify(
+    buildJsonLd(config, pageDescription, pageUrl),
+  );
 
   const fontImports = config.fonts?.imports || [];
+  const locale = config.seo?.locale || "en";
+  const seoUrl = config.seo?.url?.replace(/\/$/, "");
+
+  // Preconnect to Google Fonts when font imports reference it
+  const hasGoogleFonts = fontImports.some((url) =>
+    url.includes("fonts.googleapis.com")
+  );
+
+  // OG image dimensions: use configured values, or defaults when an image exists
+  const ogImageWidth = pageImage
+    ? (config.seo?.ogImageWidth ?? 1200)
+    : undefined;
+  const ogImageHeight = pageImage
+    ? (config.seo?.ogImageHeight ?? 630)
+    : undefined;
 
   return (
-    <html lang="en" class="scroll-smooth">
+    <html lang={locale} class="scroll-smooth">
       <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -47,6 +59,19 @@ export function App({ Component, state }: PageProps<unknown, State>) {
           media="(prefers-color-scheme: dark)"
         />
         <link rel="manifest" href="/manifest.json" />
+
+        {/* Font preconnect for Google Fonts */}
+        {hasGoogleFonts && (
+          <>
+            <link rel="preconnect" href="https://fonts.googleapis.com" />
+            <link
+              rel="preconnect"
+              href="https://fonts.gstatic.com"
+              crossOrigin="anonymous"
+            />
+          </>
+        )}
+
         {fontImports.map((url) => (
           <link
             key={url}
@@ -55,6 +80,14 @@ export function App({ Component, state }: PageProps<unknown, State>) {
           />
         ))}
         {pageUrl && <link rel="canonical" href={pageUrl} />}
+
+        {/* hreflang tags when seo.url is configured */}
+        {seoUrl && pageUrl && (
+          <>
+            <link rel="alternate" hreflang={locale} href={pageUrl} />
+            <link rel="alternate" hreflang="x-default" href={pageUrl} />
+          </>
+        )}
 
         {/* JSON-LD structured data (application/ld+json is not executable — CSP safe) */}
         <script
@@ -68,6 +101,18 @@ export function App({ Component, state }: PageProps<unknown, State>) {
         <meta property="og:description" content={pageDescription} />
         {pageUrl && <meta property="og:url" content={pageUrl} />}
         {pageImage && <meta property="og:image" content={pageImage} />}
+        {pageImage && ogImageWidth && (
+          <meta
+            property="og:image:width"
+            content={String(ogImageWidth)}
+          />
+        )}
+        {pageImage && ogImageHeight && (
+          <meta
+            property="og:image:height"
+            content={String(ogImageHeight)}
+          />
+        )}
         <meta property="og:site_name" content={config.name} />
 
         {/* Twitter Card */}
