@@ -13,6 +13,25 @@ export const config: DenoteConfig = {
     suffix: ".sh",
   },
   favicon: "/favicon.svg",
+  // ── Demo theme: uncomment to test config-driven theming ──────────
+  // Warm earthy light mode + deep teal dark mode.
+  // If theming works correctly, EVERY surface/text/border should change.
+  // colors: {
+  //   primary: "#b45309",       // amber-700
+  //   accent: "#059669",        // emerald-600
+  //   background: "#fef3c7",    // warm cream
+  //   surface: "#fde68a",       // amber-200
+  //   text: "#451a03",          // amber-950
+  //   border: "#d97706",        // amber-500
+  //   dark: {
+  //     primary: "#f59e0b",     // amber-400
+  //     accent: "#34d399",      // emerald-400
+  //     background: "#042f2e",  // teal-950
+  //     surface: "#0f766e",     // teal-700
+  //     text: "#ccfbf1",        // teal-100
+  //     border: "#115e59",      // teal-800
+  //   },
+  // },
   colors: {
     primary: "#2d5016", // forest green
     accent: "#b8860b", // dark goldenrod
@@ -21,7 +40,7 @@ export const config: DenoteConfig = {
     text: "#2c2c2c", // charcoal
     border: "#d4cec6", // warm gray
     dark: {
-      primary: "#7ec96a", // vibrant green, readable on dark
+      primary: "#4a9e6a", // forest green, readable on dark
       accent: "#e9b84e", // warm gold
       background: "#0d1117", // deep dark
       surface: "#1c2333", // visible separation from bg
