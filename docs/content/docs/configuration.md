@@ -197,7 +197,41 @@ appears.
 
 ## SEO
 
-Denote includes several built-in SEO features that work automatically:
+Denote includes several built-in SEO features that work automatically, plus an
+optional `seo` config block for production sites that need full control.
+
+### SEO Configuration
+
+For production sites with a custom domain, add the `seo` block:
+
+```typescript
+export const config: DenoteConfig = {
+  seo: {
+    url: "https://denote.sh",
+    ogImage: "https://denote.sh/og.png",
+    ogImageWidth: 1200,
+    ogImageHeight: 630,
+    locale: "en",
+    jsonLdType: "WebSite",
+    jsonLdExtra: {
+      author: { "@type": "Organization", name: "Denote" },
+    },
+  },
+};
+```
+
+| Property        | Description                                                                    |
+| --------------- | ------------------------------------------------------------------------------ |
+| `url`           | Canonical base URL — unlocks proper canonical URLs, hreflang, and sitemap URLs |
+| `ogImage`       | Default OG image for social sharing (1200x630 recommended)                     |
+| `ogImageWidth`  | OG image width in pixels (default: 1200 when ogImage is set)                   |
+| `ogImageHeight` | OG image height in pixels (default: 630 when ogImage is set)                   |
+| `locale`        | Language code for `<html lang>` and hreflang tags (default: "en")              |
+| `jsonLdType`    | JSON-LD `@type` (default: "WebSite", or "SoftwareApplication", etc.)           |
+| `jsonLdExtra`   | Additional properties merged into the JSON-LD structured data object           |
+
+All fields are optional. Without `seo`, Denote still generates correct meta tags
+using the request origin as the base URL.
 
 ### Per-Page Meta Tags
 
@@ -208,23 +242,48 @@ frontmatter to your pages for better search engine visibility.
 ### OpenGraph & Twitter Cards
 
 Denote automatically generates OpenGraph (`og:title`, `og:description`,
-`og:url`, `og:image`) and Twitter Card meta tags for every page. This ensures
-your documentation looks great when shared on social media.
+`og:url`, `og:image`, `og:image:width`, `og:image:height`) and Twitter Card meta
+tags for every page. When `seo.ogImage` is configured, it's used as the default
+for all pages. Individual pages can override it with the `image` frontmatter
+field.
 
 ### Sitemap
 
 A `sitemap.xml` is automatically generated at `/sitemap.xml` and includes all
-documentation pages. Search engines use this to discover and index your content.
+documentation pages with `<changefreq>` and `<priority>` elements (home=1.0,
+docs index=0.8, pages=0.6). When `seo.url` is set, sitemap URLs use your
+canonical domain instead of the request origin.
 
 ### Robots.txt
 
 A `robots.txt` file is served at `/robots.txt` with an `Allow: /` directive and
-a reference to the sitemap. No configuration needed.
+a reference to the sitemap. When `seo.url` is set, the sitemap URL uses your
+canonical domain.
 
 ### Canonical URLs
 
-Each page includes an `og:url` tag with its canonical URL, helping search
-engines avoid duplicate content issues.
+Each page includes a `<link rel="canonical">` tag and `og:url` meta tag. When
+`seo.url` is configured, these use your canonical domain, helping search engines
+avoid duplicate content issues across preview deployments.
+
+### Structured Data (JSON-LD)
+
+Denote auto-generates JSON-LD structured data on every page. By default it uses
+`"WebSite"` as the `@type`. Customize it via the `seo` config:
+
+```typescript
+seo: {
+  jsonLdType: "SoftwareApplication",
+  jsonLdExtra: {
+    applicationCategory: "DeveloperApplication",
+    operatingSystem: "Any",
+    offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+  },
+}
+```
+
+The `jsonLdExtra` properties are merged into the generated object alongside the
+auto-populated `name`, `url`, and `description` fields.
 
 ## Analytics
 

@@ -361,6 +361,41 @@ content follows your theme without extra configuration:
 | `--denote-bg-secondary`   | `--gfm-bg-subtle`    |
 | `--denote-bg-tertiary`    | `--gfm-bg-surface`   |
 
+## Real-World Example: denote.sh
+
+The [denote.sh](https://denote.sh) documentation site uses the theming system to
+achieve a warm, editorial look — parchment backgrounds, serif headings, and
+light-only mode — all through config alone:
+
+```typescript
+export const config: DenoteConfig = {
+  colors: {
+    primary: "#2d5016", // forest green
+    accent: "#b8860b", // dark goldenrod
+    background: "#faf6f1", // parchment
+    surface: "#f0ebe4", // warm linen
+    text: "#2c2c2c", // charcoal
+    border: "#d4cec6", // warm gray
+  },
+  fonts: {
+    heading: '"Newsreader", Georgia, serif',
+    body: '"Source Sans 3", system-ui, sans-serif',
+    imports: [
+      "https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,400;0,700;1,400&display=swap",
+      "https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700&display=swap",
+    ],
+  },
+  style: {
+    darkMode: "light", // force light mode, hide toggle
+    roundedness: "lg",
+  },
+};
+```
+
+This demonstrates how the theming system can create a dramatically different
+aesthetic from the defaults — no custom CSS, no component overrides, just
+config.
+
 ## Best Practices
 
 1. **Use CSS vars for theme colors** — `bg-[var(--denote-bg)]` adapts to any

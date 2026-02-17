@@ -23,15 +23,16 @@ order: 1
 
 ### Frontmatter Options
 
-| Property       | Description                                     |
-| -------------- | ----------------------------------------------- |
-| `title`        | The page title (required)                       |
-| `description`  | A brief description for SEO and previews        |
-| `icon`         | An emoji or icon for the sidebar                |
-| `sidebarTitle` | A shorter title for the sidebar                 |
-| `order`        | Sort order within the section                   |
-| `ai-summary`   | AI-optimized summary for LLM context/embeddings |
-| `ai-keywords`  | Keywords for AI retrieval and classification    |
+| Property       | Description                                              |
+| -------------- | -------------------------------------------------------- |
+| `title`        | The page title (required)                                |
+| `description`  | A brief description for SEO and previews                 |
+| `icon`         | An emoji or icon for the sidebar                         |
+| `sidebarTitle` | A shorter title for the sidebar                          |
+| `order`        | Sort order within the section                            |
+| `image`        | OG image URL for social sharing (overrides site default) |
+| `ai-summary`   | AI-optimized summary for LLM context/embeddings          |
+| `ai-keywords`  | Keywords for AI retrieval and classification             |
 
 ### AI Content Tags
 

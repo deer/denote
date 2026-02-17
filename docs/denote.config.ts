@@ -1,5 +1,8 @@
 /**
  * Denote Documentation Site Configuration
+ *
+ * Themed to match denote.cloud — warm parchment palette with
+ * Newsreader (headings) + Source Sans 3 (body), light-only mode.
  */
 import type { DenoteConfig } from "@denote/core";
 
@@ -10,25 +13,34 @@ export const config: DenoteConfig = {
     dark: "/logo-dark.svg",
   },
   favicon: "/favicon.ico",
-  // ── Demo theme: uncomment to test config-driven theming ──────────
-  // Warm earthy light mode + deep teal dark mode.
-  // If theming works correctly, EVERY surface/text/border should change.
-  // colors: {
-  //   primary: "#b45309",       // amber-700
-  //   accent: "#059669",        // emerald-600
-  //   background: "#fef3c7",    // warm cream
-  //   surface: "#fde68a",       // amber-200
-  //   text: "#451a03",          // amber-950
-  //   border: "#d97706",        // amber-500
-  //   dark: {
-  //     primary: "#f59e0b",     // amber-400
-  //     accent: "#34d399",      // emerald-400
-  //     background: "#042f2e",  // teal-950
-  //     surface: "#0f766e",     // teal-700
-  //     text: "#ccfbf1",        // teal-100
-  //     border: "#115e59",      // teal-800
-  //   },
-  // },
+  colors: {
+    primary: "#2d5016", // forest green
+    accent: "#b8860b", // dark goldenrod
+    background: "#faf6f1", // parchment
+    surface: "#f0ebe4", // warm linen
+    text: "#2c2c2c", // charcoal
+    border: "#d4cec6", // warm gray
+  },
+  fonts: {
+    heading: '"Newsreader", Georgia, serif',
+    body: '"Source Sans 3", system-ui, sans-serif',
+    imports: [
+      "https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,400;0,700;1,400&display=swap",
+      "https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700&display=swap",
+    ],
+  },
+  style: {
+    darkMode: "light",
+    roundedness: "lg",
+  },
+  seo: {
+    url: "https://denote.sh",
+    locale: "en",
+    jsonLdType: "WebSite",
+    jsonLdExtra: {
+      author: { "@type": "Organization", name: "Denote" },
+    },
+  },
   navigation: [
     {
       title: "Getting Started",
@@ -71,7 +83,7 @@ export const config: DenoteConfig = {
     { title: "GitHub", href: "https://github.com/deer/denote" },
   ],
   footer: {
-    copyright: "© 2026 Denote Contributors",
+    copyright: "\u00A9 2026 Denote Contributors",
     links: [
       { title: "GitHub", href: "https://github.com/deer/denote" },
     ],
