@@ -43,7 +43,7 @@ export interface DenoteConfig {
     heading?: string;
     /** Monospace font for code blocks. */
     mono?: string;
-    /** Google Fonts or other font import URLs (added as <link> tags in <head>) */
+    /** Font stylesheet URLs (added as <link> tags in <head>). Self-host fonts for privacy. */
     imports?: string[];
   };
   navigation: NavItem[];

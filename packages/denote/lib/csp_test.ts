@@ -32,7 +32,7 @@ function parseDirectives(header: string): Map<string, string[]> {
 
 Deno.test("csp - custom directive overrides default by name", async () => {
   const header = await getCspHeader({
-    csp: ["font-src 'self' https://fonts.gstatic.com"],
+    csp: ["font-src 'self' https://cdn.example.com"],
   });
   const directives = parseDirectives(header);
 
@@ -40,15 +40,15 @@ Deno.test("csp - custom directive overrides default by name", async () => {
   assertEquals(directives.get("font-src")?.length, 1);
   assertEquals(
     directives.get("font-src")?.[0],
-    "font-src 'self' https://fonts.gstatic.com",
+    "font-src 'self' https://cdn.example.com",
   );
 });
 
 Deno.test("csp - no duplicate directive names when overriding", async () => {
   const header = await getCspHeader({
     csp: [
-      "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-      "font-src 'self' https://fonts.gstatic.com",
+      "style-src 'self' 'unsafe-inline' https://cdn.example.com",
+      "font-src 'self' https://cdn.example.com",
       "img-src 'self' data: https:",
     ],
   });
@@ -66,12 +66,12 @@ Deno.test("csp - no duplicate directive names when overriding", async () => {
 
 Deno.test("csp - override values are actually present in header", async () => {
   const header = await getCspHeader({
-    csp: ["font-src 'self' https://fonts.gstatic.com"],
+    csp: ["font-src 'self' https://cdn.example.com"],
   });
 
   // The custom value must be in the final header, not silently dropped
   assertNotEquals(
-    header.indexOf("https://fonts.gstatic.com"),
+    header.indexOf("https://cdn.example.com"),
     -1,
     "custom font-src value missing from CSP header",
   );

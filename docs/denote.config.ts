@@ -51,10 +51,7 @@ export const config: DenoteConfig = {
   fonts: {
     heading: '"Newsreader", Georgia, serif',
     body: '"Source Sans 3", system-ui, sans-serif',
-    imports: [
-      "https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,400;0,700;1,400&display=swap",
-      "https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700&display=swap",
-    ],
+    imports: ["/fonts.css"],
   },
   style: {
     darkMode: "auto",
@@ -122,7 +119,7 @@ export const config: DenoteConfig = {
     enabled: true,
   },
   ai: {
-    chatbot: true,
+    chatbot: false,
     mcp: true,
   },
   ga4: true,

@@ -138,17 +138,17 @@ export const config: DenoteConfig = {
     body: '"Source Sans 3", system-ui, sans-serif',
     heading: '"Newsreader", Georgia, serif',
     mono: '"JetBrains Mono", ui-monospace, monospace',
-    imports: [
-      "https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700&display=swap",
-      "https://fonts.googleapis.com/css2?family=Newsreader:wght@400;700&display=swap",
-    ],
+    imports: ["/fonts.css"],
   },
 };
 ```
 
-The `imports` array adds `<link rel="stylesheet">` tags for web font loading.
-Font families are applied via CSS custom properties, so they affect the entire
-site including markdown content.
+The `imports` array adds `<link rel="stylesheet">` tags for font loading.
+**Self-host your fonts** — place `.woff2` files in your `static/fonts/`
+directory and create a `static/fonts.css` with `@font-face` declarations
+pointing to them. This avoids third-party requests that leak visitor IPs (a GDPR
+concern with services like Google Fonts). Font families are applied via CSS
+custom properties, so they affect the entire site including markdown content.
 
 ## Layout
 
@@ -393,10 +393,7 @@ export const config: DenoteConfig = {
   fonts: {
     heading: '"Newsreader", Georgia, serif',
     body: '"Source Sans 3", system-ui, sans-serif',
-    imports: [
-      "https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,400;0,700;1,400&display=swap",
-      "https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700&display=swap",
-    ],
+    imports: ["/fonts.css"],
   },
   style: {
     roundedness: "lg",

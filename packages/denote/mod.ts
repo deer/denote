@@ -160,20 +160,15 @@ export function denote(options: DenoteOptions): App<unknown> {
     "img-src 'self' data: https:",
   ];
 
-  // Allow font CDN origins when external font imports are configured
+  // Allow external CDN origins when font imports or custom CSS use absolute URLs
   const styleSrc = ["'self'", "'unsafe-inline'"];
   const fontSrc = ["'self'"];
   for (const url of config.fonts?.imports ?? []) {
     try {
       const { origin } = new URL(url);
       if (!styleSrc.includes(origin)) styleSrc.push(origin);
-      if (
-        origin === "https://fonts.googleapis.com" &&
-        !fontSrc.includes("https://fonts.gstatic.com")
-      ) {
-        fontSrc.push("https://fonts.gstatic.com");
-      }
-    } catch { /* skip invalid URLs */ }
+      if (!fontSrc.includes(origin)) fontSrc.push(origin);
+    } catch { /* skip relative URLs and invalid URLs */ }
   }
   if (config.style?.customCss?.startsWith("http")) {
     try {

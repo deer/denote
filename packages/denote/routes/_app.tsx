@@ -22,11 +22,6 @@ export function App({ Component, state }: PageProps<unknown, State>) {
   const locale = config.seo?.locale || "en";
   const seoUrl = config.seo?.url?.replace(/\/$/, "");
 
-  // Preconnect to Google Fonts when font imports reference it
-  const hasGoogleFonts = fontImports.some((url) =>
-    url.includes("fonts.googleapis.com")
-  );
-
   // OG image dimensions: use configured values, or defaults when an image exists
   const ogImageWidth = pageImage
     ? (config.seo?.ogImageWidth ?? 1200)
@@ -59,18 +54,6 @@ export function App({ Component, state }: PageProps<unknown, State>) {
           media="(prefers-color-scheme: dark)"
         />
         <link rel="manifest" href="/manifest.json" />
-
-        {/* Font preconnect for Google Fonts */}
-        {hasGoogleFonts && (
-          <>
-            <link rel="preconnect" href="https://fonts.googleapis.com" />
-            <link
-              rel="preconnect"
-              href="https://fonts.gstatic.com"
-              crossOrigin="anonymous"
-            />
-          </>
-        )}
 
         {fontImports.map((url) => (
           <link
