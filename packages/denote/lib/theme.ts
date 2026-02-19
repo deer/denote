@@ -154,10 +154,12 @@ export function generateThemeCSS(config: DenoteConfig): string {
     }
     if (ds) {
       lines.push(`  --denote-bg-secondary: ${ds};`);
+      // Dark mode: bg-tertiary should be LIGHTER than bg-secondary
+      // (opposite of light mode) for visible code block backgrounds
       lines.push(
-        `  --denote-bg-tertiary: color-mix(in srgb, ${ds} 70%, ${
-          dbg || "black"
-        });`,
+        `  --denote-bg-tertiary: color-mix(in srgb, ${ds}, ${
+          dt || "white"
+        } 15%);`,
       );
     }
     if (dt) {

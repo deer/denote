@@ -41,7 +41,7 @@ const DEFAULT_DIRECTIVES = [
  * Middleware to set Content-Security-Policy headers.
  *
  * Custom directives in `options.csp` override defaults by directive name.
- * For example, passing `["font-src 'self' https://fonts.gstatic.com"]`
+ * For example, passing `["font-src 'self' https://cdn.example.com"]`
  * replaces the default `font-src 'self'` instead of appending a duplicate.
  */
 export function csp(options: CSPOptions = {}) {

@@ -18,6 +18,8 @@ export interface DocFrontmatter {
   icon?: string;
   sidebarTitle?: string;
   order?: number;
+  /** OG image URL for this page (overrides config.seo.ogImage) */
+  image?: string;
   /** Short AI-optimized summary for LLM context and embeddings */
   "ai-summary"?: string;
   /** Keywords/tags for AI retrieval and classification */

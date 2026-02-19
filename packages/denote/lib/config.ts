@@ -46,6 +46,17 @@ const NavItemSchema: z.ZodType<unknown> = z.lazy(() =>
   })
 );
 
+const SeoSchema = z.object({
+  url: z.string().url("Must be a valid URL (e.g. https://denote.sh)")
+    .optional(),
+  ogImage: z.string().url("Must be a valid URL").optional(),
+  ogImageWidth: z.number().positive().optional(),
+  ogImageHeight: z.number().positive().optional(),
+  locale: z.string().optional(),
+  jsonLdType: z.string().optional(),
+  jsonLdExtra: z.record(z.string(), z.unknown()).optional(),
+}).optional();
+
 const ConfigSchema = z.object({
   name: z.string().min(1, "Config 'name' is required"),
   navigation: z.array(NavItemSchema).min(
@@ -53,6 +64,7 @@ const ConfigSchema = z.object({
     "Config 'navigation' must have at least one item",
   ),
   colors: ColorSchema,
+  seo: SeoSchema,
 }).passthrough();
 
 // ---------------------------------------------------------------------------

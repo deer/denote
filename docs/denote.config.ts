@@ -1,15 +1,18 @@
 /**
  * Denote Documentation Site Configuration
+ *
+ * Themed to match denote.cloud — warm parchment palette with
+ * Newsreader (headings) + Source Sans 3 (body), dark mode support.
  */
 import type { DenoteConfig } from "@denote/core";
 
 export const config: DenoteConfig = {
   name: "Denote",
   logo: {
-    light: "/logo.svg",
-    dark: "/logo-dark.svg",
+    text: "denote",
+    suffix: ".sh",
   },
-  favicon: "/favicon.ico",
+  favicon: "/favicon.svg",
   // ── Demo theme: uncomment to test config-driven theming ──────────
   // Warm earthy light mode + deep teal dark mode.
   // If theming works correctly, EVERY surface/text/border should change.
@@ -29,6 +32,39 @@ export const config: DenoteConfig = {
   //     border: "#115e59",      // teal-800
   //   },
   // },
+  colors: {
+    primary: "#2d5016", // forest green
+    accent: "#b8860b", // dark goldenrod
+    background: "#faf6f1", // parchment
+    surface: "#f0ebe4", // warm linen
+    text: "#2c2c2c", // charcoal
+    border: "#d4cec6", // warm gray
+    dark: {
+      primary: "#4a9e6a", // forest green, readable on dark
+      accent: "#e9b84e", // warm gold
+      background: "#0d1117", // deep dark
+      surface: "#1c2333", // visible separation from bg
+      text: "#e6edf3", // soft white
+      border: "#30363d", // clear borders
+    },
+  },
+  fonts: {
+    heading: '"Newsreader", Georgia, serif',
+    body: '"Source Sans 3", system-ui, sans-serif',
+    imports: ["/fonts.css"],
+  },
+  style: {
+    darkMode: "auto",
+    roundedness: "lg",
+  },
+  seo: {
+    url: "https://denote.sh",
+    locale: "en",
+    jsonLdType: "WebSite",
+    jsonLdExtra: {
+      author: { "@type": "Organization", name: "Denote" },
+    },
+  },
   navigation: [
     {
       title: "Getting Started",
@@ -71,7 +107,7 @@ export const config: DenoteConfig = {
     { title: "GitHub", href: "https://github.com/deer/denote" },
   ],
   footer: {
-    copyright: "© 2026 Denote Contributors",
+    copyright: "\u00A9 2026 Denote Contributors",
     links: [
       { title: "GitHub", href: "https://github.com/deer/denote" },
     ],
@@ -83,7 +119,7 @@ export const config: DenoteConfig = {
     enabled: true,
   },
   ai: {
-    chatbot: true,
+    chatbot: false,
     mcp: true,
   },
   ga4: true,

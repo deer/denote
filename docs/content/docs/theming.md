@@ -138,17 +138,17 @@ export const config: DenoteConfig = {
     body: '"Source Sans 3", system-ui, sans-serif',
     heading: '"Newsreader", Georgia, serif',
     mono: '"JetBrains Mono", ui-monospace, monospace',
-    imports: [
-      "https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700&display=swap",
-      "https://fonts.googleapis.com/css2?family=Newsreader:wght@400;700&display=swap",
-    ],
+    imports: ["/fonts.css"],
   },
 };
 ```
 
-The `imports` array adds `<link rel="stylesheet">` tags for web font loading.
-Font families are applied via CSS custom properties, so they affect the entire
-site including markdown content.
+The `imports` array adds `<link rel="stylesheet">` tags for font loading.
+**Self-host your fonts** — place `.woff2` files in your `static/fonts/`
+directory and create a `static/fonts.css` with `@font-face` declarations
+pointing to them. This avoids third-party requests that leak visitor IPs (a GDPR
+concern with services like Google Fonts). Font families are applied via CSS
+custom properties, so they affect the entire site including markdown content.
 
 ## Layout
 
@@ -360,6 +360,50 @@ content follows your theme without extra configuration:
 | `--denote-border`         | `--gfm-border-color` |
 | `--denote-bg-secondary`   | `--gfm-bg-subtle`    |
 | `--denote-bg-tertiary`    | `--gfm-bg-surface`   |
+
+## Real-World Example: denote.sh
+
+The [denote.sh](https://denote.sh) documentation site uses the theming system to
+achieve a warm, editorial look — parchment backgrounds, serif headings, and a
+matching dark mode — all through config alone:
+
+```typescript
+export const config: DenoteConfig = {
+  name: "Denote",
+  logo: {
+    text: "denote", // Lowercase in header
+    suffix: ".sh", // Rendered in primary color
+  },
+  colors: {
+    primary: "#2d5016", // forest green
+    accent: "#b8860b", // dark goldenrod
+    background: "#faf6f1", // parchment
+    surface: "#f0ebe4", // warm linen
+    text: "#2c2c2c", // charcoal
+    border: "#d4cec6", // warm gray
+    dark: {
+      primary: "#7ec96a", // vibrant green, readable on dark
+      accent: "#e9b84e", // warm gold
+      background: "#0d1117", // deep dark
+      surface: "#1c2333", // visible separation from bg
+      text: "#e6edf3", // soft white
+      border: "#30363d", // clear borders
+    },
+  },
+  fonts: {
+    heading: '"Newsreader", Georgia, serif',
+    body: '"Source Sans 3", system-ui, sans-serif',
+    imports: ["/fonts.css"],
+  },
+  style: {
+    roundedness: "lg",
+  },
+};
+```
+
+This demonstrates how the theming system can create a dramatically different
+aesthetic from the defaults — no custom CSS, no component overrides, just
+config.
 
 ## Best Practices
 

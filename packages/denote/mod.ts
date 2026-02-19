@@ -160,20 +160,15 @@ export function denote(options: DenoteOptions): App<unknown> {
     "img-src 'self' data: https:",
   ];
 
-  // Allow font CDN origins when external font imports are configured
+  // Allow external CDN origins when font imports or custom CSS use absolute URLs
   const styleSrc = ["'self'", "'unsafe-inline'"];
   const fontSrc = ["'self'"];
   for (const url of config.fonts?.imports ?? []) {
     try {
       const { origin } = new URL(url);
       if (!styleSrc.includes(origin)) styleSrc.push(origin);
-      if (
-        origin === "https://fonts.googleapis.com" &&
-        !fontSrc.includes("https://fonts.gstatic.com")
-      ) {
-        fontSrc.push("https://fonts.gstatic.com");
-      }
-    } catch { /* skip invalid URLs */ }
+      if (!fontSrc.includes(origin)) fontSrc.push(origin);
+    } catch { /* skip relative URLs and invalid URLs */ }
   }
   if (config.style?.customCss?.startsWith("http")) {
     try {
@@ -333,35 +328,24 @@ export function denote(options: DenoteOptions): App<unknown> {
   if (includeSeo) {
     app.get("/sitemap.xml", async (ctx) => {
       const { getAllDocs } = await import("./lib/docs.ts");
-      const baseUrl = new URL(ctx.req.url).origin;
+      const { buildSitemapXml } = await import("./lib/seo.ts");
+      const seoBase = config.seo?.url?.replace(/\/$/, "");
+      const baseUrl = seoBase || new URL(ctx.req.url).origin;
       const docs = await getAllDocs();
       const basePath = getDocsBasePath();
 
-      const today = new Date().toISOString().slice(0, 10);
-      const urls = docs.map((doc) => {
-        const loc = `${baseUrl}${basePath}/${doc.slug}`;
-        return `  <url><loc>${loc}</loc><lastmod>${today}</lastmod></url>`;
-      });
-
-      const xml = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>${baseUrl}/</loc><lastmod>${today}</lastmod></url>
-  <url><loc>${baseUrl}${basePath}</loc><lastmod>${today}</lastmod></url>
-${urls.join("\n")}
-</urlset>`;
+      const xml = buildSitemapXml(baseUrl, basePath, docs);
 
       return new Response(xml, {
         headers: { "Content-Type": "application/xml; charset=utf-8" },
       });
     });
 
-    app.get("/robots.txt", (ctx) => {
-      const baseUrl = new URL(ctx.req.url).origin;
-      const txt = `User-agent: *
-Allow: /
-
-Sitemap: ${baseUrl}/sitemap.xml
-`;
+    app.get("/robots.txt", async (ctx) => {
+      const { buildRobotsTxt } = await import("./lib/seo.ts");
+      const seoBase = config.seo?.url?.replace(/\/$/, "");
+      const baseUrl = seoBase || new URL(ctx.req.url).origin;
+      const txt = buildRobotsTxt(baseUrl);
       return new Response(txt, {
         headers: { "Content-Type": "text/plain; charset=utf-8" },
       });

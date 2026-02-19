@@ -14,6 +14,10 @@ export interface DenoteConfig {
   logo?: {
     light?: string;
     dark?: string;
+    /** Text to display in header (overrides config.name for the logo). Lowercase recommended. */
+    text?: string;
+    /** Styled suffix appended in primary color (e.g. ".sh", ".cloud") */
+    suffix?: string;
   };
   favicon?: string;
   colors?: {
@@ -39,7 +43,7 @@ export interface DenoteConfig {
     heading?: string;
     /** Monospace font for code blocks. */
     mono?: string;
-    /** Google Fonts or other font import URLs (added as <link> tags in <head>) */
+    /** Font stylesheet URLs (added as <link> tags in <head>). Self-host fonts for privacy. */
     imports?: string[];
   };
   navigation: NavItem[];
@@ -94,6 +98,22 @@ export interface DenoteConfig {
   /** Base URL for "Edit this page" links. Denote appends /<slug>.md automatically.
    *  Example: "https://github.com/your-org/your-repo/edit/main/docs/content/docs" */
   editUrl?: string;
+  seo?: {
+    /** Canonical base URL (e.g. "https://denote.sh"). Used for canonical links, sitemap, hreflang, OG. */
+    url?: string;
+    /** Default OG image URL (1200x630 recommended) */
+    ogImage?: string;
+    /** OG image width (default: 1200 when ogImage is set) */
+    ogImageWidth?: number;
+    /** OG image height (default: 630 when ogImage is set) */
+    ogImageHeight?: number;
+    /** Locale for hreflang and html lang (default: "en") */
+    locale?: string;
+    /** JSON-LD @type for the site (default: "WebSite") */
+    jsonLdType?: string;
+    /** Extra properties merged into the JSON-LD object */
+    jsonLdExtra?: Record<string, unknown>;
+  };
   ai?: {
     /** Enable the "Ask AI" chatbot widget on doc pages */
     chatbot?: boolean;
