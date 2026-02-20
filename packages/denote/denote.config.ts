@@ -84,6 +84,37 @@ export interface DenoteConfig {
     enabled?: boolean;
     /** Custom redirect path (default: first nav item with href) */
     redirectTo?: string;
+    /** Hero section content */
+    hero?: {
+      /** Badge text above the headline (e.g. "Open Source · Fast") */
+      badge?: string;
+      /** Main headline text */
+      title: string;
+      /** Portion of the title rendered with a gradient highlight */
+      titleHighlight?: string;
+      /** Subtitle displayed below the title */
+      subtitle?: string;
+      /** Description paragraph below the subtitle */
+      description?: string;
+    };
+    /** Call-to-action buttons in the hero */
+    cta?: {
+      /** Primary CTA button */
+      primary?: { text: string; href: string };
+      /** Secondary CTA button */
+      secondary?: { text: string; href: string };
+    };
+    /** Shell command shown in an install snippet (e.g. "npm install my-lib") */
+    install?: string;
+    /** Feature cards displayed in a grid */
+    features?: Array<{
+      /** Emoji or icon */
+      icon?: string;
+      /** Feature title */
+      title: string;
+      /** Feature description */
+      description: string;
+    }>;
   };
   style?: {
     /** Border radius scale: none=0, sm=0.25rem, md=0.5rem (default), lg=0.75rem, xl=1rem */

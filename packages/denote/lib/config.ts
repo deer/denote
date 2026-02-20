@@ -57,6 +57,28 @@ const SeoSchema = z.object({
   jsonLdExtra: z.record(z.string(), z.unknown()).optional(),
 }).optional();
 
+const LandingSchema = z.object({
+  enabled: z.boolean().optional(),
+  redirectTo: z.string().optional(),
+  hero: z.object({
+    badge: z.string().optional(),
+    title: z.string(),
+    titleHighlight: z.string().optional(),
+    subtitle: z.string().optional(),
+    description: z.string().optional(),
+  }).optional(),
+  cta: z.object({
+    primary: z.object({ text: z.string(), href: z.string() }).optional(),
+    secondary: z.object({ text: z.string(), href: z.string() }).optional(),
+  }).optional(),
+  install: z.string().optional(),
+  features: z.array(z.object({
+    icon: z.string().optional(),
+    title: z.string(),
+    description: z.string(),
+  })).optional(),
+}).optional();
+
 const ConfigSchema = z.object({
   name: z.string().min(1, "Config 'name' is required"),
   navigation: z.array(NavItemSchema).min(
@@ -65,6 +87,7 @@ const ConfigSchema = z.object({
   ),
   colors: ColorSchema,
   seo: SeoSchema,
+  landing: LandingSchema,
 }).passthrough();
 
 // ---------------------------------------------------------------------------
