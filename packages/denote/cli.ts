@@ -127,12 +127,15 @@ export const app = denote({ config, contentDir });
 `,
   );
 
-  // vite.config.ts
+  // vite.config.ts (includes config hot-reload plugin for dev)
   await Deno.writeTextFile(
     `${cwd}/vite.config.ts`,
-    `${header}import { defineConfig } from "vite";
+    `${header}import { defineConfig, type Plugin } from "vite";
 import { fresh } from "@fresh/plugin-vite";
 import tailwindcss from "@tailwindcss/vite";
+import { setConfig } from "${denotePkgDir}lib/config.ts";
+
+const DENOTE_CONFIG_PATH = "${configPath}";
 
 const islandSpecifiers = [
   "${denotePkgDir}islands/ThemeToggle.tsx",
@@ -144,8 +147,31 @@ const islandSpecifiers = [
   "${denotePkgDir}islands/AiChat.tsx",
 ];
 
+/** Vite plugin: hot-reload denote.config.ts without restarting the dev server */
+function denoteConfigHmr(): Plugin {
+  return {
+    name: "denote-config-hmr",
+    configureServer(server) {
+      server.watcher.on("change", async (file: string) => {
+        if (file === DENOTE_CONFIG_PATH) {
+          try {
+            const mod = await import("file://" + DENOTE_CONFIG_PATH + "?t=" + Date.now());
+            setConfig(mod.config || mod.default);
+            console.log("  [denote] Config reloaded");
+            server.hot.send({ type: "full-reload" });
+          } catch (e: unknown) {
+            const msg = e instanceof Error ? e.message : String(e);
+            console.error("  [denote] Config reload error:", msg);
+          }
+        }
+      });
+    },
+  };
+}
+
 export default defineConfig({
   plugins: [
+    denoteConfigHmr(),
     fresh({ islandSpecifiers }),
     tailwindcss(),
   ],
@@ -167,7 +193,7 @@ async function devCommand(port: number) {
 
   await generateBuildFiles(configPath, port);
 
-  // Run vite dev
+  // Run vite dev — config hot-reload is handled by the generated Vite plugin
   const command = new Deno.Command(Deno.execPath(), {
     args: ["run", "-A", "npm:vite"],
     cwd: Deno.cwd(),

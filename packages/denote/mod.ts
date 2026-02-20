@@ -25,6 +25,7 @@
 import { App, staticFiles } from "fresh";
 import type { DenoteConfig } from "./denote.config.ts";
 import {
+  getConfig,
   getDocsBasePath,
   setConfig,
   setContentDir,
@@ -122,12 +123,18 @@ export function denote(options: DenoteOptions): App<unknown> {
 
   // ── CSP-compliant asset routes ──────────────────────────────
 
+  // In dev mode, config-driven assets shouldn't be cached so that
+  // config changes are reflected immediately on restart.
+  const isDev = !Deno.env.get("DENO_DEPLOYMENT_ID") &&
+    Deno.env.get("NODE_ENV") !== "production";
+  const configCacheControl = isDev ? "no-cache" : "public, max-age=3600";
+
   // Theme detection script (render-blocking to prevent FOUC)
   app.get("/theme-init.js", () => {
-    return new Response(darkModeScript(config.style?.darkMode), {
+    return new Response(darkModeScript(getConfig().style?.darkMode), {
       headers: {
         "Content-Type": "application/javascript; charset=utf-8",
-        "Cache-Control": "public, max-age=3600",
+        "Cache-Control": configCacheControl,
       },
     });
   });
@@ -142,13 +149,12 @@ export function denote(options: DenoteOptions): App<unknown> {
     });
   });
 
-  // Config-driven theme override CSS variables (computed once at init)
-  const themeVarsCss = generateThemeCSS(config);
+  // Config-driven theme override CSS variables (recomputed per request for HMR)
   app.get("/theme-vars.css", () => {
-    return new Response(themeVarsCss, {
+    return new Response(generateThemeCSS(getConfig()), {
       headers: {
         "Content-Type": "text/css; charset=utf-8",
-        "Cache-Control": "public, max-age=3600",
+        "Cache-Control": configCacheControl,
       },
     });
   });

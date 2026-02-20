@@ -26,7 +26,17 @@ async function useTempDir(prefix: string) {
   const path = await Deno.makeTempDir({ prefix });
   return {
     path,
-    [Symbol.asyncDispose]: () => Deno.remove(path, { recursive: true }),
+    [Symbol.asyncDispose]: async () => {
+      for (let i = 0; i < 3; i++) {
+        try {
+          await Deno.remove(path, { recursive: true });
+          return;
+        } catch {
+          // Subprocesses (e.g. esbuild) may still be writing; brief retry
+          await new Promise((r) => setTimeout(r, 500));
+        }
+      }
+    },
   };
 }
 
