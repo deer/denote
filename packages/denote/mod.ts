@@ -23,7 +23,7 @@
  *     .listen();
  */
 import { App, staticFiles } from "fresh";
-import type { DenoteConfig } from "./denote.config.ts";
+import type { DenoteConfig, NavItem } from "./denote.config.ts";
 import {
   getConfig,
   getDocsBasePath,
@@ -44,6 +44,22 @@ import { ErrorPage } from "./routes/_error.tsx";
 import { Home as HomePage } from "./routes/index.tsx";
 import { DocsPage } from "./routes/docs/[...slug].tsx";
 import { handler as docsMiddleware } from "./routes/docs/_middleware.ts";
+
+// ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
+
+/** Walk the navigation tree and return the first item with an href. */
+function findFirstHref(items: NavItem[]): string | null {
+  for (const item of items) {
+    if (item.href) return item.href;
+    if (item.children) {
+      const found = findFirstHref(item.children);
+      if (found) return found;
+    }
+  }
+  return null;
+}
 
 // ---------------------------------------------------------------------------
 // Public API
@@ -369,11 +385,13 @@ export function denote(options: DenoteOptions): App<unknown> {
   // Middleware for docs pages (sets page metadata in state)
   app.use(`${docsBasePath}/*`, docsMiddleware);
 
-  // Redirect /docs to /docs/introduction
+  // Redirect /docs to the first navigation page
+  const firstNavHref = findFirstHref(config.navigation) ||
+    `${docsBasePath}/introduction`;
   app.get(docsBasePath, () =>
     new Response(null, {
       status: 302,
-      headers: { Location: `${docsBasePath}/introduction` },
+      headers: { Location: firstNavHref },
     }));
 
   // Doc page handler — :slug+ matches one or more path segments
