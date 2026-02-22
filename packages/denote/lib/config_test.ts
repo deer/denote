@@ -162,3 +162,62 @@ Deno.test("setConfig - warns on invalid seo.ogImage", () => {
     true,
   );
 });
+
+// ---------------------------------------------------------------------------
+// Landing config validation
+// ---------------------------------------------------------------------------
+
+Deno.test("setConfig - accepts valid landing config without warnings", () => {
+  const warnings: string[] = [];
+  const origWarn = console.warn;
+  console.warn = (msg: string) => warnings.push(msg);
+
+  setConfig({
+    name: "Test",
+    navigation: [{ title: "X", href: "/docs/x" }],
+    landing: {
+      enabled: true,
+      hero: {
+        badge: "Open Source",
+        title: "My Docs",
+        titleHighlight: "Docs",
+        subtitle: "A subtitle",
+        description: "Some description text.",
+      },
+      cta: {
+        primary: { text: "Get Started", href: "/docs" },
+        secondary: { text: "GitHub", href: "https://github.com/example" },
+      },
+      install: "deno add @example/lib",
+      features: [
+        { icon: "📝", title: "Markdown", description: "Write in Markdown." },
+        { title: "Fast", description: "Very fast." },
+      ],
+    },
+  });
+
+  console.warn = origWarn;
+  assertEquals(
+    warnings.filter((w) => w.includes("Config validation")).length,
+    0,
+  );
+});
+
+Deno.test("setConfig - warns on landing.hero missing title", () => {
+  const warnings: string[] = [];
+  const origWarn = console.warn;
+  console.warn = (msg: string) => warnings.push(msg);
+
+  setConfig({
+    name: "Test",
+    navigation: [{ title: "X", href: "/docs/x" }],
+    // @ts-ignore: intentionally omitting required hero.title
+    landing: { hero: { badge: "Open Source" } },
+  });
+
+  console.warn = origWarn;
+  assertEquals(
+    warnings.some((w) => w.includes("landing")),
+    true,
+  );
+});

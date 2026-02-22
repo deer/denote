@@ -115,6 +115,62 @@ export const config: DenoteConfig = {
   social: {
     github: "https://github.com/deer/denote",
   },
+  landing: {
+    hero: {
+      badge: "Open Source · AI-Native · Self-Hostable",
+      title: "Documentation that",
+      titleHighlight: "speaks to machines",
+      subtitle: "and humans",
+      description:
+        "The open-source docs platform with llms.txt, MCP server, and structured JSON API built in. Every AI feature free.",
+    },
+    cta: {
+      primary: { text: "Get Started", href: "/docs/introduction" },
+      secondary: {
+        text: "View on GitHub",
+        href: "https://github.com/deer/denote",
+      },
+    },
+    install: "deno run -Ar jsr:@denote/init",
+    features: [
+      {
+        icon: "📝",
+        title: "Markdown First",
+        description:
+          "Write docs in Markdown with frontmatter. No MDX compilation step, no build pipeline. Just files.",
+      },
+      {
+        icon: "⚡",
+        title: "Lightning Fast",
+        description:
+          "Server-rendered with Fresh v2's island architecture. Ship minimal JS — only for interactive components like search and theme toggle.",
+      },
+      {
+        icon: "🎨",
+        title: "Beautiful Defaults",
+        description:
+          "Tailwind CSS v4 with class-based dark mode. Looks great out of the box, fully customizable.",
+      },
+      {
+        icon: "🔍",
+        title: "⌘K Search",
+        description:
+          "Instant full-text search with keyboard navigation. No external service, no API key, no indexing delay.",
+      },
+      {
+        icon: "🤖",
+        title: "AI Native",
+        description:
+          "Built-in MCP server, llms.txt, and JSON API. Your docs are a first-class data source for AI agents.",
+      },
+      {
+        icon: "🚀",
+        title: "Deploy Anywhere",
+        description:
+          "One-click Deno Deploy, or self-host on anything that runs Deno. Docker support included.",
+      },
+    ],
+  },
   search: {
     enabled: true,
   },
