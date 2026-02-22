@@ -28,15 +28,9 @@ This is a simple example of a documentation page.
 - Item one
 - Item two
 - Item three
-
-## Code Example
-
-Here's some code:
-
-\`\`\`typescript const greeting = "Hello, World!"; console.log(greeting); \`\`\`
+```
 
 Pretty simple, right?
-```
 
 ## Step 2: Add to Navigation
 

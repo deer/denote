@@ -134,22 +134,22 @@ export const config: DenoteConfig = {
     install: "deno run -Ar jsr:@denote/init",
     features: [
       {
+        icon: "🤖",
+        title: "AI-Native",
+        description:
+          "Built-in MCP server, llms.txt, and JSON API. Your docs are a first-class data source for AI agents — not an afterthought.",
+      },
+      {
         icon: "📝",
         title: "Markdown First",
         description:
-          "Write docs in Markdown with frontmatter. No MDX compilation step, no build pipeline. Just files.",
+          "Write docs in Markdown with frontmatter. No MDX compilation step. Just files.",
       },
       {
         icon: "⚡",
         title: "Lightning Fast",
         description:
-          "Server-rendered with Fresh v2's island architecture. Ship minimal JS — only for interactive components like search and theme toggle.",
-      },
-      {
-        icon: "🎨",
-        title: "Beautiful Defaults",
-        description:
-          "Tailwind CSS v4 with class-based dark mode. Looks great out of the box, fully customizable.",
+          "Server-rendered with Fresh v2's island architecture. Minimal client JavaScript.",
       },
       {
         icon: "🔍",
@@ -158,10 +158,9 @@ export const config: DenoteConfig = {
           "Instant full-text search with keyboard navigation. No external service, no API key, no indexing delay.",
       },
       {
-        icon: "🤖",
-        title: "AI Native",
-        description:
-          "Built-in MCP server, llms.txt, and JSON API. Your docs are a first-class data source for AI agents.",
+        icon: "🦕",
+        title: "Deno Native",
+        description: "Built on Deno's secure runtime. TypeScript-first.",
       },
       {
         icon: "🚀",

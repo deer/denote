@@ -1,72 +1,66 @@
 # 🦕 Denote
 
-A Mintlify-inspired documentation platform built on **Deno** and **Fresh v2**.
+**Documentation that speaks to machines and humans.**
 
-Write Markdown. Get beautiful docs. Zero build step.
+The open-source docs platform with llms.txt, MCP server, and structured JSON API
+built in. Every AI feature free.
 
-## Features
+Open Source · AI-Native · Self-Hostable
 
-- 📝 **Markdown with Frontmatter** — Write docs in plain Markdown with YAML
-  frontmatter
-- 🎨 **Beautiful Design** — Mintlify-inspired UI with Tailwind CSS
-- 🌙 **Dark Mode** — System-aware with manual toggle
-- 🔍 **Built-in Search** — Instant full-text search (⌘K)
-- 📱 **Mobile Responsive** — Collapsible sidebar, touch-friendly
-- ⚡ **Lightning Fast** — Server-rendered with Fresh v2's island architecture
-- 📑 **Table of Contents** — Auto-generated from headings
-- 🧭 **Config-driven Navigation** — Define your sidebar in TypeScript
-- 🦕 **Deno Native** — No node_modules, no npm, just Deno
+## Why Denote?
+
+Traditional docs tools weren't built for a world where AI agents read your
+documentation too. Denote is:
+
+- 🤖 **AI-Native** — Built-in MCP server, llms.txt, and JSON API. Your docs are
+  a first-class data source for AI agents — not an afterthought.
+- 📝 **Markdown First** — Write docs in Markdown with frontmatter. No MDX
+  compilation step. Just files.
+- ⚡ **Lightning Fast** — Server-rendered with Fresh v2's island architecture.
+  Minimal client JavaScript.
+- 🦕 **Deno Native** — Built on Deno's secure runtime. TypeScript-first.
+- 🚀 **Deploy Anywhere** — One-click Deno Deploy, or self-host on anything that
+  runs Deno. Docker support included.
 
 ## Quick Start
 
 ```bash
-# Clone and enter the project
-git clone https://github.com/deer/denote.git
-cd denote
-
-# Start the dev server
-deno task dev
+deno run -Ar jsr:@denote/init
 ```
 
-Open [http://localhost:8000](http://localhost:8000).
+That's it. You'll have a docs site running locally in under a minute.
 
-## Project Structure
+## AI Features
 
+Every Denote site ships with these endpoints out of the box — zero config:
+
+| Endpoint             | What it does                                               |
+| -------------------- | ---------------------------------------------------------- |
+| `GET /llms.txt`      | AI discovery file following the open standard              |
+| `GET /llms-full.txt` | Full documentation context for LLMs                        |
+| `GET /api/docs`      | Structured JSON API for RAG, embeddings, or direct context |
+| MCP server           | Expose docs as tools/resources for Cursor, Claude, ChatGPT |
+
+### MCP Setup
+
+```json
+{
+  "mcpServers": {
+    "my-docs": {
+      "command": "deno",
+      "args": ["run", "-A", "mcp.ts"]
+    }
+  }
+}
 ```
-denote/
-├── content/docs/         # Your Markdown documentation files
-│   ├── introduction.md
-│   ├── installation.md
-│   └── ...
-├── denote.config.ts        # Navigation, branding, colors
-├── components/           # Server-rendered components
-│   ├── Header.tsx
-│   ├── Sidebar.tsx
-│   ├── DocsLayout.tsx
-│   └── TableOfContents.tsx
-├── islands/              # Interactive (client-side) components
-│   ├── Search.tsx        # ⌘K search modal
-│   ├── ThemeToggle.tsx   # Dark/light mode
-│   └── MobileMenu.tsx    # Mobile sidebar
-├── lib/                  # Utilities
-│   ├── markdown.ts       # Markdown parsing + frontmatter
-│   ├── highlight.ts      # Shiki syntax highlighting
-│   ├── ai.ts             # AI/MCP utilities
-│   └── docs.ts           # Document loader
-├── routes/               # Fresh file-based routes
-│   ├── _app.tsx          # HTML shell
-│   ├── index.tsx         # Landing page
-│   └── docs/
-│       ├── index.tsx     # Docs index redirect
-│       └── [...slug].tsx # Dynamic doc pages
-├── static/               # Static assets (favicon, logos)
-├── assets/styles.css     # Tailwind + custom styles
-├── main.ts               # Fresh app entry
-├── client.ts             # Client-side entry
-├── mcp.ts                # MCP server entry
-├── vite.config.ts        # Vite configuration
-└── deno.json             # Deno config + tasks
-```
+
+## Features
+
+- 🔍 **⌘K Search** — Instant full-text search with keyboard navigation. No
+  external service needed.
+- 📱 **Mobile Responsive** — Collapsible sidebar, touch-friendly navigation.
+- 📑 **Table of Contents** — Auto-generated from headings.
+- 🧭 **Config-driven Navigation** — Define your sidebar in TypeScript.
 
 ## Writing Docs
 
@@ -81,14 +75,6 @@ description: A brief description for search and SEO
 # My Page
 
 Write your documentation here with full Markdown support.
-
-## Code Blocks
-
-\`\`\`typescript const hello = "world"; \`\`\`
-
-## Links
-
-[Link to another page](/docs/other-page)
 ```
 
 ## Configuration
@@ -111,7 +97,7 @@ export const config: DenoteConfig = {
     },
   ],
   social: {
-    github: "https://github.com/<your-org>/denote",
+    github: "https://github.com/your-org/your-docs",
   },
 };
 ```
@@ -130,6 +116,26 @@ deployctl deploy --project=my-docs _fresh/server.js
 ```bash
 docker build -t my-docs .
 docker run -p 8000:8000 my-docs
+```
+
+## Project Structure
+
+```
+denote/
+├── packages/
+│   ├── denote/           # Core library (@denote/core)
+│   │   ├── components/   # Server-rendered components
+│   │   ├── islands/      # Interactive client components
+│   │   ├── lib/          # Utilities (markdown, search, AI)
+│   │   ├── routes/       # Fresh file-based routes
+│   │   └── mod.ts        # Library entry point
+│   └── denote-init/      # Scaffolding CLI (@denote/init)
+├── docs/                 # Documentation site (denote.sh)
+│   ├── content/docs/     # Markdown documentation files
+│   ├── denote.config.ts  # Site configuration
+│   └── main.ts           # Fresh app entry
+├── deno.json             # Workspace root config
+└── Dockerfile
 ```
 
 ## Tech Stack

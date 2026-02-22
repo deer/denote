@@ -112,7 +112,8 @@ export const config: DenoteConfig = {
       {
         icon: "📝",
         title: "Markdown",
-        description: "Write docs in Markdown with frontmatter. No build step.",
+        description:
+          "Write docs in Markdown with frontmatter. No MDX compilation step. Just files.",
       },
       {
         icon: "🔍",
@@ -216,8 +217,7 @@ ${projectName}/
 └── deno.json           # Deno configuration
 \`\`\`
 
-That's it! No build pipeline, no framework boilerplate. Just markdown and
-config.
+That's it! No framework boilerplate. Just markdown and config.
 `;
   await Deno.writeTextFile(
     `${projectDir}/content/docs/installation.md`,

@@ -59,38 +59,3 @@ preference is saved in `localStorage`.
 
 On smaller screens, the sidebar collapses into a hamburger menu accessible from
 the header.
-
-## Custom Components
-
-You can create your own components in the `components/` directory:
-
-```typescript
-// components/MyComponent.tsx
-export function MyComponent({ children }) {
-  return (
-    <div class="my-custom-component">
-      {children}
-    </div>
-  );
-}
-```
-
-For interactive components, create them as islands:
-
-```typescript
-// islands/Counter.tsx
-import { useSignal } from "@preact/signals";
-
-export function Counter() {
-  const count = useSignal(0);
-
-  return (
-    <button onClick={() => count.value++}>
-      Count: {count.value}
-    </button>
-  );
-}
-```
-
-Islands are automatically discovered by Fresh and only ship JavaScript for the
-interactive parts of the page.
