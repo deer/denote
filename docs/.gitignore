@@ -1,6 +1,3 @@
 # Denote CLI generated files
-main.ts
-client.ts
-styles.css
-vite.config.ts
+.denote/
 _fresh/

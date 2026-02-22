@@ -133,7 +133,7 @@ denote/
 ├── docs/                 # Documentation site (denote.sh)
 │   ├── content/docs/     # Markdown documentation files
 │   ├── denote.config.ts  # Site configuration
-│   └── main.ts           # Fresh app entry
+│   └── .denote/           # Generated build files (gitignored)
 ├── deno.json             # Workspace root config
 └── Dockerfile
 ```
