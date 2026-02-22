@@ -237,6 +237,7 @@ Deno.test("scaffold creates expected files", async () => {
 
   // .gitignore contains expected entries
   const gitignore = await readProjectFile(tmp.path, ".gitignore");
+  assertStringIncludes(gitignore, ".denote/");
   assertStringIncludes(gitignore, "_fresh/");
   assertStringIncludes(gitignore, ".DS_Store");
 
