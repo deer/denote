@@ -289,29 +289,6 @@ Code blocks use the `.highlight` wrapper and `.code-header` from `@deer/gfm`:
 }
 ```
 
-## Custom Components
-
-Create styled components using theme tokens for automatic dark mode support:
-
-```tsx
-interface ButtonProps {
-  variant?: "primary" | "secondary";
-  children: ComponentChildren;
-}
-
-function Button({ variant = "primary", children }: ButtonProps) {
-  const base = "px-4 py-2 rounded-lg font-medium transition-colors";
-  const variants = {
-    primary:
-      "bg-[var(--denote-primary)] hover:bg-[var(--denote-primary-hover)] text-[var(--denote-text-inverse)]",
-    secondary:
-      "bg-[var(--denote-bg-secondary)] hover:bg-[var(--denote-bg-tertiary)] text-[var(--denote-text)] border border-[var(--denote-border)]",
-  };
-
-  return <button class={`${base} ${variants[variant]}`}>{children}</button>;
-}
-```
-
 ## Design Tokens Reference
 
 These are the CSS custom properties that control the theme. All components
@@ -382,7 +359,7 @@ export const config: DenoteConfig = {
     text: "#2c2c2c", // charcoal
     border: "#d4cec6", // warm gray
     dark: {
-      primary: "#7ec96a", // vibrant green, readable on dark
+      primary: "#4a9e6a", // forest green, readable on dark
       accent: "#e9b84e", // warm gold
       background: "#0d1117", // deep dark
       surface: "#1c2333", // visible separation from bg
