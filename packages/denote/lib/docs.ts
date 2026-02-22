@@ -1,20 +1,134 @@
 /**
  * Documentation loader utilities
+ *
+ * Features an in-memory content cache that avoids redundant disk I/O and
+ * markdown parsing. The cache is populated on first access and invalidated
+ * automatically via Deno.watchFs in development. In production the cache
+ * lives for the lifetime of the process (content is immutable after deploy).
  */
-import { type ParsedDoc, parseDocument } from "./markdown.ts";
+import {
+  type ParsedDoc,
+  parseDocument,
+  renderDoc,
+  type TocItem,
+} from "./markdown.ts";
 import type { NavItem } from "../denote.config.ts";
 import { getConfig, getContentDir } from "./config.ts";
-import { resolve } from "jsr:@std/path@1";
+import { resolve } from "@std/path";
 
 export interface DocPage extends ParsedDoc {
   slug: string;
   path: string;
 }
 
+/** Cached rendered output for a single document. */
+interface RenderedDoc {
+  doc: DocPage;
+  html: string;
+  toc: TocItem[];
+}
+
+// ---------------------------------------------------------------------------
+// Content cache
+// ---------------------------------------------------------------------------
+
+/** slug → cached doc (parsed frontmatter + raw markdown) */
+const docCache = new Map<string, DocPage>();
+
+/** slug → cached rendered HTML + TOC */
+const renderCache = new Map<string, RenderedDoc>();
+
+/** Whether the full doc list has been loaded at least once. */
+let allDocsLoaded = false;
+
+/** Active file watcher (if any). */
+let watcher: Deno.FsWatcher | null = null;
+
 /**
- * Get a single document by slug
+ * Invalidate caches for a specific file path, or everything if path is null.
+ */
+function invalidate(filePath?: string): void {
+  if (!filePath) {
+    docCache.clear();
+    renderCache.clear();
+    allDocsLoaded = false;
+    clearSearchIndexCache();
+    return;
+  }
+
+  // Find which slug(s) map to this file path
+  for (const [slug, cached] of docCache) {
+    if (cached.path === filePath) {
+      docCache.delete(slug);
+      renderCache.delete(slug);
+    }
+  }
+  allDocsLoaded = false;
+  clearSearchIndexCache();
+}
+
+/**
+ * Start watching the content directory for changes.
+ * Only runs once; safe to call multiple times.
+ * Skipped in test environments to avoid resource leaks.
+ */
+function startWatcher(): void {
+  // Don't start watcher in tests or if already running
+  if (watcher || Deno.env.get("DENO_TESTING") === "1") return;
+
+  const contentDir = getContentDir();
+
+  // Deno.watchFs may not be available in all environments (e.g. Deno Deploy)
+  try {
+    watcher = Deno.watchFs(contentDir, { recursive: true });
+
+    (async () => {
+      try {
+        for await (const event of watcher!) {
+          if (
+            event.kind === "modify" || event.kind === "create" ||
+            event.kind === "remove"
+          ) {
+            for (const path of event.paths) {
+              if (path.endsWith(".md")) {
+                invalidate(path);
+              }
+            }
+          }
+        }
+      } catch {
+        // Watcher was closed — expected during shutdown
+      }
+    })();
+  } catch {
+    // watchFs not available — cache is still valid, just won't auto-refresh
+    watcher = null;
+  }
+}
+
+/**
+ * Stop the file watcher and clear all caches.
+ * Useful for cleanup in tests or graceful shutdown.
+ */
+export function stopWatcher(): void {
+  if (watcher) {
+    watcher.close();
+    watcher = null;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Document loading
+// ---------------------------------------------------------------------------
+
+/**
+ * Get a single document by slug (cached).
  */
 export async function getDoc(slug: string): Promise<DocPage | null> {
+  // Return from cache if available
+  const cached = docCache.get(slug);
+  if (cached) return cached;
+
   const docsDir = getContentDir();
 
   // Path traversal guard: ensure slug resolves within docsDir
@@ -34,12 +148,14 @@ export async function getDoc(slug: string): Promise<DocPage | null> {
   for (const path of paths) {
     try {
       const content = await Deno.readTextFile(path);
-      const doc = parseDocument(content);
-      return {
-        ...doc,
+      const doc: DocPage = {
+        ...parseDocument(content),
         slug,
         path,
       };
+      docCache.set(slug, doc);
+      startWatcher();
+      return doc;
     } catch {
       // File not found, try next path
     }
@@ -49,11 +165,33 @@ export async function getDoc(slug: string): Promise<DocPage | null> {
 }
 
 /**
- * Get all documents
+ * Get rendered HTML + TOC for a document (cached).
+ * Avoids re-rendering markdown on every page load.
+ */
+export async function getRenderedDoc(
+  slug: string,
+): Promise<{ doc: DocPage; html: string; toc: TocItem[] } | null> {
+  const cached = renderCache.get(slug);
+  if (cached) return cached;
+
+  const doc = await getDoc(slug);
+  if (!doc) return null;
+
+  const { html, toc } = await renderDoc(doc.content);
+  const result: RenderedDoc = { doc, html, toc };
+  renderCache.set(slug, result);
+  return result;
+}
+
+/**
+ * Get all documents (cached).
  */
 export async function getAllDocs(): Promise<DocPage[]> {
-  const docs: DocPage[] = [];
+  if (allDocsLoaded && docCache.size > 0) {
+    return Array.from(docCache.values());
+  }
 
+  const docs: DocPage[] = [];
   const docsDir = getContentDir();
 
   async function walkDir(dir: string, prefix = ""): Promise<void> {
@@ -69,13 +207,14 @@ export async function getAllDocs(): Promise<DocPage[]> {
             : `${prefix}${entry.name.replace(".md", "")}`;
 
           const content = await Deno.readTextFile(path);
-          const doc = parseDocument(content);
-
-          docs.push({
-            ...doc,
+          const doc: DocPage = {
+            ...parseDocument(content),
             slug,
             path,
-          });
+          };
+
+          docs.push(doc);
+          docCache.set(slug, doc);
         }
       }
     } catch {
@@ -88,8 +227,14 @@ export async function getAllDocs(): Promise<DocPage[]> {
   }
 
   await walkDir(docsDir);
+  allDocsLoaded = true;
+  startWatcher();
   return docs;
 }
+
+// ---------------------------------------------------------------------------
+// Navigation helpers
+// ---------------------------------------------------------------------------
 
 /**
  * Flatten navigation tree into an ordered list of page links
@@ -158,6 +303,10 @@ export function getBreadcrumbs(currentPath: string): Breadcrumb[] {
   return crumbs;
 }
 
+// ---------------------------------------------------------------------------
+// Search index
+// ---------------------------------------------------------------------------
+
 /**
  * Build search index from all docs (cached in memory)
  */
@@ -171,14 +320,9 @@ export interface SearchItem {
 }
 
 let cachedSearchIndex: SearchItem[] | null = null;
-let searchIndexBuiltAt = 0;
-const SEARCH_INDEX_TTL_MS = 60_000; // 1 minute TTL
 
 export async function buildSearchIndex(): Promise<SearchItem[]> {
-  const now = Date.now();
-  if (cachedSearchIndex && (now - searchIndexBuiltAt) < SEARCH_INDEX_TTL_MS) {
-    return cachedSearchIndex;
-  }
+  if (cachedSearchIndex) return cachedSearchIndex;
 
   const docs = await getAllDocs();
 
@@ -190,13 +334,11 @@ export async function buildSearchIndex(): Promise<SearchItem[]> {
     slug: doc.slug,
     content: doc.content.slice(0, 500), // First 500 chars for search preview
   }));
-  searchIndexBuiltAt = now;
 
   return cachedSearchIndex;
 }
 
-/** Clear the search index cache (useful for testing) */
+/** Clear the search index cache (useful for testing or after content changes) */
 export function clearSearchIndexCache(): void {
   cachedSearchIndex = null;
-  searchIndexBuiltAt = 0;
 }

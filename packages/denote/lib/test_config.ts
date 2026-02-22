@@ -4,6 +4,9 @@
 import { setConfig, setContentDir } from "./config.ts";
 import { dirname, fromFileUrl, join } from "@std/path";
 
+// Prevent file watcher from starting during tests (avoids resource leaks)
+Deno.env.set("DENO_TESTING", "1");
+
 // Set content directory to docs/content/docs in monorepo
 const __dirname = dirname(fromFileUrl(import.meta.url));
 setContentDir(join(__dirname, "..", "..", "..", "docs", "content", "docs"));

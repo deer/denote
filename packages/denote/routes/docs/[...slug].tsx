@@ -3,10 +3,9 @@ import { define, type State } from "../../utils.ts";
 import {
   buildSearchIndex,
   getBreadcrumbs,
-  getDoc,
   getPrevNext,
+  getRenderedDoc,
 } from "../../lib/docs.ts";
-import { renderDoc } from "../../lib/markdown.ts";
 import { DocsLayout } from "../../components/DocsLayout.tsx";
 import { Search } from "../../islands/Search.tsx";
 import { CopyButton } from "../../islands/CopyButton.tsx";
@@ -21,13 +20,13 @@ export async function DocsPage(ctx: PageProps<unknown, State>) {
     ? slugParts.join("/")
     : slugParts || "introduction";
 
-  const doc = await getDoc(slug);
+  const rendered = await getRenderedDoc(slug);
 
-  if (!doc) {
+  if (!rendered) {
     throw new HttpError(404, `Documentation page not found: ${slug}`);
   }
 
-  const { html, toc } = await renderDoc(doc.content);
+  const { doc, html, toc } = rendered;
   const searchIndex = await buildSearchIndex();
   const currentPath = `/docs/${slug}`;
   const { prev, next } = getPrevNext(currentPath);
