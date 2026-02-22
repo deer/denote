@@ -411,7 +411,22 @@ export function denote(options: DenoteOptions): App<unknown> {
 // Re-exports for library consumers
 // ---------------------------------------------------------------------------
 
-export type { DenoteConfig, NavItem } from "./denote.config.ts";
+export type {
+  AiConfig,
+  AiProviderConfig,
+  ColorConfig,
+  CtaConfig,
+  DenoteConfig,
+  FeatureCard,
+  FontConfig,
+  HeroConfig,
+  LandingConfig,
+  LayoutConfig,
+  LogoConfig,
+  NavItem,
+  SeoConfig,
+  StyleConfig,
+} from "./denote.config.ts";
 export type { State } from "./utils.ts";
 export {
   getConfig,
