@@ -1,17 +1,19 @@
 /**
  * Site Header Component
  */
-import { getConfig } from "../lib/config.ts";
+import type { DenoteConfig } from "../denote.config.ts";
 import { ThemeToggle } from "../islands/ThemeToggle.tsx";
 import { MobileMenu } from "../islands/MobileMenu.tsx";
 
 interface HeaderProps {
+  config: DenoteConfig;
   showSearch?: boolean;
   currentPath?: string;
 }
 
-export function Header({ showSearch = true, currentPath }: HeaderProps) {
-  const config = getConfig();
+export function Header(
+  { config, showSearch = true, currentPath }: HeaderProps,
+) {
   return (
     <header
       class="sticky top-0 z-50 w-full border-b border-[var(--denote-border)] backdrop-blur-sm"

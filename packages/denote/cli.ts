@@ -271,10 +271,14 @@ if (import.meta.main) {
 
     case "validate": {
       const { config } = await loadUserConfig();
-      const { setConfig } = await import("./lib/config.ts");
-      setConfig(config as import("./denote.config.ts").DenoteConfig);
+      const { resolve } = await import("@std/path");
       const { validateAndPrint } = await import("./lib/validate.ts");
-      const errorCount = await validateAndPrint();
+      const denoteContext = {
+        config: config as import("./denote.config.ts").DenoteConfig,
+        contentDir: resolve("./content/docs"),
+        docsBasePath: "/docs",
+      };
+      const errorCount = await validateAndPrint(denoteContext);
       Deno.exit(errorCount > 0 ? 1 : 0);
       break;
     }

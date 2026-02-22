@@ -1,10 +1,10 @@
-import { define } from "../utils.ts";
+import type { PageProps } from "fresh";
+import { define, type State } from "../utils.ts";
 import { Header } from "../components/Header.tsx";
-import { getConfig } from "../lib/config.ts";
 
 /** 404 page component — exported for programmatic routing */
-export function NotFoundPage() {
-  const config = getConfig();
+export function NotFoundPage(ctx: PageProps<unknown, State>) {
+  const config = ctx.state.denote.config;
   // Popular pages to suggest
   const suggestions = config.navigation
     .flatMap((section) =>
@@ -14,7 +14,7 @@ export function NotFoundPage() {
 
   return (
     <div class="min-h-screen bg-[var(--denote-bg)]">
-      <Header />
+      <Header config={config} />
 
       <main class="flex items-center justify-center min-h-[calc(100vh-4rem)]">
         <div class="text-center px-4 py-16 max-w-lg">

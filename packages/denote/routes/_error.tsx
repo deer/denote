@@ -4,13 +4,14 @@ import { Header } from "../components/Header.tsx";
 
 /** Error page component — exported for programmatic routing */
 export function ErrorPage(ctx: PageProps<unknown, State>) {
+  const config = ctx.state.denote.config;
   const error = ctx.error;
   const message = error instanceof Error ? error.message : "An error occurred";
   const isDev = Deno.env.get("DENO_ENV") !== "production";
 
   return (
     <div class="min-h-screen bg-[var(--denote-bg)]">
-      <Header />
+      <Header config={config} />
 
       <main class="flex items-center justify-center min-h-[calc(100vh-4rem)]">
         <div class="text-center px-4 py-16 max-w-lg">

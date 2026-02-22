@@ -99,7 +99,8 @@ let _config: DenoteConfig | null = null;
 
 /**
  * Get the active Denote configuration.
- * Throws if no config has been set yet (programming error).
+ * Used internally by the context middleware to read the latest config
+ * (supports HMR updates via setConfig).
  */
 export function getConfig(): DenoteConfig {
   if (!_config) {
@@ -133,6 +134,7 @@ let _contentDir = resolve("./content/docs");
 
 /**
  * Get the content directory path.
+ * Used internally by the context middleware.
  */
 export function getContentDir(): string {
   return _contentDir;
@@ -155,6 +157,7 @@ let _docsBasePath = "/docs";
 
 /**
  * Get the docs base path (e.g. "/docs" or "/reference").
+ * Used internally by the context middleware.
  */
 export function getDocsBasePath(): string {
   return _docsBasePath;

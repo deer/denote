@@ -2,6 +2,8 @@
  * Shared test configuration for library tests.
  */
 import { setConfig, setContentDir } from "./config.ts";
+import type { DenoteContext } from "../utils.ts";
+import type { DenoteConfig } from "../denote.config.ts";
 import { dirname, fromFileUrl, join } from "@std/path";
 
 // Prevent file watcher from starting during tests (avoids resource leaks)
@@ -9,10 +11,18 @@ Deno.env.set("DENO_TESTING", "1");
 
 // Set content directory to docs/content/docs in monorepo
 const __dirname = dirname(fromFileUrl(import.meta.url));
-setContentDir(join(__dirname, "..", "..", "..", "docs", "content", "docs"));
+const testContentDir = join(
+  __dirname,
+  "..",
+  "..",
+  "..",
+  "docs",
+  "content",
+  "docs",
+);
 
-// Set test config
-setConfig({
+// Test config object
+const testConfig: DenoteConfig = {
   name: "Denote",
   navigation: [
     {
@@ -50,4 +60,15 @@ setConfig({
       ],
     },
   ],
-});
+};
+
+// Set singletons (still needed by setConfig validation tests)
+setContentDir(testContentDir);
+setConfig(testConfig);
+
+/** Shared test context for context-based APIs */
+export const testContext: DenoteContext = {
+  config: testConfig,
+  contentDir: testContentDir,
+  docsBasePath: "/docs",
+};

@@ -11,7 +11,18 @@
  */
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { WebStandardStreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js";
-import { createMcpServer, getSiteName, MCP_CORS_HEADERS } from "./lib/mcp.ts";
+import { createMcpServer, MCP_CORS_HEADERS } from "./lib/mcp.ts";
+import { getConfig, getContentDir, getDocsBasePath } from "./lib/config.ts";
+import type { DenoteContext } from "./utils.ts";
+
+// Build context from singletons (set by importing denote.config.ts or CLI)
+function buildContext(): DenoteContext {
+  return {
+    config: getConfig(),
+    contentDir: getContentDir(),
+    docsBasePath: getDocsBasePath(),
+  };
+}
 
 // ── Transport ───────────────────────────────────────────────
 
@@ -23,7 +34,8 @@ if (useHttp) {
   const port = portIdx !== -1 ? parseInt(args[portIdx + 1]) : 3100;
   const httpBaseUrl = `http://localhost:${port}`;
 
-  const name = getSiteName();
+  const ctx = buildContext();
+  const name = ctx.config.name;
   console.log(
     `🦕 ${name} MCP server (Streamable HTTP) on port ${port}`,
   );
@@ -39,7 +51,7 @@ if (useHttp) {
 
     // MCP endpoint — stateless: fresh server+transport per request
     if (url.pathname === "/mcp") {
-      const server = createMcpServer(httpBaseUrl);
+      const server = createMcpServer(buildContext(), httpBaseUrl);
       const transport = new WebStandardStreamableHTTPServerTransport({});
       await server.connect(transport);
 
@@ -54,14 +66,15 @@ if (useHttp) {
 
     // Health endpoint
     if (url.pathname === "/" || url.pathname === "/health") {
+      const currentCtx = buildContext();
       return new Response(
         JSON.stringify({
-          name: `${getSiteName()} Docs MCP Server`,
+          name: `${currentCtx.config.name} Docs MCP Server`,
           status: "ok",
           transport: "streamable-http",
           endpoint: "/mcp",
           instructions:
-            `Search and read ${getSiteName()} documentation. Use search_docs to find pages, get_doc to read a specific page, or get_all_docs for full context.`,
+            `Search and read ${currentCtx.config.name} documentation. Use search_docs to find pages, get_doc to read a specific page, or get_all_docs for full context.`,
         }),
         {
           headers: {
@@ -78,7 +91,7 @@ if (useHttp) {
     });
   });
 } else {
-  const server = createMcpServer();
+  const server = createMcpServer(buildContext());
   const transport = new StdioServerTransport();
   await server.connect(transport);
 }

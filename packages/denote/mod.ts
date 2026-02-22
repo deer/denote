@@ -26,6 +26,7 @@ import { App, staticFiles } from "fresh";
 import type { DenoteConfig, NavItem } from "./denote.config.ts";
 import {
   getConfig,
+  getContentDir,
   getDocsBasePath,
   setConfig,
   setContentDir,
@@ -35,13 +36,13 @@ import { csp } from "./lib/csp.ts";
 import { ga4Middleware } from "./lib/ga4.ts";
 import { darkModeScript, generateThemeCSS } from "./lib/theme.ts";
 import { COMBINED_CSS } from "@deer/gfm/style";
-import type { State } from "./utils.ts";
+import type { DenoteContext, State } from "./utils.ts";
 
 // Import page components for programmatic routing
 import { App as AppWrapper } from "./routes/_app.tsx";
 import { NotFoundPage } from "./routes/_404.tsx";
 import { ErrorPage } from "./routes/_error.tsx";
-import { Home as HomePage } from "./routes/index.tsx";
+import { HomePage } from "./routes/index.tsx";
 import { DocsPage } from "./routes/docs/[...slug].tsx";
 import { handler as docsMiddleware } from "./routes/docs/_middleware.ts";
 
@@ -117,12 +118,26 @@ export function denote(options: DenoteOptions): App<unknown> {
     includeErrorHandlers = true,
   } = options;
 
-  // Configure the module-level singletons
+  // Set module-level singletons — used by the context middleware to read the
+  // latest config (supports HMR via setConfig) and by the CLI.
   setConfig(config);
   setContentDir(contentDir);
   setDocsBasePath(docsBasePath);
 
   const app = new App<State>();
+
+  // ── Context middleware ────────────────────────────────────────
+  // Reads from singletons so HMR updates (via setConfig) are
+  // picked up on the next request without restarting the server.
+  app.use((ctx) => {
+    const denoteContext: DenoteContext = {
+      config: getConfig(),
+      contentDir: getContentDir(),
+      docsBasePath: getDocsBasePath(),
+    };
+    ctx.state.denote = denoteContext;
+    return ctx.next();
+  });
 
   // ── App wrapper (HTML shell) ────────────────────────────────
   app.appWrapper(AppWrapper);
@@ -146,13 +161,16 @@ export function denote(options: DenoteOptions): App<unknown> {
   const configCacheControl = isDev ? "no-cache" : "public, max-age=3600";
 
   // Theme detection script (render-blocking to prevent FOUC)
-  app.get("/theme-init.js", () => {
-    return new Response(darkModeScript(getConfig().style?.darkMode), {
-      headers: {
-        "Content-Type": "application/javascript; charset=utf-8",
-        "Cache-Control": configCacheControl,
+  app.get("/theme-init.js", (ctx) => {
+    return new Response(
+      darkModeScript(ctx.state.denote.config.style?.darkMode),
+      {
+        headers: {
+          "Content-Type": "application/javascript; charset=utf-8",
+          "Cache-Control": configCacheControl,
+        },
       },
-    });
+    );
   });
 
   // GFM syntax highlighting CSS
@@ -166,8 +184,8 @@ export function denote(options: DenoteOptions): App<unknown> {
   });
 
   // Config-driven theme override CSS variables (recomputed per request for HMR)
-  app.get("/theme-vars.css", () => {
-    return new Response(generateThemeCSS(getConfig()), {
+  app.get("/theme-vars.css", (ctx) => {
+    return new Response(generateThemeCSS(ctx.state.denote.config), {
       headers: {
         "Content-Type": "text/css; charset=utf-8",
         "Cache-Control": configCacheControl,
@@ -240,7 +258,7 @@ export function denote(options: DenoteOptions): App<unknown> {
   // ── MCP Endpoint ────────────────────────────────────────────
 
   if (config.ai?.mcp) {
-    const mcpHandler = async (ctx: { req: Request }) => {
+    const mcpHandler = async (ctx: { req: Request; state: State }) => {
       const { createMcpServer, MCP_CORS_HEADERS } = await import(
         "./lib/mcp.ts"
       );
@@ -256,7 +274,7 @@ export function denote(options: DenoteOptions): App<unknown> {
         "@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js"
       );
       const origin = new URL(ctx.req.url).origin;
-      const server = createMcpServer(origin);
+      const server = createMcpServer(ctx.state.denote, origin);
       const transport = new WebStandardStreamableHTTPServerTransport({});
       await server.connect(transport);
 
@@ -287,15 +305,15 @@ export function denote(options: DenoteOptions): App<unknown> {
   app.get("/llms.txt", async (ctx) => {
     const { generateLlmsTxt } = await import("./lib/ai.ts");
     const baseUrl = new URL(ctx.req.url).origin;
-    const txt = await generateLlmsTxt(baseUrl);
+    const txt = await generateLlmsTxt(ctx.state.denote, baseUrl);
     return new Response(txt, {
       headers: { "Content-Type": "text/plain; charset=utf-8" },
     });
   });
 
-  app.get("/llms-full.txt", async () => {
+  app.get("/llms-full.txt", async (ctx) => {
     const { generateFullDocs } = await import("./lib/ai.ts");
-    const txt = await generateFullDocs();
+    const txt = await generateFullDocs(ctx.state.denote);
     return new Response(txt, {
       headers: { "Content-Type": "text/plain; charset=utf-8" },
     });
@@ -304,7 +322,7 @@ export function denote(options: DenoteOptions): App<unknown> {
   app.get("/api/docs", async (ctx) => {
     const { getDocsJson } = await import("./lib/ai.ts");
     const baseUrl = new URL(ctx.req.url).origin;
-    const json = await getDocsJson(baseUrl);
+    const json = await getDocsJson(ctx.state.denote, baseUrl);
     return new Response(JSON.stringify(json, null, 2), {
       headers: { "Content-Type": "application/json" },
     });
@@ -324,7 +342,7 @@ export function denote(options: DenoteOptions): App<unknown> {
     const { handleChat } = await import("./lib/chat.ts");
     try {
       const body = await ctx.req.json();
-      const result = await handleChat(body);
+      const result = await handleChat(body, ctx.state.denote);
       return new Response(JSON.stringify(result), {
         headers: { "Content-Type": "application/json" },
       });
@@ -337,9 +355,9 @@ export function denote(options: DenoteOptions): App<unknown> {
     }
   });
 
-  app.get("/api/search", async () => {
+  app.get("/api/search", async (ctx) => {
     const { buildSearchIndex } = await import("./lib/docs.ts");
-    const index = await buildSearchIndex();
+    const index = await buildSearchIndex(ctx.state.denote);
     return new Response(JSON.stringify(index), {
       headers: { "Content-Type": "application/json" },
     });
@@ -351,12 +369,12 @@ export function denote(options: DenoteOptions): App<unknown> {
     app.get("/sitemap.xml", async (ctx) => {
       const { getAllDocs } = await import("./lib/docs.ts");
       const { buildSitemapXml } = await import("./lib/seo.ts");
-      const seoBase = config.seo?.url?.replace(/\/$/, "");
+      const denoteCtx = ctx.state.denote;
+      const seoBase = denoteCtx.config.seo?.url?.replace(/\/$/, "");
       const baseUrl = seoBase || new URL(ctx.req.url).origin;
-      const docs = await getAllDocs();
-      const basePath = getDocsBasePath();
+      const docs = await getAllDocs(denoteCtx);
 
-      const xml = buildSitemapXml(baseUrl, basePath, docs);
+      const xml = buildSitemapXml(baseUrl, denoteCtx.docsBasePath, docs);
 
       return new Response(xml, {
         headers: { "Content-Type": "application/xml; charset=utf-8" },
@@ -365,7 +383,7 @@ export function denote(options: DenoteOptions): App<unknown> {
 
     app.get("/robots.txt", async (ctx) => {
       const { buildRobotsTxt } = await import("./lib/seo.ts");
-      const seoBase = config.seo?.url?.replace(/\/$/, "");
+      const seoBase = ctx.state.denote.config.seo?.url?.replace(/\/$/, "");
       const baseUrl = seoBase || new URL(ctx.req.url).origin;
       const txt = buildRobotsTxt(baseUrl);
       return new Response(txt, {
@@ -427,15 +445,8 @@ export type {
   SeoConfig,
   StyleConfig,
 } from "./denote.config.ts";
-export type { State } from "./utils.ts";
-export {
-  getConfig,
-  getContentDir,
-  getDocsBasePath,
-  setConfig,
-  setContentDir,
-  setDocsBasePath,
-} from "./lib/config.ts";
+export type { DenoteContext, State } from "./utils.ts";
+export { setConfig, setContentDir, setDocsBasePath } from "./lib/config.ts";
 
 /**
  * Island specifiers for Fresh vite plugin configuration.

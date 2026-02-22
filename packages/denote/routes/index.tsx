@@ -1,5 +1,5 @@
-import { define } from "../utils.ts";
-import { getConfig } from "../lib/config.ts";
+import { type PageProps } from "fresh";
+import { define, type State } from "../utils.ts";
 import type { NavItem } from "../denote.config.ts";
 import { Header } from "../components/Header.tsx";
 
@@ -15,21 +15,21 @@ function firstNavHref(items: NavItem[]): string | undefined {
   return undefined;
 }
 
-/** Handler to support landing page redirect */
-export const handler = define.handlers({
-  GET(ctx) {
-    const config = getConfig();
-    if (config.landing?.enabled === false) {
-      const target = config.landing?.redirectTo ||
-        firstNavHref(config.navigation) || "/docs";
-      return new Response(null, {
-        status: 302,
-        headers: { Location: target },
-      });
-    }
-    return ctx.render(<Home />);
-  },
-});
+/** Main page component that handles both redirect and render cases.
+ *  Must be async so Fresh v2 checks the return value for Response objects. */
+// deno-lint-ignore require-await
+export async function HomePage(ctx: PageProps<unknown, State>) {
+  const config = ctx.state.denote.config;
+  if (config.landing?.enabled === false) {
+    const target = config.landing?.redirectTo ||
+      firstNavHref(config.navigation) || "/docs";
+    return new Response(null, {
+      status: 302,
+      headers: { Location: target },
+    });
+  }
+  return <Home {...ctx} />;
+}
 
 // ---------------------------------------------------------------------------
 // Default content (used when no landing config is provided)
@@ -74,8 +74,8 @@ const defaultFeatures = [
 ];
 
 /** Home page component — exported for programmatic routing */
-export function Home() {
-  const config = getConfig();
+export function Home(props: PageProps<unknown, State>) {
+  const config = props.state.denote.config;
   const l = config.landing ?? {};
 
   // Hero
@@ -108,7 +108,7 @@ export function Home() {
           `linear-gradient(to bottom, var(--denote-bg), var(--denote-bg-secondary))`,
       }}
     >
-      <Header showSearch={false} />
+      <Header config={config} showSearch={false} />
 
       {/* Hero Section */}
       <section class="relative overflow-hidden">
@@ -299,4 +299,4 @@ export function Home() {
 }
 
 /** Default export for fsRoutes compatibility */
-export default define.page(Home);
+export default define.page(HomePage);

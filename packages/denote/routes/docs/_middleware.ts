@@ -1,12 +1,12 @@
 import { define } from "../../utils.ts";
 import { getDoc } from "../../lib/docs.ts";
-import { getConfig, getDocsBasePath } from "../../lib/config.ts";
 
 export const handler = define.middleware(async (ctx) => {
-  const config = getConfig();
+  const denoteContext = ctx.state.denote;
+  const config = denoteContext.config;
 
   // Extract slug from URL pathname (more reliable than ctx.params in wildcard middleware)
-  const basePath = getDocsBasePath();
+  const basePath = denoteContext.docsBasePath;
   const pathname = ctx.url.pathname;
   const prefix = basePath + "/";
   const slug = pathname.startsWith(prefix)
@@ -14,7 +14,7 @@ export const handler = define.middleware(async (ctx) => {
     : null;
 
   if (slug) {
-    const doc = await getDoc(slug);
+    const doc = await getDoc(slug, denoteContext);
     if (doc) {
       ctx.state.pageTitle = doc.frontmatter.title;
       ctx.state.pageDescription = doc.frontmatter.description;

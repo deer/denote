@@ -7,7 +7,7 @@
  */
 import { buildSearchIndex } from "./docs.ts";
 import { generateFullDocs } from "./ai.ts";
-import { getConfig } from "./config.ts";
+import type { DenoteContext } from "../utils.ts";
 
 let _apiKeyWarned = false;
 let _missingKeyWarned = false;
@@ -30,14 +30,17 @@ export interface ChatResponse {
 /**
  * Handle a chat request — delegates to AI provider or falls back to search
  */
-export async function handleChat(req: ChatRequest): Promise<ChatResponse> {
-  const config = getConfig();
+export async function handleChat(
+  req: ChatRequest,
+  denoteContext: DenoteContext,
+): Promise<ChatResponse> {
+  const config = denoteContext.config;
   const aiConfig = config.ai;
 
   if (aiConfig?.provider) {
-    return await aiChat(req, aiConfig);
+    return await aiChat(req, aiConfig, denoteContext);
   } else {
-    return await searchChat(req);
+    return await searchChat(req, denoteContext);
   }
 }
 
@@ -48,12 +51,13 @@ async function aiChat(
   req: ChatRequest,
   // deno-lint-ignore no-explicit-any
   aiConfig: any,
+  denoteContext: DenoteContext,
 ): Promise<ChatResponse> {
-  const fullDocs = await generateFullDocs();
+  const fullDocs = await generateFullDocs(denoteContext);
   const userMessage = req.messages[req.messages.length - 1]?.content || "";
 
   const systemPrompt =
-    `You are a helpful documentation assistant for ${getConfig().name}. ` +
+    `You are a helpful documentation assistant for ${denoteContext.config.name}. ` +
     `Answer questions based ONLY on the documentation provided below. ` +
     `If the answer isn't in the docs, say so. Be concise and helpful.\n\n` +
     `--- DOCUMENTATION ---\n${fullDocs}`;
@@ -99,7 +103,7 @@ async function aiChat(
   if (!response.ok) {
     console.error(`AI provider error: ${response.status}`);
     // Fall back to search on AI error
-    return await searchChat(req);
+    return await searchChat(req, denoteContext);
   }
 
   const data = await response.json();
@@ -107,7 +111,7 @@ async function aiChat(
     "Sorry, I couldn't generate a response.";
 
   // Find relevant source pages
-  const sources = await findRelevantSources(userMessage);
+  const sources = await findRelevantSources(userMessage, denoteContext);
 
   return {
     message: { role: "assistant", content },
@@ -119,9 +123,12 @@ async function aiChat(
 /**
  * Search-based fallback when no AI provider is configured
  */
-async function searchChat(req: ChatRequest): Promise<ChatResponse> {
+async function searchChat(
+  req: ChatRequest,
+  denoteContext: DenoteContext,
+): Promise<ChatResponse> {
   const userMessage = req.messages[req.messages.length - 1]?.content || "";
-  const sources = await findRelevantSources(userMessage);
+  const sources = await findRelevantSources(userMessage, denoteContext);
 
   if (sources.length === 0) {
     return {
@@ -155,8 +162,9 @@ async function searchChat(req: ChatRequest): Promise<ChatResponse> {
  */
 async function findRelevantSources(
   query: string,
+  denoteContext: DenoteContext,
 ): Promise<{ title: string; slug: string }[]> {
-  const index = await buildSearchIndex();
+  const index = await buildSearchIndex(denoteContext);
   const q = query.toLowerCase();
   const words = q.split(/\s+/).filter((w) => w.length > 2);
 

@@ -2,14 +2,10 @@
  * Validation utilities for Denote projects.
  * Checks content directory, frontmatter, navigation links, and config.
  */
-import {
-  getConfig,
-  getContentDir,
-  getDocsBasePath,
-  HEX_COLOR_REGEX,
-} from "./config.ts";
+import { HEX_COLOR_REGEX } from "./config.ts";
 import { getAllDocs } from "./docs.ts";
 import type { DenoteConfig, NavItem } from "../denote.config.ts";
+import type { DenoteContext } from "../utils.ts";
 
 export interface ValidationIssue {
   severity: "error" | "warning";
@@ -80,24 +76,17 @@ function validateConfig(config: DenoteConfig): ValidationIssue[] {
 /**
  * Run all validation checks and return a list of issues.
  */
-export async function validate(): Promise<ValidationIssue[]> {
+export async function validate(
+  denoteContext: DenoteContext,
+): Promise<ValidationIssue[]> {
   const issues: ValidationIssue[] = [];
 
   // 1. Config validation
-  let config: DenoteConfig;
-  try {
-    config = getConfig();
-    issues.push(...validateConfig(config));
-  } catch {
-    issues.push({
-      severity: "error",
-      message: "Config not initialized. Ensure denote.config.ts is loaded.",
-    });
-    return issues;
-  }
+  const config = denoteContext.config;
+  issues.push(...validateConfig(config));
 
   // 2. Content directory check
-  const contentDir = getContentDir();
+  const contentDir = denoteContext.contentDir;
   try {
     await Deno.stat(contentDir);
   } catch {
@@ -109,7 +98,7 @@ export async function validate(): Promise<ValidationIssue[]> {
   }
 
   // 3. Frontmatter validation
-  const docs = await getAllDocs();
+  const docs = await getAllDocs(denoteContext);
   if (docs.length === 0) {
     issues.push({
       severity: "warning",
@@ -127,7 +116,7 @@ export async function validate(): Promise<ValidationIssue[]> {
   }
 
   // 4. Navigation link validation
-  const docsBasePath = getDocsBasePath();
+  const docsBasePath = denoteContext.docsBasePath;
   const slugs = new Set(docs.map((d) => `${docsBasePath}/${d.slug}`));
   const navHrefs = collectNavHrefs(config.navigation);
 
@@ -148,8 +137,10 @@ export async function validate(): Promise<ValidationIssue[]> {
  * Run validation and print results to console.
  * Returns the number of errors found.
  */
-export async function validateAndPrint(): Promise<number> {
-  const issues = await validate();
+export async function validateAndPrint(
+  denoteContext: DenoteContext,
+): Promise<number> {
+  const issues = await validate(denoteContext);
   const errors = issues.filter((i) => i.severity === "error");
   const warnings = issues.filter((i) => i.severity === "warning");
 
