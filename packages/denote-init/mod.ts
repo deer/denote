@@ -87,6 +87,40 @@ export const config: DenoteConfig = {
   colors: {
     primary: "#6366f1",
   },
+  landing: {
+    hero: {
+      badge: "Open Source",
+      title: "Welcome to",
+      titleHighlight: "${projectName}",
+      description:
+        "A fast, beautiful documentation site. Edit denote.config.ts to customize this page.",
+    },
+    cta: {
+      primary: { text: "Get Started", href: "/docs/introduction" },
+      secondary: {
+        text: "GitHub",
+        href: "https://github.com/your-org/${projectName}",
+      },
+    },
+    install: "deno run -Ar jsr:@denote/init",
+    features: [
+      {
+        icon: "⚡",
+        title: "Fast",
+        description: "Server-rendered with minimal client-side JavaScript.",
+      },
+      {
+        icon: "📝",
+        title: "Markdown",
+        description: "Write docs in Markdown with frontmatter. No build step.",
+      },
+      {
+        icon: "🔍",
+        title: "Search",
+        description: "Built-in full-text search. No external service needed.",
+      },
+    ],
+  },
   navigation: [
     {
       title: "Getting Started",
