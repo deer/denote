@@ -9,6 +9,7 @@
  * creating routes.
  */
 import type { DenoteConfig } from "../denote.config.ts";
+import { resolve } from "@std/path";
 import { z } from "zod";
 
 /** Matches 3, 6, or 8-digit hex color strings like #f00, #ff0000, #ff000080 */
@@ -128,7 +129,7 @@ export function setConfig(config: DenoteConfig): void {
 // Content directory
 // ---------------------------------------------------------------------------
 
-let _contentDir = "./content/docs";
+let _contentDir = resolve("./content/docs");
 
 /**
  * Get the content directory path.
@@ -139,10 +140,11 @@ export function getContentDir(): string {
 
 /**
  * Set the content directory path.
+ * Resolves to an absolute path to avoid CWD-sensitivity at runtime.
  * Default: "./content/docs"
  */
 export function setContentDir(dir: string): void {
-  _contentDir = dir;
+  _contentDir = resolve(dir);
 }
 
 // ---------------------------------------------------------------------------
