@@ -9,29 +9,25 @@ import {
   ResourceTemplate,
 } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { buildSearchIndex, getAllDocs, getDoc } from "./docs.ts";
-import { getConfig, getDocsBasePath } from "./config.ts";
+import type { DenoteContext } from "../utils.ts";
 import { z } from "zod";
 
 /** Allowed slug pattern: lowercase alphanumeric segments separated by / */
 const SLUG_PATTERN = /^[a-z0-9][a-z0-9\-]*(?:\/[a-z0-9][a-z0-9\-]*)*$/;
 
-/** Get site name from config, with fallback */
-export function getSiteName(): string {
-  try {
-    return getConfig()?.name ?? "Denote";
-  } catch {
-    return "Denote";
-  }
-}
-
 /**
  * Create a configured MCP server with documentation tools and resources.
  *
+ * @param denoteContext The Denote configuration context
  * @param baseUrl Optional base URL of the docs site (e.g. "https://docs.example.com").
  *   When provided, tool and resource output includes canonical web URLs.
  */
-export function createMcpServer(baseUrl?: string): McpServer {
-  const name = getSiteName();
+export function createMcpServer(
+  denoteContext: DenoteContext,
+  baseUrl?: string,
+): McpServer {
+  const name = denoteContext.config.name;
+  const docsBasePath = denoteContext.docsBasePath;
   const server = new McpServer({
     name: `${name} Docs`,
     version: "1.0.0",
@@ -41,20 +37,13 @@ export function createMcpServer(baseUrl?: string): McpServer {
   const webUrl = (slug: string): string | undefined =>
     baseUrl ? `${baseUrl}${docsBasePath}/${slug}` : undefined;
 
-  let docsBasePath: string;
-  try {
-    docsBasePath = getDocsBasePath();
-  } catch {
-    docsBasePath = "/docs";
-  }
-
   // ── Resources ───────────────────────────────────────────────
 
   server.resource(
     "docs-index",
     "docs://index",
     async (uri) => {
-      const docs = await getAllDocs();
+      const docs = await getAllDocs(denoteContext);
       const listing = docs
         .map((d) => {
           const url = webUrl(d.slug);
@@ -70,7 +59,7 @@ export function createMcpServer(baseUrl?: string): McpServer {
         contents: [{
           uri: uri.href,
           mimeType: "text/plain",
-          text: `# ${getSiteName()} Documentation Index\n\n${listing}`,
+          text: `# ${name} Documentation Index\n\n${listing}`,
         }],
       };
     },
@@ -80,7 +69,7 @@ export function createMcpServer(baseUrl?: string): McpServer {
     "doc-page",
     new ResourceTemplate("docs://{slug}", {
       list: async () => {
-        const docs = await getAllDocs();
+        const docs = await getAllDocs(denoteContext);
         return {
           resources: docs.map((d) => ({
             uri: `docs://${d.slug}`,
@@ -103,7 +92,7 @@ export function createMcpServer(baseUrl?: string): McpServer {
         };
       }
 
-      const doc = await getDoc(slug as string);
+      const doc = await getDoc(slug as string, denoteContext);
       if (!doc) {
         return {
           contents: [{
@@ -150,7 +139,7 @@ export function createMcpServer(baseUrl?: string): McpServer {
     `Search ${name} documentation by keyword. Returns matching page titles, descriptions, and content snippets with match context. Use this first to find relevant pages before fetching full content with get_doc.`,
     { query: z.string().min(1).max(200).describe("Search query") },
     async ({ query }: { query: string }) => {
-      const index = await buildSearchIndex();
+      const index = await buildSearchIndex(denoteContext);
       const q = query.toLowerCase();
 
       const results = index
@@ -215,7 +204,7 @@ export function createMcpServer(baseUrl?: string): McpServer {
       ),
     },
     async ({ slug }: { slug: string }) => {
-      const doc = await getDoc(slug);
+      const doc = await getDoc(slug, denoteContext);
       if (!doc) {
         return {
           content: [{
@@ -247,7 +236,7 @@ export function createMcpServer(baseUrl?: string): McpServer {
     `Get all ${name} documentation as a single text. Warning: may be large. Use search_docs or get_doc first unless you need comprehensive context.`,
     {},
     async () => {
-      const docs = await getAllDocs();
+      const docs = await getAllDocs(denoteContext);
       const body = docs
         .map((d) => `# ${d.frontmatter.title}\n\n${d.content}`)
         .join("\n\n---\n\n");

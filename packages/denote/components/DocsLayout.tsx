@@ -8,9 +8,10 @@ import { ActiveToc } from "../islands/ActiveToc.tsx";
 import { AiChat } from "../islands/AiChat.tsx";
 import type { TocItem } from "../lib/markdown.ts";
 import type { Breadcrumb, NavLink } from "../lib/docs.ts";
-import { getConfig } from "../lib/config.ts";
+import type { DenoteConfig } from "../denote.config.ts";
 
 interface DocsLayoutProps {
+  config: DenoteConfig;
   title: string;
   description?: string;
   children: ComponentChildren;
@@ -22,6 +23,7 @@ interface DocsLayoutProps {
 }
 
 export function DocsLayout({
+  config,
   title,
   description,
   children,
@@ -31,15 +33,14 @@ export function DocsLayout({
   next,
   breadcrumbs = [],
 }: DocsLayoutProps) {
-  const config = getConfig();
   const showToc = config.layout?.toc !== false;
   const showBreadcrumbs = config.layout?.breadcrumbs !== false;
   const showFooter = config.layout?.footer !== false;
 
   return (
     <div class="min-h-screen bg-[var(--denote-bg)]">
-      <Header currentPath={currentPath} />
-      <Sidebar currentPath={currentPath} />
+      <Header config={config} currentPath={currentPath} />
+      <Sidebar config={config} currentPath={currentPath} />
 
       <main
         class={`lg:[padding-left:var(--denote-sidebar-width)]${
@@ -151,7 +152,7 @@ export function DocsLayout({
       </main>
 
       {showToc && <ActiveToc items={toc} />}
-      {getConfig().ai?.chatbot && <AiChat />}
+      {config.ai?.chatbot && <AiChat />}
     </div>
   );
 }

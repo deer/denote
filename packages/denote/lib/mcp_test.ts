@@ -1,4 +1,4 @@
-import "./test_config.ts"; // side-effect: sets up config for tests
+import { testContext } from "./test_config.ts";
 import {
   assertEquals,
   assertNotEquals,
@@ -6,7 +6,7 @@ import {
 } from "jsr:@std/assert@1";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";
-import { createMcpServer, getSiteName, MCP_CORS_HEADERS } from "./mcp.ts";
+import { createMcpServer, MCP_CORS_HEADERS } from "./mcp.ts";
 import { clearSearchIndexCache } from "./docs.ts";
 
 // deno-lint-ignore no-explicit-any
@@ -27,7 +27,7 @@ function resourceText(result: Any): string {
 // ---------------------------------------------------------------------------
 
 async function createTestClient(baseUrl?: string) {
-  const server = createMcpServer(baseUrl);
+  const server = createMcpServer(testContext, baseUrl);
   const [clientTransport, serverTransport] = InMemoryTransport
     .createLinkedPair();
 
@@ -50,15 +50,6 @@ async function createTestClient(baseUrl?: string) {
 // The MCP SDK's InMemoryTransport leaves internal async ops after close()
 // that Deno's sanitizer incorrectly attributes to other test files.
 const mcpTestOpts = { sanitizeOps: false, sanitizeResources: false };
-
-// ---------------------------------------------------------------------------
-// getSiteName
-// ---------------------------------------------------------------------------
-
-Deno.test("getSiteName - returns configured name", () => {
-  // test_config.ts sets name to "Denote"
-  assertEquals(getSiteName(), "Denote");
-});
 
 // ---------------------------------------------------------------------------
 // MCP_CORS_HEADERS

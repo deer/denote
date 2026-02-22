@@ -215,12 +215,5 @@ export interface DenoteConfig {
   ai?: AiConfig;
 }
 
-/** Re-export config accessors */
-export {
-  getConfig,
-  getContentDir,
-  getDocsBasePath,
-  setConfig,
-  setContentDir,
-  setDocsBasePath,
-} from "./lib/config.ts";
+/** Re-export config setters (used by CLI and mod.ts internals) */
+export { setConfig, setContentDir, setDocsBasePath } from "./lib/config.ts";

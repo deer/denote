@@ -5,20 +5,24 @@
  * See: https://llmstxt.org/
  */
 import { getAllDocs } from "./docs.ts";
-import { getConfig } from "./config.ts";
+import type { DenoteContext } from "../utils.ts";
 import { extractToc } from "@deer/gfm";
 
 /**
  * Generate llms.txt — a standard file that tells AI agents
  * what this documentation contains and how to access it.
  */
-export async function generateLlmsTxt(baseUrl: string): Promise<string> {
-  const docs = await getAllDocs();
+export async function generateLlmsTxt(
+  denoteContext: DenoteContext,
+  baseUrl: string,
+): Promise<string> {
+  const config = denoteContext.config;
+  const docs = await getAllDocs(denoteContext);
 
   const lines: string[] = [
-    `# ${getConfig().name}`,
+    `# ${config.name}`,
     "",
-    `> ${getConfig().name} documentation`,
+    `> ${config.name} documentation`,
     "",
     "## Docs",
     "",
@@ -44,7 +48,7 @@ export async function generateLlmsTxt(baseUrl: string): Promise<string> {
   );
 
   // Advertise MCP endpoint when enabled
-  if (getConfig().ai?.mcp) {
+  if (config.ai?.mcp) {
     lines.push("");
     lines.push("## MCP (Model Context Protocol)");
     lines.push("");
@@ -62,11 +66,14 @@ export async function generateLlmsTxt(baseUrl: string): Promise<string> {
 /**
  * Generate full markdown dump of all docs — optimized for AI context windows.
  */
-export async function generateFullDocs(): Promise<string> {
-  const docs = await getAllDocs();
+export async function generateFullDocs(
+  denoteContext: DenoteContext,
+): Promise<string> {
+  const config = denoteContext.config;
+  const docs = await getAllDocs(denoteContext);
 
   const sections: string[] = [
-    `# ${getConfig().name} — Complete Documentation`,
+    `# ${config.name} — Complete Documentation`,
     "",
   ];
 
@@ -101,9 +108,12 @@ export async function generateFullDocs(): Promise<string> {
 /**
  * Get all docs as structured JSON for API consumption.
  */
-export async function getDocsJson(baseUrl?: string): Promise<object> {
-  const config = getConfig();
-  const docs = await getAllDocs();
+export async function getDocsJson(
+  denoteContext: DenoteContext,
+  baseUrl?: string,
+): Promise<object> {
+  const config = denoteContext.config;
+  const docs = await getAllDocs(denoteContext);
 
   const result: Record<string, unknown> = {
     name: config.name,

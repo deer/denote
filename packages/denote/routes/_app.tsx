@@ -1,11 +1,10 @@
 import type { PageProps } from "fresh";
 import { define, type State } from "../utils.ts";
-import { getConfig } from "../lib/config.ts";
 import { buildJsonLd } from "../lib/seo.ts";
 
 /** App wrapper component — exported for programmatic routing */
 export function App({ Component, state }: PageProps<unknown, State>) {
-  const config = getConfig();
+  const config = state.denote.config;
   const pageTitle = state.pageTitle
     ? `${state.pageTitle} | ${config.name}`
     : `${config.name} — Docs for humans and machines`;

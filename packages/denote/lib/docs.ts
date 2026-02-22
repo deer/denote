@@ -13,7 +13,7 @@ import {
   type TocItem,
 } from "./markdown.ts";
 import type { NavItem } from "../denote.config.ts";
-import { getConfig, getContentDir } from "./config.ts";
+import type { DenoteContext } from "../utils.ts";
 import { resolve } from "@std/path";
 
 export interface DocPage extends ParsedDoc {
@@ -72,11 +72,9 @@ function invalidate(filePath?: string): void {
  * Only runs once; safe to call multiple times.
  * Skipped in test environments to avoid resource leaks.
  */
-function startWatcher(): void {
+function startWatcher(contentDir: string): void {
   // Don't start watcher in tests or if already running
   if (watcher || Deno.env.get("DENO_TESTING") === "1") return;
-
-  const contentDir = getContentDir();
 
   // Deno.watchFs may not be available in all environments (e.g. Deno Deploy)
   try {
@@ -124,12 +122,15 @@ export function stopWatcher(): void {
 /**
  * Get a single document by slug (cached).
  */
-export async function getDoc(slug: string): Promise<DocPage | null> {
+export async function getDoc(
+  slug: string,
+  denoteContext: DenoteContext,
+): Promise<DocPage | null> {
   // Return from cache if available
   const cached = docCache.get(slug);
   if (cached) return cached;
 
-  const docsDir = getContentDir();
+  const docsDir = denoteContext.contentDir;
 
   // Path traversal guard: ensure slug resolves within docsDir
   const resolvedBase = resolve(docsDir);
@@ -154,7 +155,7 @@ export async function getDoc(slug: string): Promise<DocPage | null> {
         path,
       };
       docCache.set(slug, doc);
-      startWatcher();
+      startWatcher(denoteContext.contentDir);
       return doc;
     } catch {
       // File not found, try next path
@@ -170,11 +171,12 @@ export async function getDoc(slug: string): Promise<DocPage | null> {
  */
 export async function getRenderedDoc(
   slug: string,
+  denoteContext: DenoteContext,
 ): Promise<{ doc: DocPage; html: string; toc: TocItem[] } | null> {
   const cached = renderCache.get(slug);
   if (cached) return cached;
 
-  const doc = await getDoc(slug);
+  const doc = await getDoc(slug, denoteContext);
   if (!doc) return null;
 
   const { html, toc } = await renderDoc(doc.content);
@@ -186,13 +188,15 @@ export async function getRenderedDoc(
 /**
  * Get all documents (cached).
  */
-export async function getAllDocs(): Promise<DocPage[]> {
+export async function getAllDocs(
+  denoteContext: DenoteContext,
+): Promise<DocPage[]> {
   if (allDocsLoaded && docCache.size > 0) {
     return Array.from(docCache.values());
   }
 
   const docs: DocPage[] = [];
-  const docsDir = getContentDir();
+  const docsDir = denoteContext.contentDir;
 
   async function walkDir(dir: string, prefix = ""): Promise<void> {
     try {
@@ -228,7 +232,7 @@ export async function getAllDocs(): Promise<DocPage[]> {
 
   await walkDir(docsDir);
   allDocsLoaded = true;
-  startWatcher();
+  startWatcher(denoteContext.contentDir);
   return docs;
 }
 
@@ -262,8 +266,9 @@ function flattenNav(items: NavItem[]): NavLink[] {
  */
 export function getPrevNext(
   currentPath: string,
+  denoteContext: DenoteContext,
 ): { prev: NavLink | null; next: NavLink | null } {
-  const pages = flattenNav(getConfig().navigation);
+  const pages = flattenNav(denoteContext.config.navigation);
   const index = pages.findIndex((p) => p.href === currentPath);
   if (index === -1) return { prev: null, next: null };
   return {
@@ -280,7 +285,10 @@ export interface Breadcrumb {
   href?: string;
 }
 
-export function getBreadcrumbs(currentPath: string): Breadcrumb[] {
+export function getBreadcrumbs(
+  currentPath: string,
+  denoteContext: DenoteContext,
+): Breadcrumb[] {
   const crumbs: Breadcrumb[] = [];
 
   function findPath(items: NavItem[], parents: Breadcrumb[]): boolean {
@@ -299,7 +307,7 @@ export function getBreadcrumbs(currentPath: string): Breadcrumb[] {
     return false;
   }
 
-  findPath(getConfig().navigation, []);
+  findPath(denoteContext.config.navigation, []);
   return crumbs;
 }
 
@@ -321,10 +329,12 @@ export interface SearchItem {
 
 let cachedSearchIndex: SearchItem[] | null = null;
 
-export async function buildSearchIndex(): Promise<SearchItem[]> {
+export async function buildSearchIndex(
+  denoteContext: DenoteContext,
+): Promise<SearchItem[]> {
   if (cachedSearchIndex) return cachedSearchIndex;
 
-  const docs = await getAllDocs();
+  const docs = await getAllDocs(denoteContext);
 
   cachedSearchIndex = docs.map((doc) => ({
     title: doc.frontmatter.title,
