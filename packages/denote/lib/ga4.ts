@@ -16,7 +16,7 @@ let showedMissingWarning = false;
  *
  * Reads the measurement ID from the `GA4_MEASUREMENT_ID` environment variable.
  */
-export function ga4Middleware() {
+export function ga4Middleware(): <T>(ctx: Context<T>) => Promise<Response> {
   const id = Deno.env.get("GA4_MEASUREMENT_ID");
 
   return async function ga4Handler<T>(ctx: Context<T>): Promise<Response> {

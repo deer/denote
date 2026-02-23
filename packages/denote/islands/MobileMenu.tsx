@@ -25,7 +25,7 @@ interface MobileMenuProps {
 
 export function MobileMenu(
   { currentPath, siteName, logoSuffix, navigation, topNav }: MobileMenuProps,
-) {
+): preact.JSX.Element {
   const portalRef = useRef<HTMLDivElement | null>(null);
 
   // Create and manage portal container

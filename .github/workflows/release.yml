@@ -1,0 +1,88 @@
+name: Release
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+
+      - name: Install dependencies
+        run: deno install --frozen
+
+      - name: Verify
+        run: deno task ok
+
+      # --- @denote/core ---
+      - name: Check @denote/core version
+        id: core
+        run: |
+          VERSION=$(jq -r .version packages/denote/deno.json)
+          TAG="@denote/core@${VERSION}"
+          if git rev-parse "$TAG" >/dev/null 2>&1; then
+            echo "Tag $TAG already exists, skipping"
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "New version detected: $VERSION"
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+            echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Publish @denote/core to JSR
+        if: steps.core.outputs.changed == 'true'
+        run: deno publish
+        working-directory: packages/denote
+
+      - name: Create @denote/core release
+        if: steps.core.outputs.changed == 'true'
+        run: |
+          gh release create "${{ steps.core.outputs.tag }}" \
+            --title "${{ steps.core.outputs.tag }}" \
+            --generate-notes \
+            --draft
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      # --- @denote/init ---
+      - name: Check @denote/init version
+        id: init
+        run: |
+          VERSION=$(jq -r .version packages/denote-init/deno.json)
+          TAG="@denote/init@${VERSION}"
+          if git rev-parse "$TAG" >/dev/null 2>&1; then
+            echo "Tag $TAG already exists, skipping"
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "New version detected: $VERSION"
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+            echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Publish @denote/init to JSR
+        if: steps.init.outputs.changed == 'true'
+        run: deno publish
+        working-directory: packages/denote-init
+
+      - name: Create @denote/init release
+        if: steps.init.outputs.changed == 'true'
+        run: |
+          gh release create "${{ steps.init.outputs.tag }}" \
+            --title "${{ steps.init.outputs.tag }}" \
+            --generate-notes \
+            --draft
+        env:
+          GH_TOKEN: ${{ github.token }}

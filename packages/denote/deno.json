@@ -1,6 +1,6 @@
 {
   "name": "@denote/core",
-  "version": "0.1.0",
+  "version": "0.0.1",
   "exports": {
     ".": "./mod.ts",
     "./cli": "./cli.ts",
@@ -11,7 +11,6 @@
     "./islands/CopyButton.tsx": "./islands/CopyButton.tsx",
     "./islands/ActiveToc.tsx": "./islands/ActiveToc.tsx",
     "./islands/AiChat.tsx": "./islands/AiChat.tsx",
-    "./assets/styles.css": "./assets/styles.css",
     "./ga4": "./lib/ga4.ts",
     "./types": "./denote.config.ts"
   },
@@ -53,6 +52,13 @@
     "@tailwindcss/vite": "npm:@tailwindcss/vite@^4.1.12",
     "zod": "npm:zod@^4.3.6",
     "preact-render-to-string": "npm:preact-render-to-string@^6.5.0"
+  },
+  "publish": {
+    "exclude": [
+      "**/*_test.ts",
+      "**/*_test.tsx",
+      "lib/test_config.ts"
+    ]
   },
   "compilerOptions": {
     "lib": [

@@ -20,7 +20,7 @@ function setIconContent(el: HTMLElement, html: string) {
 // Track which button was just copied (by index) and clear after timeout
 const copiedIndex = signal(-1);
 
-export function CopyButton() {
+export function CopyButton(): null {
   useEffect(() => {
     // @deer/gfm wraps code blocks in: .highlight > .code-header + pre > code
     const headers = document.querySelectorAll(".code-header");

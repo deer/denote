@@ -146,7 +146,7 @@ function renderInline(text: string) {
   return <>{parts}</>;
 }
 
-export function AiChat() {
+export function AiChat(): preact.JSX.Element {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
