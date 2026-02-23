@@ -23,7 +23,9 @@ interface ThemeToggleProps {
   darkMode?: "auto" | "light" | "dark" | "toggle";
 }
 
-export function ThemeToggle({ darkMode }: ThemeToggleProps) {
+export function ThemeToggle(
+  { darkMode }: ThemeToggleProps,
+): preact.JSX.Element | null {
   // Hide toggle when theme is forced
   if (darkMode === "light" || darkMode === "dark") {
     return null;

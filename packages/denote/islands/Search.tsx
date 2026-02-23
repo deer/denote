@@ -26,7 +26,7 @@ effect(() => {
   selectedIndex.value = 0;
 });
 
-export function Search({ items }: SearchProps) {
+export function Search({ items }: SearchProps): preact.JSX.Element | null {
   const results = computed(() => {
     const q = query.value.trim().toLowerCase();
     if (!q) return [];

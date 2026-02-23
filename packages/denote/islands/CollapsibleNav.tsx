@@ -53,7 +53,7 @@ function toggleSection(key: string): void {
 
 export function CollapsibleNav(
   { navigation, currentPath }: CollapsibleNavProps,
-) {
+): preact.JSX.Element {
   useEffect(() => {
     collapsed.value = loadCollapsed();
   }, []);

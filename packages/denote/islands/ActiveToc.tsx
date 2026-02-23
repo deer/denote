@@ -17,7 +17,9 @@ interface ActiveTocProps {
 
 const activeId = signal("");
 
-export function ActiveToc({ items }: ActiveTocProps) {
+export function ActiveToc(
+  { items }: ActiveTocProps,
+): preact.JSX.Element | null {
   useEffect(() => {
     if (items.length === 0) return;
 
