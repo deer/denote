@@ -67,7 +67,7 @@ async function scaffold(projectDir: string, projectName: string) {
   }
 
   // Create deno.json
-  const coreSpecifier = "jsr:@denote/core@^0.0.1";
+  const coreSpecifier = "jsr:@denote/core@^0.0.2";
   const denoJson = {
     tasks: {
       dev: "deno run -A jsr:@denote/core/cli dev",
