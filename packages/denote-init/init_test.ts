@@ -121,6 +121,20 @@ async function patchDenoJsonFull(projectDir: string) {
     config.imports[key] ??= value;
   }
 
+  // Map sub-path exports (islands, etc.) so Vite can resolve them
+  for (
+    const [subpath, target] of Object.entries(
+      coreDeno.exports as Record<string, string>,
+    )
+  ) {
+    if (subpath === ".") continue;
+    const specifier = `@denote/core/${subpath.replace(/^\.\//, "")}`;
+    config.imports[specifier] ??= new URL(
+      (target as string).replace(/^\.\//, ""),
+      coreUrl,
+    ).href;
+  }
+
   // JSX compiler options (required for Fresh/Preact)
   config.compilerOptions = coreDeno.compilerOptions;
   config.nodeModulesDir = "auto";
