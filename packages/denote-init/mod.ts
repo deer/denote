@@ -3,11 +3,12 @@
  * @denote/init — Scaffold a new Denote documentation project
  *
  * Usage:
- *   deno run -Ar jsr:@denote/init [project-name]
- *   deno run -Ar jsr:@denote/init my-docs
- *   deno run -Ar jsr:@denote/init .  # Initialize in current directory
+ *   deno run -Ar jsr:@denote/init             # Prompts for project name
+ *   deno run -Ar jsr:@denote/init my-docs      # Create "my-docs" directory
+ *   deno run -Ar jsr:@denote/init .             # Initialize in current directory
  */
 
+import { basename, resolve } from "@std/path";
 import denoConfig from "./deno.json" with { type: "json" };
 export const VERSION = denoConfig.version;
 
@@ -25,8 +26,13 @@ ${bold("USAGE")}
   deno run -Ar jsr:@denote/init [project-name]
 
 ${bold("EXAMPLES")}
-  deno run -Ar jsr:@denote/init my-docs    ${dim("# Create new project")}
-  deno run -Ar jsr:@denote/init .          ${dim("# Initialize in current dir")}
+  deno run -Ar jsr:@denote/init              ${
+    dim("# Prompts with default name")
+  }
+  deno run -Ar jsr:@denote/init my-docs      ${dim("# Create new project")}
+  deno run -Ar jsr:@denote/init .            ${
+    dim("# Initialize in current dir")
+  }
 
 ${bold("OPTIONS")}
   -h, --help       Show this help message
@@ -246,11 +252,14 @@ dist/
   await Deno.writeTextFile(`${projectDir}/.gitignore`, gitignore);
   console.log(`  ${green("✓")} .gitignore`);
 
-  // Done!
+  // Done! Skip "cd" instruction when scaffolding into the current directory.
+  const isCwd = projectDir === Deno.cwd();
   console.log(`
 ${green(bold("✓ Project created!"))}
-
-  ${dim("cd")} ${projectName}
+${
+    isCwd ? "" : `
+  ${dim("cd")} ${projectName}`
+  }
   ${dim("deno task")} dev
 
   Then open ${cyan("http://localhost:8000")}
@@ -287,13 +296,22 @@ if (import.meta.main) {
     Deno.exit(0);
   }
 
-  const projectArg = args.find((a) => !a.startsWith("-")) || ".";
-  const projectDir = projectArg === "."
-    ? Deno.cwd()
-    : `${Deno.cwd()}/${projectArg}`;
-  const projectName = projectArg === "."
-    ? Deno.cwd().split("/").pop()!
-    : projectArg;
+  const projectArg = args.find((a) => !a.startsWith("-"));
+
+  let unresolvedDirectory: string;
+  if (projectArg) {
+    unresolvedDirectory = projectArg;
+  } else {
+    const input = prompt("Project Name:", "my-docs");
+    if (!input) {
+      printHelp();
+      Deno.exit(1);
+    }
+    unresolvedDirectory = input;
+  }
+
+  const projectDir = resolve(Deno.cwd(), unresolvedDirectory);
+  const projectName = basename(projectDir);
 
   // Check if directory exists and has files
   if (await fileExists(projectDir)) {
@@ -301,9 +319,11 @@ if (import.meta.main) {
     for await (const entry of Deno.readDir(projectDir)) {
       entries.push(entry);
     }
-    if (entries.length > 0 && projectArg !== ".") {
+    const isEmpty = entries.length === 0 ||
+      entries.length === 1 && entries[0].name === ".git";
+    if (!isEmpty && unresolvedDirectory !== ".") {
       console.error(
-        `Error: Directory '${projectArg}' already exists and is not empty.`,
+        `Error: Directory '${unresolvedDirectory}' already exists and is not empty.`,
       );
       Deno.exit(1);
     }

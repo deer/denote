@@ -159,13 +159,13 @@ async function runCommand(
   cwd: string,
   cmd: string[],
 ): Promise<{ code: number; stdout: string; stderr: string }> {
-  const command = new Deno.Command(cmd[0], {
+  const output = await new Deno.Command(cmd[0], {
     args: cmd.slice(1),
     cwd,
+    stdin: "null",
     stdout: "piped",
     stderr: "piped",
-  });
-  const output = await command.output();
+  }).output();
   return {
     code: output.code,
     stdout: new TextDecoder().decode(output.stdout),
@@ -326,14 +326,30 @@ Deno.test("scaffold into existing directory preserves files", async () => {
   await expectProjectFile(tmp.path, "deno.json");
 });
 
-Deno.test("CLI no-args scaffolds into cwd", async () => {
-  await using tmp = await useTempDir("denote_init_cwd_");
+Deno.test("CLI no-args with EOF stdin shows help", async () => {
+  await using tmp = await useTempDir("denote_init_noargs_");
 
   const result = await runCommand(tmp.path, [
     DENO_BIN,
     "run",
     "-A",
     join(import.meta.dirname!, "mod.ts"),
+  ]);
+
+  // prompt() returns null on EOF → show help and exit 1
+  assert(result.code !== 0, "Should exit with non-zero code");
+  assertStringIncludes(result.stdout, "USAGE");
+});
+
+Deno.test("CLI dot argument scaffolds into cwd", async () => {
+  await using tmp = await useTempDir("denote_init_dot_");
+
+  const result = await runCommand(tmp.path, [
+    DENO_BIN,
+    "run",
+    "-A",
+    join(import.meta.dirname!, "mod.ts"),
+    ".",
   ]);
 
   // Should succeed (exit 0)
