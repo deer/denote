@@ -32,7 +32,6 @@ jobs:
       - name: Generate coverage report
         run: deno coverage .coverage --lcov > lcov.info
 
-
   deploy:
     name: Deploy
     needs: verify
