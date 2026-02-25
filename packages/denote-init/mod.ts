@@ -2,15 +2,30 @@
 /**
  * @denote/init — Scaffold a new Denote documentation project
  *
- * Usage:
- *   deno run -Ar jsr:@denote/init             # Prompts for project name
- *   deno run -Ar jsr:@denote/init my-docs      # Create "my-docs" directory
- *   deno run -Ar jsr:@denote/init .             # Initialize in current directory
+ * @module
+ *
+ * CLI and programmatic API for scaffolding a new Denote docs site. Creates
+ * a ready-to-run project with configuration, sample content, and Deno tasks.
+ *
+ * @example CLI usage
+ * ```sh
+ * deno run -Ar jsr:@denote/init             # Prompts for project name
+ * deno run -Ar jsr:@denote/init my-docs     # Create "my-docs" directory
+ * deno run -Ar jsr:@denote/init .           # Initialize in current directory
+ * ```
+ *
+ * @example Programmatic usage
+ * ```ts
+ * import { initProject } from "@denote/init";
+ *
+ * await initProject({ dir: "./my-docs", name: "my-docs" });
+ * ```
  */
 
 import { basename, resolve } from "@std/path";
 import denoConfig from "./deno.json" with { type: "json" };
-export const VERSION = denoConfig.version;
+/** Current package version, read from deno.json. */
+export const VERSION: string = denoConfig.version;
 
 // ANSI colors
 const bold = (s: string) => `\x1b[1m${s}\x1b[0m`;

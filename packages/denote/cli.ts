@@ -2,10 +2,21 @@
 /**
  * Denote CLI — The documentation framework for Deno
  *
- * Usage:
- *   denote dev          Start development server
- *   denote build        Build for production
- *   denote mcp          Start MCP server
+ * @module
+ *
+ * Command-line interface for developing, building, and validating Denote
+ * documentation sites. Not intended for programmatic import — use
+ * `@denote/core` (the main entry point) instead.
+ *
+ * @example Run the dev server
+ * ```sh
+ * deno run -A jsr:@denote/core/cli dev
+ * ```
+ *
+ * @example Build for production
+ * ```sh
+ * deno run -A jsr:@denote/core/cli build
+ * ```
  */
 
 import denoConfig from "./deno.json" with { type: "json" };

@@ -1,7 +1,11 @@
 /**
  * Copy Button Island
- * Adds a header bar with language label and copy button to code blocks.
- * Mounts once and attaches to all code blocks on the page.
+ *
+ * @module
+ *
+ * Adds a header bar with language label and copy-to-clipboard button to
+ * fenced code blocks. Mounts once and attaches to all code blocks rendered
+ * by `@deer/gfm` on the page.
  */
 import { useEffect } from "preact/hooks";
 import { signal } from "@preact/signals";

@@ -1,6 +1,11 @@
 /**
  * AI Chat Island
- * Floating "Ask AI" widget for documentation pages
+ *
+ * @module
+ *
+ * Floating "Ask AI" widget for documentation pages. Sends user questions to
+ * the `/api/chat` endpoint and streams back AI-generated answers with source
+ * citations.
  */
 import { signal } from "@preact/signals";
 import { useEffect, useRef } from "preact/hooks";

@@ -1,6 +1,11 @@
 /**
  * Active Table of Contents Island
- * Highlights the current section in the right sidebar as user scrolls.
+ *
+ * @module
+ *
+ * Highlights the current section in the right-hand table of contents sidebar
+ * as the user scrolls through the page. Uses an IntersectionObserver to
+ * track which heading is in view.
  */
 import { useEffect } from "preact/hooks";
 import { signal } from "@preact/signals";

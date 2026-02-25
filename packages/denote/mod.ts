@@ -1,28 +1,50 @@
 /**
  * Denote — Mountable Documentation Engine for Fresh v2
  *
- * Usage (standalone):
- *   import { denote } from "./mod.ts";
- *   import { config } from "./denote.config.ts";
- *   const app = denote({ config });
- *   app.listen();
+ * @module
  *
- * Usage (mounted in another Fresh app):
- *   import { denote } from "denote/mod.ts";
- *   import { App, staticFiles } from "fresh";
+ * The main entry point for the Denote documentation framework. Provides the
+ * {@linkcode denote} factory function that creates a configured Fresh v2 app
+ * with docs routes, AI endpoints, search, and theming.
  *
- *   const docs = denote({
- *     config: { name: "My Project", navigation: [...] },
- *     contentDir: "./docs/content",
- *   });
+ * @example Standalone usage
+ * ```ts
+ * import { denote } from "@denote/core";
  *
- *   const app = new App()
- *     .use(staticFiles())
- *     .get("/", (ctx) => ctx.render(<HomePage />))
- *     .mountApp("/", docs)
- *     .listen();
+ * const app = denote({
+ *   config: {
+ *     name: "My Docs",
+ *     navigation: [
+ *       { title: "Guide", children: [
+ *         { title: "Intro", href: "/docs/intro" },
+ *       ]},
+ *     ],
+ *   },
+ * });
+ *
+ * app.listen();
+ * ```
+ *
+ * @example Mounted in another Fresh app
+ * ```ts
+ * import { denote } from "@denote/core";
+ * import { App, staticFiles } from "fresh";
+ *
+ * const docs = denote({
+ *   config: { name: "My Project", navigation: [] },
+ *   contentDir: "./docs/content",
+ *   includeLandingPage: false,
+ * });
+ *
+ * const app = new App()
+ *   .use(staticFiles())
+ *   .mountApp("/", docs);
+ *
+ * app.listen();
+ * ```
  */
 import { App, staticFiles } from "fresh";
+export type { App } from "fresh";
 import type { DenoteConfig, NavItem } from "./denote.config.ts";
 import {
   getConfig,
@@ -66,6 +88,7 @@ function findFirstHref(items: NavItem[]): string | null {
 // Public API
 // ---------------------------------------------------------------------------
 
+/** Options for creating a Denote documentation app via {@linkcode denote}. */
 export interface DenoteOptions {
   /** Denote site configuration (name, navigation, colors, etc.) */
   config: DenoteConfig;

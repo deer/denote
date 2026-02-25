@@ -1,6 +1,10 @@
 /**
  * Collapsible Navigation Island
- * Sidebar sections that expand/collapse with persisted state.
+ *
+ * @module
+ *
+ * Sidebar sections that expand and collapse with state persisted to
+ * localStorage. Highlights the currently active page in the navigation tree.
  */
 import { useEffect } from "preact/hooks";
 import { signal } from "@preact/signals";

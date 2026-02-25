@@ -1,6 +1,8 @@
 {
   "name": "@denote/init",
-  "version": "0.0.4",
+  "version": "0.0.5",
+  "description": "Scaffold a new Denote documentation project",
+  "license": "MIT",
   "exports": "./mod.ts",
   "tasks": {
     "dev": "deno run -A mod.ts",
