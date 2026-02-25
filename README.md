@@ -1,5 +1,10 @@
 # 🦕 Denote
 
+[![JSR Score](https://jsr.io/badges/@denote/core/score)](https://jsr.io/@denote/core)
+[![JSR](https://jsr.io/badges/@denote/core)](https://jsr.io/@denote/core)
+[![CI](https://github.com/deer/denote/actions/workflows/deploy.yml/badge.svg)](https://github.com/deer/denote/actions/workflows/deploy.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 **Documentation that speaks to machines and humans.**
 
 The open-source docs platform with llms.txt, MCP server, and structured JSON API

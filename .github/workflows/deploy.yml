@@ -1,4 +1,5 @@
-name: Deploy
+name: CI
+
 on:
   push:
     branches: main
@@ -6,13 +7,12 @@ on:
     branches: main
 
 jobs:
-  deploy:
-    name: Deploy
+  verify:
+    name: Verify
     runs-on: ubuntu-latest
 
     permissions:
-      id-token: write # Needed for auth with Deno Deploy
-      contents: read # Needed to clone the repository
+      contents: read
 
     steps:
       - name: Clone repository
@@ -23,13 +23,58 @@ jobs:
         with:
           deno-version: v2.x
 
-      - name: verify
-        run: "deno task ok"
+      - name: Format, lint, and type-check
+        run: deno fmt --check && deno lint && deno check
 
-      - name: Build step
-        run: "deno task build"
+      - name: Test with coverage
+        run: deno test -A --coverage=.coverage
+
+      - name: Generate coverage report
+        run: deno coverage .coverage --lcov > lcov.info
+
+      - name: Upload coverage to Codecov
+        if: github.event_name == 'push'
+        uses: codecov/codecov-action@v5
+        with:
+          files: lcov.info
+
+  deploy:
+    name: Deploy
+    needs: verify
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v4
+
+      - name: Check for deploy-relevant changes
+        uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            deploy:
+              - 'packages/denote/**'
+              - 'docs/**'
+              - 'deno.json'
+              - '.github/workflows/**'
+
+      - name: Install Deno
+        if: steps.filter.outputs.deploy == 'true'
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+
+      - name: Build
+        if: steps.filter.outputs.deploy == 'true'
+        run: deno task build
 
       - name: Upload to Deno Deploy
+        if: steps.filter.outputs.deploy == 'true'
         uses: denoland/deployctl@v1
         with:
           project: "rvr-denote"
