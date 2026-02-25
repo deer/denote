@@ -1,10 +1,26 @@
 /**
  * GA4 Analytics Middleware for Denote
  *
- * Opt-in server-side Google Analytics 4 event reporting using @kitsonk/ga4.
- * Sends page_view events for document responses and exception events on errors.
+ * @module
+ *
+ * Opt-in server-side Google Analytics 4 event reporting using `@kitsonk/ga4`.
+ * Sends `page_view` events for document responses and `exception` events on
+ * errors. Enable by setting `ga4: true` in your Denote config and providing
+ * the `GA4_MEASUREMENT_ID` environment variable.
+ *
+ * @example
+ * ```ts
+ * // denote.config.ts
+ * export const config: DenoteConfig = {
+ *   name: "My Docs",
+ *   ga4: true,
+ *   navigation: [],
+ * };
+ * ```
  */
 
+// Re-export to satisfy `deno doc --lint` (public return type references Context)
+export type { Context } from "fresh";
 import type { Context } from "fresh";
 import { GA4Report, isDocument, isServerError } from "@kitsonk/ga4";
 import type { Event } from "@kitsonk/ga4";

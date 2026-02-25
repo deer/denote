@@ -1,6 +1,11 @@
 /**
  * Mobile Menu Island
- * Signal-driven sidebar toggle with portal rendering to escape header stacking context
+ *
+ * @module
+ *
+ * Signal-driven sidebar toggle with portal rendering to escape header stacking
+ * context. Renders a hamburger button that opens a full-screen navigation
+ * overlay on mobile devices.
  */
 import { effect, signal } from "@preact/signals";
 import { useEffect, useRef } from "preact/hooks";

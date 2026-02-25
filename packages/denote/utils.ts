@@ -11,14 +11,21 @@ export interface DenoteContext {
   docsBasePath: string;
 }
 
+/** Fresh route state populated by Denote middleware. */
 export interface State {
+  /** Shared state string (Fresh convention). */
   shared: string;
+  /** Current page title (set by docs middleware). */
   pageTitle?: string;
+  /** Current page meta description (set by docs middleware). */
   pageDescription?: string;
+  /** Canonical URL for the current page. */
   pageUrl?: string;
+  /** OG image URL for the current page. */
   pageImage?: string;
   /** Denote configuration context — set by denote() middleware */
   denote: DenoteContext;
 }
 
+/** Type-safe Fresh route helper pre-bound to {@linkcode State}. */
 export const define = createDefine<State>();

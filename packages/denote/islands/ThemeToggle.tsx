@@ -1,6 +1,11 @@
 /**
  * Theme Toggle Island
- * Signal-driven dark/light mode switching
+ *
+ * @module
+ *
+ * Signal-driven dark/light mode switching button. Renders a sun/moon icon
+ * that toggles between light and dark themes, persisting the choice to
+ * localStorage.
  */
 import { effect, signal } from "@preact/signals";
 

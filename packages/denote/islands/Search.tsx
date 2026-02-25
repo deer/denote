@@ -1,6 +1,11 @@
 /**
  * Search Island
- * Signal-driven search modal with ⌘K shortcut
+ *
+ * @module
+ *
+ * Signal-driven search modal activated by the Cmd+K / Ctrl+K keyboard
+ * shortcut. Performs client-side full-text search over the docs index and
+ * renders results with keyboard navigation.
  */
 import { computed, effect, signal } from "@preact/signals";
 import { useEffect } from "preact/hooks";
