@@ -123,10 +123,14 @@ async function* walkTsx(dir: string): AsyncGenerator<string> {
 if (import.meta.main) {
   const PKG_DIR = new URL("../", import.meta.url).pathname;
 
-  // Server-rendered files (NOT islands — Vite handles those)
+  // All .tsx source directories — components, routes, AND islands.
+  // Island classes must be safelisted because @tailwindcss/vite's
+  // module-graph scanning doesn't reliably detect them during builds
+  // (especially when islands resolve via JSR package specifiers).
   const dirs = [
     `${PKG_DIR}components`,
     `${PKG_DIR}routes`,
+    `${PKG_DIR}islands`,
   ];
 
   const allClasses = new Set<string>();
