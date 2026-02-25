@@ -69,7 +69,7 @@ async function scaffold(projectDir: string, projectName: string) {
   // Create deno.json
   // Imports must cover bare specifiers used in CLI-generated .denote/ files
   // (vite.config.ts, main.ts). Transitive deps resolve via JSR/npm graphs.
-  const coreSpecifier = "jsr:@denote/core@^0.0.2";
+  const coreSpecifier = "jsr:@denote/core@^0.0.3";
   const denoJson = {
     nodeModulesDir: "auto",
     tasks: {
