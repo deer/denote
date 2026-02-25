@@ -100,9 +100,9 @@ async function patchDenoJson(projectDir: string) {
 }
 
 /**
- * Full patch: resolve @denote/core locally AND copy all deps from the core
- * package (fresh, preact, vite, tailwindcss, etc.) plus JSX compilerOptions.
- * Needed for tests that actually start the dev server.
+ * Full patch: resolve @denote/core locally, copy core's own deps (needed
+ * because file:// imports bypass JSR's dependency graph), and map sub-path
+ * exports so Vite can resolve islands etc.
  */
 async function patchDenoJsonFull(projectDir: string) {
   const denoJsonPath = join(projectDir, "deno.json");
@@ -113,7 +113,7 @@ async function patchDenoJsonFull(projectDir: string) {
   config.imports["@denote/core/types"] = coreUrl + "denote.config.ts";
   config.imports["@denote/core/cli"] = new URL("cli.ts", coreUrl).href;
 
-  // Copy ALL deps from core package (fresh, preact, vite, tailwindcss, etc.)
+  // Copy core's deps — file:// imports don't get JSR's dep graph
   const coreDeno = JSON.parse(
     await Deno.readTextFile(join(DENOTE_CORE_DIR, "deno.json")),
   );
@@ -135,9 +135,8 @@ async function patchDenoJsonFull(projectDir: string) {
     ).href;
   }
 
-  // JSX compiler options (required for Fresh/Preact)
+  // Core's compilerOptions (JSX etc.) for local file:// resolution
   config.compilerOptions = coreDeno.compilerOptions;
-  config.nodeModulesDir = "auto";
 
   await Deno.writeTextFile(
     denoJsonPath,
@@ -234,8 +233,10 @@ Deno.test("scaffold creates expected files", async () => {
   // Directories exist
   await expectProjectDir(tmp.path, "static");
 
-  // deno.json has correct tasks and import
+  // deno.json has correct structure (Fresh base + vite/tailwind + Denote)
   const denoJson = JSON.parse(await readProjectFile(tmp.path, "deno.json"));
+
+  // Tasks
   assertEquals(denoJson.tasks.dev, "deno run -A jsr:@denote/core/cli dev");
   assertEquals(denoJson.tasks.build, "deno run -A jsr:@denote/core/cli build");
   assertEquals(
@@ -243,7 +244,40 @@ Deno.test("scaffold creates expected files", async () => {
     "deno run -A jsr:@denote/core/cli validate",
   );
   assertEquals(denoJson.tasks.mcp, "deno run -A jsr:@denote/core/cli mcp");
+
+  // nodeModulesDir required for Vite's resolver
+  assertEquals(denoJson.nodeModulesDir, "auto");
+
+  // Imports: Denote core
   assert(denoJson.imports["@denote/core"], "Should have @denote/core import");
+  // Imports: Vite + Tailwind (used by generated .denote/vite.config.ts & styles.css)
+  assert(denoJson.imports["vite"], "Should have vite import");
+  assert(
+    denoJson.imports["@fresh/plugin-vite"],
+    "Should have @fresh/plugin-vite import",
+  );
+  assert(
+    denoJson.imports["@tailwindcss/vite"],
+    "Should have @tailwindcss/vite import",
+  );
+  assert(denoJson.imports["tailwindcss"], "Should have tailwindcss import");
+  // Imports: Fresh runtime (used by Fresh plugin's server entry)
+  assert(denoJson.imports["fresh"], "Should have fresh import");
+  assert(denoJson.imports["preact"], "Should have preact import");
+  assert(
+    denoJson.imports["@preact/signals"],
+    "Should have @preact/signals import",
+  );
+
+  // Fresh lint rules
+  assertEquals(denoJson.lint?.rules?.tags, ["fresh", "recommended"]);
+
+  // Compiler options (Fresh/Preact JSX)
+  assertEquals(denoJson.compilerOptions?.jsx, "precompile");
+  assertEquals(denoJson.compilerOptions?.jsxImportSource, "preact");
+
+  // Exclude build output
+  assert(denoJson.exclude?.includes("**/_fresh/*"));
 
   // denote.config.ts contains project name
   const config = await readProjectFile(tmp.path, "denote.config.ts");

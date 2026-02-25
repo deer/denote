@@ -67,8 +67,11 @@ async function scaffold(projectDir: string, projectName: string) {
   }
 
   // Create deno.json
+  // Imports must cover bare specifiers used in CLI-generated .denote/ files
+  // (vite.config.ts, main.ts). Transitive deps resolve via JSR/npm graphs.
   const coreSpecifier = "jsr:@denote/core@^0.0.2";
   const denoJson = {
+    nodeModulesDir: "auto",
     tasks: {
       dev: "deno run -A jsr:@denote/core/cli dev",
       build: "deno run -A jsr:@denote/core/cli build",
@@ -77,6 +80,38 @@ async function scaffold(projectDir: string, projectName: string) {
     },
     imports: {
       "@denote/core": coreSpecifier,
+      "@fresh/plugin-vite": "jsr:@fresh/plugin-vite@^1.0.8",
+      "@tailwindcss/vite": "npm:@tailwindcss/vite@^4.1.12",
+      "vite": "npm:vite@^7.3.1",
+      "tailwindcss": "npm:tailwindcss@^4.1.10",
+      "fresh": "jsr:@fresh/core@^2.2.0",
+      "preact": "npm:preact@^10.27.2",
+      "@preact/signals": "npm:@preact/signals@^2.5.0",
+    },
+    lint: {
+      rules: { tags: ["fresh", "recommended"] },
+    },
+    exclude: ["**/_fresh/*"],
+    compilerOptions: {
+      lib: ["dom", "dom.asynciterable", "dom.iterable", "deno.ns"],
+      jsx: "precompile",
+      jsxImportSource: "preact",
+      jsxPrecompileSkipElements: [
+        "a",
+        "img",
+        "source",
+        "body",
+        "html",
+        "head",
+        "title",
+        "meta",
+        "script",
+        "link",
+        "style",
+        "base",
+        "noscript",
+        "template",
+      ],
     },
   };
   await Deno.writeTextFile(
