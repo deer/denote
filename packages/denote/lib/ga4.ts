@@ -28,7 +28,7 @@ import type { Event } from "@kitsonk/ga4";
 let showedMissingWarning = false;
 
 /**
- * Create a GA4 analytics middleware for Fresh v2.
+ * Create a GA4 analytics middleware for Fresh.
  *
  * Reads the measurement ID from the `GA4_MEASUREMENT_ID` environment variable.
  */

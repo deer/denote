@@ -217,7 +217,7 @@ This is your documentation site, powered by **Denote**.
 ## Features
 
 - 📝 **Markdown First** — Write docs in plain Markdown
-- ⚡ **Lightning Fast** — Server-rendered with Fresh v2
+- ⚡ **Lightning Fast** — Server-rendered with Fresh
 - 🤖 **AI Native** — Built-in MCP server, llms.txt, and JSON API
 - 🔍 **Full-text Search** — Instant ⌘K search
 
