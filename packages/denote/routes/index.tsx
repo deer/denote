@@ -16,7 +16,7 @@ function firstNavHref(items: NavItem[]): string | undefined {
 }
 
 /** Main page component that handles both redirect and render cases.
- *  Must be async so Fresh v2 checks the return value for Response objects. */
+ *  Must be async so Fresh checks the return value for Response objects. */
 // deno-lint-ignore require-await
 export async function HomePage(ctx: PageProps<unknown, State>) {
   const config = ctx.state.denote.config;

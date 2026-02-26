@@ -1,10 +1,10 @@
 /**
- * Denote — Mountable Documentation Engine for Fresh v2
+ * Denote — Mountable Documentation Engine for Fresh
  *
  * @module
  *
  * The main entry point for the Denote documentation framework. Provides the
- * {@linkcode denote} factory function that creates a configured Fresh v2 app
+ * {@linkcode denote} factory function that creates a configured Fresh app
  * with docs routes, AI endpoints, search, and theming.
  *
  * @example Standalone usage

@@ -149,7 +149,7 @@ export const config: DenoteConfig = {
         icon: "⚡",
         title: "Lightning Fast",
         description:
-          "Server-rendered with Fresh v2's island architecture. Minimal client JavaScript.",
+          "Server-rendered with Fresh's island architecture. Minimal client JavaScript.",
       },
       {
         icon: "🔍",

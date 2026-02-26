@@ -128,8 +128,7 @@ For richer AI integration, Denote includes a built-in
 
 ## Custom Endpoints
 
-You can add custom API routes in the `routes/` directory using Fresh v2's
-routing:
+You can add custom API routes in the `routes/` directory using Fresh's routing:
 
 ```typescript
 // routes/api/custom.ts
@@ -153,8 +152,8 @@ app.get("/api/custom", (ctx) => {
 });
 ```
 
-## Fresh v2
+## Fresh
 
-Denote is built on [Fresh v2](https://fresh.deno.dev/docs/). For details on
+Denote is built on [Fresh](https://fresh.deno.dev/docs/). For details on
 routing, middleware, and app configuration, see the
-[Fresh v2 documentation](https://fresh.deno.dev/docs/).
+[Fresh documentation](https://fresh.deno.dev/docs/).
