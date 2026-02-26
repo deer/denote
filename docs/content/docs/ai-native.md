@@ -165,39 +165,6 @@ The MCP server exposes:
 All responses include canonical web URLs back to your docs site, so AI agents
 can link users to the source.
 
-## AI Chatbot Widget
-
-Denote includes a built-in "Ask AI" chat widget that appears on every doc page.
-Enable it in your config:
-
-```typescript
-// denote.config.ts
-export const config = {
-  // ... other config
-  ai: {
-    chatbot: true,
-  },
-};
-```
-
-By default, the chatbot uses keyword search to find relevant doc pages. For
-LLM-powered answers, configure an OpenAI-compatible API provider:
-
-```typescript
-ai: {
-  chatbot: true,
-  provider: {
-    apiUrl: "https://api.openai.com/v1/chat/completions",
-    model: "gpt-4o-mini",
-    // Set DENOTE_AI_API_KEY environment variable (recommended)
-    // Avoid putting API keys directly in config files
-  },
-},
-```
-
-The provider uses your full documentation (`llms-full.txt`) as context, so the
-AI answers are grounded in your actual docs.
-
 ## Content Tags
 
 Use frontmatter fields to improve AI understanding of your pages:
