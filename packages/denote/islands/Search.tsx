@@ -31,6 +31,7 @@ effect(() => {
   selectedIndex.value = 0;
 });
 
+/** Full-text search modal activated by Cmd+K / Ctrl+K. */
 export function Search({ items }: SearchProps): preact.JSX.Element | null {
   const results = computed(() => {
     const q = query.value.trim().toLowerCase();

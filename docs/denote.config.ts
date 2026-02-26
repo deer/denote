@@ -122,7 +122,7 @@ export const config: DenoteConfig = {
       titleHighlight: "speaks to machines",
       subtitle: "and humans",
       description:
-        "The open-source docs platform with llms.txt, MCP server, and structured JSON API built in. Every AI feature free.",
+        "The open-source docs framework with llms.txt, MCP server, and structured JSON API built in. Every AI feature free.",
     },
     cta: {
       primary: { text: "Get Started", href: "/docs/introduction" },

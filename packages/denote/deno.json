@@ -1,7 +1,7 @@
 {
   "name": "@denote/core",
-  "version": "0.0.4",
-  "description": "AI-native documentation framework for Deno and Fresh",
+  "version": "0.0.5",
+  "description": "AI-native documentation framework",
   "license": "MIT",
   "exports": {
     ".": "./mod.ts",

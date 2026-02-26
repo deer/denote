@@ -28,6 +28,7 @@ interface MobileMenuProps {
   topNav?: { title: string; href: string }[];
 }
 
+/** Hamburger menu button and full-screen navigation overlay for mobile. */
 export function MobileMenu(
   { currentPath, siteName, logoSuffix, navigation, topNav }: MobileMenuProps,
 ): preact.JSX.Element {

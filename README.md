@@ -7,8 +7,8 @@
 
 **Documentation that speaks to machines and humans.**
 
-The open-source docs platform with llms.txt, MCP server, and structured JSON API
-built in. Every AI feature free.
+The open-source docs framework with llms.txt, MCP server, and structured JSON
+API built in. Every AI feature free.
 
 Open Source · AI-Native · Self-Hostable
 

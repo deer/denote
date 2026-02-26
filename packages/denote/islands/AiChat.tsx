@@ -151,6 +151,7 @@ function renderInline(text: string) {
   return <>{parts}</>;
 }
 
+/** Floating "Ask AI" chat widget. Posts questions to `/api/chat` and renders answers with source links. */
 export function AiChat(): preact.JSX.Element {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);

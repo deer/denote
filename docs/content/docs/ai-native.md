@@ -29,7 +29,7 @@ many developers interact with documentation. When someone asks "how do I
 configure X?", the AI needs to find and read your docs — fast, accurately, and
 in a format it understands.
 
-Most documentation platforms treat AI access as an afterthought. Denote builds
+Most documentation frameworks treat AI access as an afterthought. Denote builds
 it in from day one.
 
 ## Three layers of AI access
@@ -189,7 +189,8 @@ ai: {
   provider: {
     apiUrl: "https://api.openai.com/v1/chat/completions",
     model: "gpt-4o-mini",
-    apiKey: "sk-...", // or set DENOTE_AI_API_KEY env var
+    // Set DENOTE_AI_API_KEY environment variable (recommended)
+    // Avoid putting API keys directly in config files
   },
 },
 ```
