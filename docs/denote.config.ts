@@ -174,7 +174,6 @@ export const config: DenoteConfig = {
     enabled: true,
   },
   ai: {
-    chatbot: false,
     mcp: true,
   },
   ga4: true,

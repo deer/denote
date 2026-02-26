@@ -12,7 +12,6 @@
     "./islands/CollapsibleNav.tsx": "./islands/CollapsibleNav.tsx",
     "./islands/CopyButton.tsx": "./islands/CopyButton.tsx",
     "./islands/ActiveToc.tsx": "./islands/ActiveToc.tsx",
-    "./islands/AiChat.tsx": "./islands/AiChat.tsx",
     "./ga4": "./lib/ga4.ts",
     "./types": "./denote.config.ts"
   },

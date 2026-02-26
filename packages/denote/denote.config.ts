@@ -203,24 +203,10 @@ export interface SeoConfig {
 // AI
 // ---------------------------------------------------------------------------
 
-/** AI provider configuration for LLM-powered chat answers. */
-export interface AiProviderConfig {
-  /** OpenAI-compatible API URL (default: https://api.openai.com/v1/chat/completions) */
-  apiUrl?: string;
-  /** Model name (default: gpt-4o-mini) */
-  model?: string;
-  /** API key (or set DENOTE_AI_API_KEY env var) */
-  apiKey?: string;
-}
-
-/** AI features: chatbot widget, MCP endpoint, and provider settings. */
+/** AI features configuration. */
 export interface AiConfig {
-  /** Enable the "Ask AI" chatbot widget on doc pages */
-  chatbot?: boolean;
   /** Enable MCP (Model Context Protocol) endpoint at /mcp */
   mcp?: boolean;
-  /** AI provider for LLM-powered answers (optional — falls back to search) */
-  provider?: AiProviderConfig;
 }
 
 // ---------------------------------------------------------------------------
@@ -276,7 +262,7 @@ export interface DenoteConfig {
   editUrl?: string;
   /** SEO and Open Graph settings. */
   seo?: SeoConfig;
-  /** AI features: chatbot, MCP, and provider. */
+  /** AI features (MCP endpoint). */
   ai?: AiConfig;
 }
 

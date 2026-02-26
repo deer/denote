@@ -5,7 +5,6 @@ import type { ComponentChildren } from "preact";
 import { Header } from "./Header.tsx";
 import { Sidebar } from "./Sidebar.tsx";
 import { ActiveToc } from "../islands/ActiveToc.tsx";
-import { AiChat } from "../islands/AiChat.tsx";
 import type { TocItem } from "../lib/markdown.ts";
 import type { Breadcrumb, NavLink } from "../lib/docs.ts";
 import type { DenoteConfig } from "../denote.config.ts";
@@ -152,7 +151,6 @@ export function DocsLayout({
       </main>
 
       {showToc && <ActiveToc items={toc} />}
-      {config.ai?.chatbot && <AiChat />}
     </div>
   );
 }
