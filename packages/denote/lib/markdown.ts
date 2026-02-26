@@ -5,7 +5,7 @@
  * Markdown support, syntax highlighting via lowlight, and single-pass
  * TOC extraction via renderWithMeta.
  */
-import { renderWithMeta } from "@deer/gfm";
+import { renderWithMeta } from "@deer/gfm/lowlight";
 import { parse as parseYaml } from "jsr:@std/yaml@1";
 
 // ---------------------------------------------------------------------------
@@ -97,7 +97,6 @@ export async function renderDoc(
   content: string,
 ): Promise<{ html: string; toc: TocItem[] }> {
   const result = await renderWithMeta(content, {
-    highlighter: "lowlight",
     allowMath: true,
   });
 

@@ -1,7 +1,7 @@
 {
   "version": "5",
   "specifiers": {
-    "jsr:@deer/gfm@0.0.4": "0.0.4",
+    "jsr:@deer/gfm@0.0.6": "0.0.6",
     "jsr:@deno/esbuild-plugin@^1.2.0": "1.2.1",
     "jsr:@deno/loader@~0.3.10": "0.3.11",
     "jsr:@deno/loader@~0.3.2": "0.3.11",
@@ -45,8 +45,8 @@
     "jsr:@std/streams@~0.224.5": "0.224.5",
     "jsr:@std/testing@1": "1.0.17",
     "jsr:@std/uuid@^1.0.9": "1.1.0",
-    "jsr:@std/yaml@1": "1.0.11",
-    "jsr:@std/yaml@^1.0.11": "1.0.11",
+    "jsr:@std/yaml@1": "1.0.12",
+    "jsr:@std/yaml@^1.0.11": "1.0.12",
     "npm:@babel/core@^7.28.0": "7.29.0",
     "npm:@babel/preset-react@^7.27.1": "7.28.5_@babel+core@7.29.0",
     "npm:@mjackson/node-fetch-server@0.7": "0.7.0",
@@ -95,8 +95,8 @@
     "npm:zod@^4.3.6": "4.3.6"
   },
   "jsr": {
-    "@deer/gfm@0.0.4": {
-      "integrity": "81f1ecb3b5950e63f1f70cfe7ecb0d4151bc681350d180c8aea01187da6f7f5f",
+    "@deer/gfm@0.0.6": {
+      "integrity": "7541fa4652f4e350744440eec169522028781adcf19f6ece37bc3aae94711315",
       "dependencies": [
         "jsr:@std/yaml@^1.0.11",
         "npm:@types/hast",
@@ -303,8 +303,8 @@
         "jsr:@std/bytes"
       ]
     },
-    "@std/yaml@1.0.11": {
-      "integrity": "bd139ce77f2d06cbed3713c8b26d301d2a2e12ecc7986130a268107e212143ee"
+    "@std/yaml@1.0.12": {
+      "integrity": "7deabca4545bcedd07c5f69ea53acea71b8b4c67562f224e17b90d75944cb20c"
     }
   },
   "npm": {
@@ -974,8 +974,8 @@
         "vite"
       ]
     },
-    "@primer/octicons@19.21.2": {
-      "integrity": "sha512-SRTcpAZtKYh2266VQpAqNkXAQpPvYWk6dxggkHDzwI95NrE5mEzJ7cfFt/bSVbqDffKQ+tm7TEdLHoSjEcggfQ==",
+    "@primer/octicons@19.22.0": {
+      "integrity": "sha512-nWoh9PlE6u7xbiZF3KcUm3ktLpN2rQPt11trwp/t4EsKuYRNVWVbBp1LkCBsvZq7ScckNKUURLigIU0wS1FQdw==",
       "dependencies": [
         "object-assign"
       ]
@@ -1921,8 +1921,8 @@
       "integrity": "sha512-XmOWe7eyHYH14cLdVPoyg+GOH3rYX++KpzrylJwSW98t3Nk+U8XOl8FWKOgwtzdb8lXGf6zYwDUzeHMWfxasyg==",
       "bin": true
     },
-    "katex@0.16.28": {
-      "integrity": "sha512-YHzO7721WbmAL6Ov1uzN/l5mY5WWWhJBSW+jq4tkfZfsxmo1hu6frS0EOswvjBUnWE6NtjEs48SFn5CQESRLZg==",
+    "katex@0.16.33": {
+      "integrity": "sha512-q3N5u+1sY9Bu7T4nlXoiRBXWfwSefNGoKeOwekV+gw0cAXQlz2Ww6BLcmBxVDeXBMUDQv6fK5bcNaJLxob3ZQA==",
       "dependencies": [
         "commander"
       ],
@@ -2044,8 +2044,8 @@
         "unist-util-visit-parents"
       ]
     },
-    "mdast-util-from-markdown@2.0.2": {
-      "integrity": "sha512-uZhTV/8NBuw0WHkPTrCqDOl0zVe1BIng5ZtHoDk49ME1qqcjYmmLmOf0gELgcRMxN4w2iuIeVso5/6QymSrgmA==",
+    "mdast-util-from-markdown@2.0.3": {
+      "integrity": "sha512-W4mAWTvSlKvf8L6J+VN9yLSqQ9AOAAvHuoDAmPkz4dHf553m5gVj2ejadHJhoJmcmxEnOv6Pa8XJhpxE93kb8Q==",
       "dependencies": [
         "@types/mdast",
         "@types/unist",
@@ -3049,7 +3049,7 @@
       },
       "packages/denote": {
         "dependencies": [
-          "jsr:@deer/gfm@0.0.4",
+          "jsr:@deer/gfm@0.0.6",
           "jsr:@fresh/core@^2.2.0",
           "jsr:@fresh/plugin-vite@^1.0.8",
           "jsr:@kitsonk/ga4@0.1",

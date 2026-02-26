@@ -47,7 +47,7 @@
     "preact": "npm:preact@^10.27.2",
     "@preact/signals": "npm:@preact/signals@^2.5.0",
     "@fresh/plugin-vite": "jsr:@fresh/plugin-vite@^1.0.8",
-    "@deer/gfm": "jsr:@deer/gfm@0.0.4",
+    "@deer/gfm": "jsr:@deer/gfm@0.0.6",
     "@kitsonk/ga4": "jsr:@kitsonk/ga4@^0.1",
 
     "vite": "npm:vite@^7.3.1",

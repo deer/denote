@@ -6,7 +6,7 @@
  */
 import { getAllDocs } from "./docs.ts";
 import type { DenoteContext } from "../utils.ts";
-import { extractToc } from "@deer/gfm";
+import { extractToc } from "@deer/gfm/parse";
 
 /**
  * Generate llms.txt — a standard file that tells AI agents
