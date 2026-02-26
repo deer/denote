@@ -59,6 +59,8 @@ import { ga4Middleware } from "./lib/ga4.ts";
 import { darkModeScript, generateThemeCSS } from "./lib/theme.ts";
 import { COMBINED_CSS } from "@deer/gfm/style";
 import type { DenoteContext, State } from "./utils.ts";
+import { buildRobotsTxt, buildSitemapXml } from "./lib/seo.ts";
+import { buildSearchIndex, getAllDocs } from "./lib/docs.ts";
 
 // Import page components for programmatic routing
 import { App as AppWrapper } from "./routes/_app.tsx";
@@ -379,7 +381,6 @@ export function denote(options: DenoteOptions): App<unknown> {
   });
 
   app.get("/api/search", async (ctx) => {
-    const { buildSearchIndex } = await import("./lib/docs.ts");
     const index = await buildSearchIndex(ctx.state.denote);
     return new Response(JSON.stringify(index), {
       headers: { "Content-Type": "application/json" },
@@ -390,8 +391,6 @@ export function denote(options: DenoteOptions): App<unknown> {
 
   if (includeSeo) {
     app.get("/sitemap.xml", async (ctx) => {
-      const { getAllDocs } = await import("./lib/docs.ts");
-      const { buildSitemapXml } = await import("./lib/seo.ts");
       const denoteCtx = ctx.state.denote;
       const seoBase = denoteCtx.config.seo?.url?.replace(/\/$/, "");
       const baseUrl = seoBase || new URL(ctx.req.url).origin;
@@ -404,8 +403,7 @@ export function denote(options: DenoteOptions): App<unknown> {
       });
     });
 
-    app.get("/robots.txt", async (ctx) => {
-      const { buildRobotsTxt } = await import("./lib/seo.ts");
+    app.get("/robots.txt", (ctx) => {
       const seoBase = ctx.state.denote.config.seo?.url?.replace(/\/$/, "");
       const baseUrl = seoBase || new URL(ctx.req.url).origin;
       const txt = buildRobotsTxt(baseUrl);
