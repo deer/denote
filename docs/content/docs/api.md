@@ -43,8 +43,8 @@ curl https://your-docs.com/api/docs
 
 ### GET /api/search
 
-Returns the search index — all pages with truncated content for
-search/filtering.
+Returns the search index — all pages with content truncated to the first 500
+characters, plus AI metadata when available.
 
 ```bash
 curl https://your-docs.com/api/search
@@ -57,11 +57,16 @@ curl https://your-docs.com/api/search
   {
     "title": "Introduction",
     "description": "Welcome to the project",
+    "aiSummary": "Project overview and getting started guide.",
+    "aiKeywords": ["intro", "overview"],
     "slug": "introduction",
-    "content": "First 500 characters of content..."
+    "content": "# Introduction\n\nWelcome to the project..."
   }
 ]
 ```
+
+Fields `aiSummary` and `aiKeywords` are included when the page defines
+`ai-summary` and `ai-keywords` frontmatter.
 
 ### GET /llms.txt
 
@@ -128,21 +133,7 @@ For richer AI integration, Denote includes a built-in
 
 ## Custom Endpoints
 
-You can add custom API routes in the `routes/` directory using Fresh's routing:
-
-```typescript
-// routes/api/custom.ts
-export const handler = {
-  GET: async () => {
-    const data = { message: "Custom API endpoint" };
-    return new Response(JSON.stringify(data), {
-      headers: { "Content-Type": "application/json" },
-    });
-  },
-};
-```
-
-Or register them directly in `main.ts`:
+Register custom API routes on the Fresh app instance in your `main.ts`:
 
 ```typescript
 app.get("/api/custom", (ctx) => {

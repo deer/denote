@@ -22,6 +22,7 @@ interface ActiveTocProps {
 
 const activeId = signal("");
 
+/** Right-hand table of contents that highlights the current section on scroll. */
 export function ActiveToc(
   { items }: ActiveTocProps,
 ): preact.JSX.Element | null {

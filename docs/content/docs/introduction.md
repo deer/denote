@@ -1,7 +1,7 @@
 ---
 title: Introduction
-description: Denote — the open-source, AI-native documentation platform built on Deno and Fresh
-ai-summary: Denote is an open-source, AI-native documentation platform built on Deno and Fresh. It auto-generates llms.txt, JSON API, and MCP server endpoints so AI agents can consume your docs as structured data. Zero config, server-rendered, markdown-first.
+description: Denote — the open-source, AI-native documentation framework
+ai-summary: Denote is an open-source, AI-native documentation framework. It auto-generates llms.txt, JSON API, and MCP server endpoints so AI agents can consume your docs as structured data. Zero config, server-rendered, markdown-first.
 ai-keywords:
   - documentation
   - deno
@@ -14,7 +14,7 @@ ai-keywords:
 
 # Welcome to Denote
 
-Denote is an open-source documentation platform built on **Deno** and **Fresh**
+Denote is an open-source documentation framework built on **Deno** and **Fresh**
 — designed for a world where AI agents read your docs too.
 
 Write Markdown. Get a site that humans love and AI agents can query. Every AI

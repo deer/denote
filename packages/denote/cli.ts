@@ -1,6 +1,6 @@
 #!/usr/bin/env -S deno run -A
 /**
- * Denote CLI — The documentation framework for Deno
+ * Denote CLI — AI-native documentation framework
  *
  * @module
  *

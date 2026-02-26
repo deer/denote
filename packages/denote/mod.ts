@@ -1,13 +1,12 @@
 /**
- * Denote — Mountable Documentation Engine for Fresh
+ * Denote — AI-native documentation framework
  *
  * @module
  *
- * The main entry point for the Denote documentation framework. Provides the
- * {@linkcode denote} factory function that creates a configured Fresh app
- * with docs routes, AI endpoints, search, and theming.
+ * Provides the {@linkcode denote} factory function that creates a configured
+ * Fresh app with docs routes, AI endpoints, search, and theming.
  *
- * @example Standalone usage
+ * @example Usage
  * ```ts
  * import { denote } from "@denote/core";
  *
@@ -21,24 +20,6 @@
  *     ],
  *   },
  * });
- *
- * app.listen();
- * ```
- *
- * @example Mounted in another Fresh app
- * ```ts
- * import { denote } from "@denote/core";
- * import { App, staticFiles } from "fresh";
- *
- * const docs = denote({
- *   config: { name: "My Project", navigation: [] },
- *   contentDir: "./docs/content",
- *   includeLandingPage: false,
- * });
- *
- * const app = new App()
- *   .use(staticFiles())
- *   .mountApp("/", docs);
  *
  * app.listen();
  * ```
@@ -102,16 +83,10 @@ export interface DenoteOptions {
    */
   docsBasePath?: string;
 
-  /**
-   * Include the default landing page at "/". Default: true
-   * Set to false when mounting into an existing app that has its own homepage.
-   */
+  /** Include the default landing page at "/". Default: true */
   includeLandingPage?: boolean;
 
-  /**
-   * Include static file serving middleware. Default: true
-   * Set to false when the parent app already handles static files.
-   */
+  /** Include static file serving middleware. Default: true */
   includeStaticFiles?: boolean;
 
   /**
@@ -119,17 +94,11 @@ export interface DenoteOptions {
    */
   includeSeo?: boolean;
 
-  /**
-   * Include 404/error handlers. Default: true
-   * Set to false when the parent app provides its own error handling.
-   */
+  /** Include 404/error handlers. Default: true */
   includeErrorHandlers?: boolean;
 }
 
-/**
- * Create a Denote documentation app that can be used standalone
- * or mounted into another Fresh app via `app.mountApp()`.
- */
+/** Create a Denote documentation app. */
 export function denote(options: DenoteOptions): App<unknown> {
   const {
     config,

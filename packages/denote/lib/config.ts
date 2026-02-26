@@ -4,9 +4,9 @@
  * Module-level singleton that holds the active DenoteConfig and content directory.
  * Uses ES module live bindings so all importers see updates immediately.
  *
- * When Denote runs standalone, `denote.config.ts` sets the config at import time.
- * When mounted into another app, `denote()` in mod.ts calls setConfig() before
- * creating routes.
+ * The {@linkcode denote} factory in mod.ts calls {@linkcode setConfig} before
+ * creating routes. HMR updates also go through setConfig so changes are
+ * picked up on the next request without restarting the server.
  */
 import type { DenoteConfig } from "../denote.config.ts";
 import { resolve } from "@std/path";
@@ -111,10 +111,7 @@ export function getConfig(): DenoteConfig {
   return _config;
 }
 
-/**
- * Set the active Denote configuration.
- * Called by denote.config.ts (standalone) or denote() (mounted).
- */
+/** Set the active Denote configuration. */
 export function setConfig(config: DenoteConfig): void {
   const result = ConfigSchema.safeParse(config);
   if (!result.success) {

@@ -35,7 +35,7 @@ const dim = (s: string) => `\x1b[2m${s}\x1b[0m`;
 
 function printHelp() {
   console.log(`
-${bold("🦕 Denote")} — AI-native documentation platform
+${bold("🦕 Denote")} — AI-native documentation framework
 
 ${bold("USAGE")}
   deno run -Ar jsr:@denote/init [project-name]
@@ -84,7 +84,7 @@ async function scaffold(projectDir: string, projectName: string) {
   // Create deno.json
   // Imports must cover bare specifiers used in CLI-generated .denote/ files
   // (vite.config.ts, main.ts). Transitive deps resolve via JSR/npm graphs.
-  const coreSpecifier = "jsr:@denote/core@^0.0.4";
+  const coreSpecifier = "jsr:@denote/core@^0.0.5";
   const denoJson = {
     nodeModulesDir: "auto",
     tasks: {

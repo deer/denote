@@ -24,6 +24,7 @@ function setIconContent(el: HTMLElement, html: string) {
 // Track which button was just copied (by index) and clear after timeout
 const copiedIndex = signal(-1);
 
+/** Attaches copy-to-clipboard buttons to all fenced code blocks on the page. Renders nothing visible. */
 export function CopyButton(): null {
   useEffect(() => {
     // @deer/gfm wraps code blocks in: .highlight > .code-header + pre > code

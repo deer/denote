@@ -84,7 +84,7 @@ export function Home(props: PageProps<unknown, State>) {
   const titleHighlight = l.hero?.titleHighlight ?? "beautifully delivered";
   const subtitle = l.hero?.subtitle ?? null;
   const description = l.hero?.description ??
-    "Write Markdown, get a fast and beautiful documentation site with search, dark mode, and AI integration built in.";
+    "Write Markdown, get a fast and beautiful docs site with search, dark mode, and AI integration built in.";
 
   // CTAs
   const primaryCta = l.cta?.primary ??

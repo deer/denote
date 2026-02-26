@@ -55,6 +55,7 @@ function toggleSection(key: string): void {
   saveCollapsed(next);
 }
 
+/** Sidebar navigation with collapsible sections. State persisted to localStorage. */
 export function CollapsibleNav(
   { navigation, currentPath }: CollapsibleNavProps,
 ): preact.JSX.Element {
