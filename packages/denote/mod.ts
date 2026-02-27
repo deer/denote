@@ -196,7 +196,8 @@ export function denote(options: DenoteOptions): App<unknown> {
 
   // Allow external CDN origins when font imports or custom CSS use absolute URLs
   const styleSrc = ["'self'", "'unsafe-inline'"];
-  const fontSrc = ["'self'"];
+  // @deer/gfm bundles KaTeX CSS which references fonts on cdn.jsdelivr.net
+  const fontSrc = ["'self'", "https://cdn.jsdelivr.net"];
   for (const url of config.fonts?.imports ?? []) {
     try {
       const { origin } = new URL(url);
