@@ -99,6 +99,7 @@ export const config: DenoteConfig = {
       title: "Customization",
       children: [
         { title: "Theming & Styling", href: "/docs/theming" },
+        { title: "Custom Pages", href: "/docs/custom-pages" },
       ],
     },
   ],
@@ -110,6 +111,8 @@ export const config: DenoteConfig = {
     copyright: "\u00A9 2026 Denote Contributors",
     links: [
       { title: "GitHub", href: "https://github.com/deer/denote" },
+      { title: "Privacy", href: "/privacy" },
+      { title: "Impressum", href: "/impressum" },
     ],
   },
   social: {
