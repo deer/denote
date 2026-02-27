@@ -50,6 +50,7 @@ import { ErrorPage } from "./routes/_error.tsx";
 import { HomePage } from "./routes/index.tsx";
 import { DocsPage } from "./routes/docs/[...slug].tsx";
 import { handler as docsMiddleware } from "./routes/docs/_middleware.ts";
+import { PageLayout } from "./components/PageLayout.tsx";
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -100,7 +101,32 @@ export interface DenoteOptions {
   includeErrorHandlers?: boolean;
 }
 
-/** Create a Denote documentation app. */
+/**
+ * Create a Denote documentation app.
+ *
+ * Returns a Fresh {@linkcode App} with docs routes, AI endpoints, search,
+ * and theming pre-configured. User-defined routes in your project's
+ * `routes/` directory are automatically wrapped with a
+ * {@link PageLayout} providing the site header and footer.
+ *
+ * @example Usage
+ * ```ts
+ * import { denote } from "@denote/core";
+ *
+ * const app = denote({
+ *   config: {
+ *     name: "My Docs",
+ *     navigation: [
+ *       { title: "Guide", children: [
+ *         { title: "Intro", href: "/docs/intro" },
+ *       ]},
+ *     ],
+ *   },
+ * });
+ *
+ * app.listen();
+ * ```
+ */
 export function denote(options: DenoteOptions): App<unknown> {
   const {
     config,
@@ -363,6 +389,8 @@ export function denote(options: DenoteOptions): App<unknown> {
   }
 
   // ── Documentation routes ───────────────────────────────────
+  // Registered before the PageLayout so docs pages (which render
+  // their own DocsLayout) don't get double-wrapped.
 
   // Middleware for docs pages (sets page metadata in state)
   app.use(`${docsBasePath}/*`, docsMiddleware);
@@ -378,6 +406,12 @@ export function denote(options: DenoteOptions): App<unknown> {
 
   // Doc page handler — :slug+ matches one or more path segments
   app.route(`${docsBasePath}/:slug+`, { component: DocsPage });
+
+  // ── User-defined file-system routes ─────────────────────────
+  // A layout wraps user routes with Header + footer so route
+  // components only render their own content.
+  app.layout("*", PageLayout);
+  app.fsRoutes();
 
   // ── Error handlers ─────────────────────────────────────────
 
