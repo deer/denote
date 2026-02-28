@@ -255,8 +255,15 @@ export interface DenoteConfig {
   landing?: LandingConfig;
   /** Visual style options. */
   style?: StyleConfig;
-  /** Enable GA4 analytics. Set GA4_MEASUREMENT_ID env var to activate. */
-  ga4?: boolean;
+  /** Server-side analytics (no client JS, no cookies, GDPR-friendly) */
+  analytics?: {
+    /** Analytics provider: "umami", "plausible", or "custom" */
+    provider: "umami" | "plausible" | "custom";
+    /** Collection API endpoint URL. Defaults to the provider's cloud endpoint for Umami and Plausible. Required for "custom". */
+    endpoint?: string;
+    /** Site identifier. Falls back to ANALYTICS_SITE_ID env var at runtime. Keep out of committed config to prevent analytics spam. */
+    siteId?: string;
+  };
   /** Base URL for "Edit this page" links. Denote appends /<slug>.md automatically.
    *  Example: "https://github.com/your-org/your-repo/edit/main/docs/content/docs" */
   editUrl?: string;
