@@ -36,7 +36,7 @@ import {
   setDocsBasePath,
 } from "./lib/config.ts";
 import { csp } from "./lib/csp.ts";
-import { ga4Middleware } from "./lib/ga4.ts";
+import { analyticsMiddleware } from "./lib/analytics.ts";
 import { darkModeScript, generateThemeCSS } from "./lib/theme.ts";
 import { COMBINED_CSS } from "@deer/gfm/style";
 import type { DenoteContext, State } from "./utils.ts";
@@ -167,9 +167,9 @@ export function denote(options: DenoteOptions): App<unknown> {
     app.use(staticFiles());
   }
 
-  // ── GA4 Analytics middleware (opt-in) ────────────────────────
-  if (config.ga4) {
-    app.use(ga4Middleware());
+  // ── Analytics middleware (opt-in, server-side) ───────────────
+  if (config.analytics) {
+    app.use(analyticsMiddleware(config.analytics));
   }
 
   // ── CSP-compliant asset routes ──────────────────────────────

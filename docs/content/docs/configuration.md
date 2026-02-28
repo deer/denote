@@ -289,43 +289,73 @@ auto-populated `name`, `url`, and `description` fields.
 
 ## Analytics
 
-Denote has built-in support for Google Analytics 4 (GA4). When enabled, it
-automatically tracks page views and exceptions server-side — no client-side
-script needed.
+Denote has built-in server-side analytics that works with privacy-friendly
+providers. No client-side JavaScript, no cookies, fully GDPR-compliant.
+
+### Built-in Providers
+
+- **Umami** — Free cloud tier (100K events/mo), open source, EU-friendly
+- **Plausible** — EU-hosted, starts at $9/mo
+- **Custom** — Any endpoint that accepts JSON POST requests
 
 ### Setup
 
-1. Set `ga4: true` in your config:
+1. Add an `analytics` block to your config:
 
 ```typescript
 export const config: DenoteConfig = {
   name: "My Docs",
-  ga4: true,
+  analytics: { provider: "umami" },
   // ...
 };
 ```
 
-2. Set the `GA4_MEASUREMENT_ID` environment variable with your GA4 measurement
-   ID (e.g. `G-XXXXXXXXXX`).
+2. Set the `ANALYTICS_SITE_ID` environment variable to your website ID:
 
-That's it. Denote will send `page_view` events for HTML responses and
-`exception` events when errors occur. If the environment variable isn't set,
-you'll see a warning in the console and analytics will be silently disabled.
+```bash
+export ANALYTICS_SITE_ID="your-website-id"
+```
+
+That's it. The endpoint defaults to the provider's cloud API (`cloud.umami.is`
+for Umami, `plausible.io` for Plausible). Override with `endpoint` if you
+self-host.
+
+For **Plausible**:
+
+```typescript
+analytics: { provider: "plausible" },
+// ANALYTICS_SITE_ID="your-domain.com"
+```
+
+For a **custom** provider, both `endpoint` and `siteId` (or the env var) are
+required:
+
+```typescript
+analytics: {
+  provider: "custom",
+  endpoint: "https://my-analytics.example.com/collect",
+},
+// ANALYTICS_SITE_ID="my-site"
+```
+
+> **Why an env var?** Your site ID is the key that authorizes writes to your
+> analytics account. If it's in your source code, anyone can read it and send
+> bogus pageviews. Keeping it in an environment variable means it never leaks
+> into your repo or client-side bundle.
 
 ### How It Works
 
 - **Server-side only** — no tracking scripts are injected into your pages
+- **No cookies** — visitor privacy is preserved by default
 - **Non-blocking** — analytics are sent asynchronously after the response
-- **Selective** — only GET/POST requests that serve HTML documents are tracked;
-  static assets (CSS, JS, images, fonts) are automatically skipped
-- **Error tracking** — unhandled errors are reported as GA4 `exception` events
-  with severity info
+- **Selective** — only GET requests returning HTML documents are tracked; static
+  assets, API routes, and internal paths are automatically skipped
 
 ### Deployment
 
-On **Deno Deploy**, add `GA4_MEASUREMENT_ID` in your project's environment
-variables settings. For **Docker** or **VPS** deployments, set it in your
-environment or `.env` file.
+Set `ANALYTICS_SITE_ID` in your hosting platform's environment variables (Deno
+Deploy, Docker, etc.). If the env var is missing, analytics are silently
+disabled — your site still works fine.
 
 ## Full Example
 
@@ -378,7 +408,10 @@ export const config: DenoteConfig = {
     roundedness: "md",
     darkMode: "auto",
   },
-  ga4: true,
+  analytics: {
+    provider: "umami",
+  },
+  // Set ANALYTICS_SITE_ID env var in your hosting platform
   editUrl: "https://github.com/acme/docs/edit/main/docs/content/docs",
 };
 ```

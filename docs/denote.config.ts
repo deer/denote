@@ -179,6 +179,6 @@ export const config: DenoteConfig = {
   ai: {
     mcp: true,
   },
-  ga4: true,
+  // analytics: { provider: "umami" },  // set ANALYTICS_SITE_ID env var
   editUrl: "https://github.com/deer/denote/edit/main/docs/content/docs",
 };
