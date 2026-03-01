@@ -1,6 +1,7 @@
 node_modules/
 _fresh/
 .vite/
+.worktrees/
 .claude/settings.local.json
 
 # Denote CLI generated files (marked with @denote-generated)

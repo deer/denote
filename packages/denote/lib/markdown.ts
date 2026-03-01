@@ -96,9 +96,7 @@ export function parseFrontmatter(
 export async function renderDoc(
   content: string,
 ): Promise<{ html: string; toc: TocItem[] }> {
-  const result = await renderWithMeta(content, {
-    allowMath: true,
-  });
+  const result = await renderWithMeta(content, {});
 
   // Strip the "user-content-" prefix that rehype-sanitize adds to heading IDs,
   // so they match the TOC slugs for anchor navigation.

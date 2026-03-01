@@ -38,7 +38,7 @@ import {
 import { csp } from "./lib/csp.ts";
 import { analyticsMiddleware } from "./lib/analytics.ts";
 import { darkModeScript, generateThemeCSS } from "./lib/theme.ts";
-import { COMBINED_CSS } from "@deer/gfm/style";
+import { CSS, HIGHLIGHT_CSS } from "@deer/gfm/style";
 import type { DenoteContext, State } from "./utils.ts";
 import { buildRobotsTxt, buildSitemapXml } from "./lib/seo.ts";
 import { buildSearchIndex, getAllDocs } from "./lib/docs.ts";
@@ -195,7 +195,7 @@ export function denote(options: DenoteOptions): App<unknown> {
 
   // GFM syntax highlighting CSS
   app.get("/gfm.css", () => {
-    return new Response(COMBINED_CSS, {
+    return new Response(`${CSS}\n${HIGHLIGHT_CSS}`, {
       headers: {
         "Content-Type": "text/css; charset=utf-8",
         "Cache-Control": "public, max-age=86400",
@@ -222,8 +222,7 @@ export function denote(options: DenoteOptions): App<unknown> {
 
   // Allow external CDN origins when font imports or custom CSS use absolute URLs
   const styleSrc = ["'self'", "'unsafe-inline'"];
-  // @deer/gfm bundles KaTeX CSS which references fonts on cdn.jsdelivr.net
-  const fontSrc = ["'self'", "https://cdn.jsdelivr.net"];
+  const fontSrc = ["'self'"];
   for (const url of config.fonts?.imports ?? []) {
     try {
       const { origin } = new URL(url);

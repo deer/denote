@@ -1,7 +1,7 @@
 {
   "version": "5",
   "specifiers": {
-    "jsr:@deer/gfm@0.0.6": "0.0.6",
+    "jsr:@deer/gfm@0.0.7": "0.0.7",
     "jsr:@deno/esbuild-plugin@^1.2.0": "1.2.1",
     "jsr:@deno/loader@~0.3.10": "0.3.11",
     "jsr:@deno/loader@~0.3.2": "0.3.11",
@@ -75,13 +75,14 @@
     "npm:tailwindcss@^4.1.10": "4.1.18",
     "npm:unified@^11.0.5": "11.0.5",
     "npm:unist-util-visit@^5.1.0": "5.1.0",
+    "npm:vite@*": "7.3.1_picomatch@4.0.3",
     "npm:vite@^7.1.4": "7.3.1_picomatch@4.0.3",
     "npm:vite@^7.3.1": "7.3.1_picomatch@4.0.3",
     "npm:zod@^4.3.6": "4.3.6"
   },
   "jsr": {
-    "@deer/gfm@0.0.6": {
-      "integrity": "7541fa4652f4e350744440eec169522028781adcf19f6ece37bc3aae94711315",
+    "@deer/gfm@0.0.7": {
+      "integrity": "bdfa4142d2ddde7716df7b9184fce08bdc90fa14ef8b299581acc0178b4935a5",
       "dependencies": [
         "jsr:@std/yaml@^1.0.11",
         "npm:@types/hast",
@@ -2984,7 +2985,7 @@
       },
       "packages/denote": {
         "dependencies": [
-          "jsr:@deer/gfm@0.0.6",
+          "jsr:@deer/gfm@0.0.7",
           "jsr:@fresh/core@^2.2.0",
           "jsr:@fresh/plugin-vite@^1.0.8",
           "jsr:@std/path@1",
