@@ -117,37 +117,16 @@ Point any MCP client to your site's `/mcp` endpoint:
 The endpoint supports Streamable HTTP with full CORS, so it works from any
 origin.
 
-## Local MCP (stdio)
+## Local MCP
 
-For local development, you can also run the MCP server via stdio transport. This
-is useful for tools like Cursor and Claude Desktop that connect to local MCP
-servers.
-
-### Cursor
-
-Add to your `.cursor/mcp.json`:
+During local development, point your MCP client at your dev server's `/mcp`
+endpoint:
 
 ```json
 {
   "mcpServers": {
     "my-docs": {
-      "command": "deno",
-      "args": ["run", "-A", "mcp.ts"]
-    }
-  }
-}
-```
-
-### Claude Desktop
-
-Add to your Claude Desktop config:
-
-```json
-{
-  "mcpServers": {
-    "my-docs": {
-      "command": "deno",
-      "args": ["run", "-A", "/path/to/your/project/mcp.ts"]
+      "url": "http://localhost:8000/mcp"
     }
   }
 }
