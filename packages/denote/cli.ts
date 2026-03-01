@@ -41,7 +41,6 @@ ${bold("COMMANDS")}
   dev              Start development server
   build            Build static site for production
   validate         Check content, config, and navigation for issues
-  mcp [--http]     Start MCP server for AI agents
 
 ${bold("OPTIONS")}
   -h, --help       Show this help message
@@ -51,7 +50,6 @@ ${bold("OPTIONS")}
 ${bold("EXAMPLES")}
   denote dev                    ${dim("# Start dev server")}
   denote build                  ${dim("# Build for production")}
-  denote mcp --http --port 3100 ${dim("# Start MCP server")}
 `);
 }
 
@@ -290,23 +288,6 @@ if (import.meta.main) {
       };
       const errorCount = await validateAndPrint(denoteContext);
       Deno.exit(errorCount > 0 ? 1 : 0);
-      break;
-    }
-
-    case "mcp": {
-      // Delegate to the existing mcp.ts with remaining args
-      const mcpArgs = args.slice(1);
-      // Dynamically import and the mcp.ts handles its own execution
-      const mcpPath = new URL("./mcp.ts", import.meta.url).href;
-      // Set Deno.args-like behavior by re-running
-      const cmd = new Deno.Command(Deno.execPath(), {
-        args: ["run", "-A", mcpPath, ...mcpArgs],
-        stdout: "inherit",
-        stderr: "inherit",
-        stdin: "inherit",
-      });
-      const { code } = await cmd.output();
-      Deno.exit(code);
       break;
     }
 

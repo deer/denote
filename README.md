@@ -48,12 +48,13 @@ Every Denote site ships with these endpoints out of the box — zero config:
 
 ### MCP Setup
 
+Enable MCP in your config, then point any MCP client at your site:
+
 ```json
 {
   "mcpServers": {
     "my-docs": {
-      "command": "deno",
-      "args": ["run", "-A", "mcp.ts"]
+      "url": "https://docs.example.com/mcp"
     }
   }
 }

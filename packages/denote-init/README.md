@@ -15,7 +15,7 @@ This will prompt for a project name and create a ready-to-run docs site with:
 
 - `denote.config.ts` — site configuration
 - `content/docs/` — starter markdown pages
-- `deno.json` — tasks for dev, build, validate, and MCP
+- `deno.json` — tasks for dev, build, and validate
 
 ## Options
 

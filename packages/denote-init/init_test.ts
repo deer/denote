@@ -243,7 +243,6 @@ Deno.test("scaffold creates expected files", async () => {
     denoJson.tasks.validate,
     "deno run -A jsr:@denote/core/cli validate",
   );
-  assertEquals(denoJson.tasks.mcp, "deno run -A jsr:@denote/core/cli mcp");
 
   // nodeModulesDir required for Vite's resolver
   assertEquals(denoJson.nodeModulesDir, "auto");
