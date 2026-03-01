@@ -10,13 +10,19 @@
 import { useEffect } from "preact/hooks";
 import { signal } from "@preact/signals";
 
-interface TocItem {
+/** A single heading entry in the table of contents. */
+export interface TocItem {
+  /** The heading's HTML id attribute. */
   id: string;
+  /** Display text of the heading. */
   title: string;
+  /** Heading depth (2 for h2, 3 for h3, etc.). */
   level: number;
 }
 
-interface ActiveTocProps {
+/** Props for the {@linkcode ActiveToc} island. */
+export interface ActiveTocProps {
+  /** Heading entries to render in the sidebar. */
   items: TocItem[];
 }
 

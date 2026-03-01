@@ -11,6 +11,7 @@ import { effect, signal } from "@preact/signals";
 import { useEffect, useRef } from "preact/hooks";
 import { render } from "preact";
 import type { NavItem } from "../denote.config.ts";
+export type { NavItem } from "../denote.config.ts";
 
 const isOpen = signal(false);
 
@@ -20,11 +21,17 @@ effect(() => {
   document.body.style.overflow = isOpen.value ? "hidden" : "";
 });
 
-interface MobileMenuProps {
+/** Props for the {@linkcode MobileMenu} island. */
+export interface MobileMenuProps {
+  /** Current page path for active-state highlighting. */
   currentPath?: string;
+  /** Site name displayed in the mobile sidebar header. */
   siteName: string;
+  /** Optional logo suffix in primary color. */
   logoSuffix?: string;
+  /** Navigation tree to render in the sidebar. */
   navigation: NavItem[];
+  /** Top-level navigation links. */
   topNav?: { title: string; href: string }[];
 }
 

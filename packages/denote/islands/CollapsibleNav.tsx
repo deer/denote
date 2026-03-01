@@ -9,15 +9,23 @@
 import { useEffect } from "preact/hooks";
 import { signal } from "@preact/signals";
 
-interface NavItem {
+/** A navigation tree node used by the sidebar. */
+export interface NavItem {
+  /** Display label. */
   title: string;
+  /** Link target (leaf nodes). */
   href?: string;
+  /** Optional icon identifier. */
   icon?: string;
+  /** Nested children (section nodes). */
   children?: NavItem[];
 }
 
-interface CollapsibleNavProps {
+/** Props for the {@linkcode CollapsibleNav} island. */
+export interface CollapsibleNavProps {
+  /** Navigation tree to render. */
   navigation: NavItem[];
+  /** Current page path for active-state highlighting. */
   currentPath?: string;
 }
 
