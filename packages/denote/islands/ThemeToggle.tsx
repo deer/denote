@@ -24,7 +24,9 @@ effect(() => {
   localStorage.setItem("theme", isDark.value ? "dark" : "light");
 });
 
-interface ThemeToggleProps {
+/** Props for the {@linkcode ThemeToggle} island. */
+export interface ThemeToggleProps {
+  /** Dark mode behavior. Default: "toggle". */
   darkMode?: "auto" | "light" | "dark" | "toggle";
 }
 
