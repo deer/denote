@@ -254,22 +254,6 @@ Here is a sentence with a footnote[^1].
 
 [^1]: This is the footnote content.
 
-### Math (LaTeX)
-
-Inline math: `$E = mc^2$` renders as $E = mc^2$
-
-Block math:
-
-```markdown
-$$
-\frac{n!}{k!(n-k)!} = \binom{n}{k}
-$$
-```
-
-$$
-\frac{n!}{k!(n-k)!} = \binom{n}{k}
-$$
-
 ### Autolinks
 
 URLs and email addresses are automatically linked:

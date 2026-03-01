@@ -98,11 +98,7 @@ export default function PrivacyPage() {
             Third-Party Services
           </h2>
           <p>
-            This site self-hosts most resources (styles, scripts). For
-            mathematical typesetting on certain documentation pages, fonts may
-            be loaded from <strong>cdn.jsdelivr.net</strong>{" "}
-            (operated by Cloudflare/Jsdelivr). This causes your browser to make
-            a request to their servers, which may expose your IP address. No
+            This site self-hosts all resources (styles, scripts, fonts). No
             advertising networks, tracking pixels, or Google services are
             loaded.
           </p>

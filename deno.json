@@ -7,6 +7,9 @@
     "packages/denote-init",
     "docs"
   ],
+  "exclude": [
+    ".worktrees"
+  ],
   "tasks": {
     "build": "cd docs && deno task build",
     "dev": "cd docs && deno task dev",
