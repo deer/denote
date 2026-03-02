@@ -1,5 +1,5 @@
 import type { PageProps } from "fresh";
-import { define, type State } from "../utils.ts";
+import { define, isDev, type State } from "../utils.ts";
 import { Header } from "../components/Header.tsx";
 
 /** Error page component — exported for programmatic routing */
@@ -7,7 +7,7 @@ export function ErrorPage(ctx: PageProps<unknown, State>) {
   const config = ctx.state.denote.config;
   const error = ctx.error;
   const message = error instanceof Error ? error.message : "An error occurred";
-  const isDev = Deno.env.get("DENO_ENV") !== "production";
+  const devMode = isDev();
 
   return (
     <div class="min-h-screen bg-[var(--denote-bg)]">
@@ -25,7 +25,7 @@ export function ErrorPage(ctx: PageProps<unknown, State>) {
             {message}
           </p>
 
-          {isDev && error instanceof Error && error.stack && (
+          {devMode && error instanceof Error && error.stack && (
             <pre class="text-left text-xs text-[var(--denote-text-muted)] bg-[var(--denote-bg-tertiary)] rounded-lg p-4 mb-8 overflow-x-auto">
               {error.stack}
             </pre>
