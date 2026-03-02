@@ -15,7 +15,7 @@
     "dev": "cd docs && deno task dev",
     "start": "cd docs && deno task start",
     "validate": "cd docs && deno task validate",
-    "test": "deno test -A",
+    "test": "rm -rf .coverage && deno test -A --coverage=.coverage && deno coverage .coverage --lcov > lcov.info",
     "ok": "deno fmt --check && deno lint && deno check && deno task test && deno task validate"
   }
 }
