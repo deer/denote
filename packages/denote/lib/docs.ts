@@ -15,6 +15,7 @@ import {
 import type { NavItem } from "../denote.config.ts";
 import type { DenoteContext } from "../utils.ts";
 import { resolve } from "@std/path";
+import { flattenNav, type NavLink } from "./nav.ts";
 
 export interface DocPage extends ParsedDoc {
   slug: string;
@@ -242,26 +243,8 @@ export async function getAllDocs(
 // Navigation helpers
 // ---------------------------------------------------------------------------
 
-/**
- * Flatten navigation tree into an ordered list of page links
- */
-export interface NavLink {
-  title: string;
-  href: string;
-}
-
-function flattenNav(items: NavItem[]): NavLink[] {
-  const result: NavLink[] = [];
-  for (const item of items) {
-    if (item.href) {
-      result.push({ title: item.title, href: item.href });
-    }
-    if (item.children) {
-      result.push(...flattenNav(item.children));
-    }
-  }
-  return result;
-}
+/** Re-export NavLink for consumers that import from docs.ts */
+export type { NavLink } from "./nav.ts";
 
 /**
  * Get previous and next pages for a given path

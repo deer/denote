@@ -26,7 +26,7 @@
  */
 import { App, staticFiles } from "fresh";
 export type { App } from "fresh";
-import type { DenoteConfig, NavItem } from "./denote.config.ts";
+import type { DenoteConfig } from "./denote.config.ts";
 import {
   getConfig,
   getContentDir,
@@ -42,6 +42,7 @@ import { CSS, HIGHLIGHT_CSS } from "@deer/gfm/style";
 import type { DenoteContext, State } from "./utils.ts";
 import { buildRobotsTxt, buildSitemapXml } from "./lib/seo.ts";
 import { buildSearchIndex, getAllDocs } from "./lib/docs.ts";
+import { findFirstHref } from "./lib/nav.ts";
 
 // Import page components for programmatic routing
 import { App as AppWrapper } from "./routes/_app.tsx";
@@ -51,22 +52,6 @@ import { HomePage } from "./routes/index.tsx";
 import { DocsPage } from "./routes/docs/[...slug].tsx";
 import { handler as docsMiddleware } from "./routes/docs/_middleware.ts";
 import { PageLayout } from "./components/PageLayout.tsx";
-
-// ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
-
-/** Walk the navigation tree and return the first item with an href. */
-function findFirstHref(items: NavItem[]): string | null {
-  for (const item of items) {
-    if (item.href) return item.href;
-    if (item.children) {
-      const found = findFirstHref(item.children);
-      if (found) return found;
-    }
-  }
-  return null;
-}
 
 // ---------------------------------------------------------------------------
 // Public API
