@@ -1,5 +1,5 @@
 @import "tailwindcss";
-@import "@denote/core/styles.css";
+@import "../../packages/denote/styles.css";
 
 @source "./";
 @source "../../packages/denote/";
