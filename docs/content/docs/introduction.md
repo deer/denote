@@ -14,8 +14,8 @@ ai-keywords:
 
 # Welcome to Denote
 
-Denote is an open-source documentation framework built on **Deno** and **Fresh**
-— designed for a world where AI agents read your docs too.
+Denote is an open-source, AI-native documentation framework — designed for a
+world where AI agents read your docs too.
 
 Write Markdown. Get a site that humans love and AI agents can query. Every AI
 feature is built in and free.

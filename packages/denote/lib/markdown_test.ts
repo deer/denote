@@ -70,7 +70,7 @@ Deno.test("renderDoc - extracts toc", async () => {
 Deno.test("renderDoc - code blocks with syntax highlighting", async () => {
   const { html } = await renderDoc("```typescript\nconst x = 1;\n```");
   assertEquals(html.includes("language-typescript"), true);
-  assertEquals(html.includes("<pre>"), true);
+  assertEquals(html.includes("<pre"), true);
   assertEquals(html.includes("const"), true);
 });
 
