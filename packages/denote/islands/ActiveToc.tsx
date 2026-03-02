@@ -37,29 +37,26 @@ export function ActiveToc(
 
     const headingIds = items.map((item) => item.id);
 
-    function updateActive() {
-      const scrollY = globalThis.scrollY;
-      const offset = 100; // Account for sticky header
+    // Default to first heading
+    activeId.value = headingIds[0];
 
-      let current = "";
-      for (const id of headingIds) {
-        const el = document.getElementById(id);
-        if (el && el.offsetTop - offset <= scrollY) {
-          current = id;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            activeId.value = entry.target.id;
+          }
         }
-      }
+      },
+      { rootMargin: "-100px 0px -66% 0px" },
+    );
 
-      // If we're at the top, highlight the first item
-      if (!current && headingIds.length > 0) {
-        current = headingIds[0];
-      }
-
-      activeId.value = current;
+    for (const id of headingIds) {
+      const el = document.getElementById(id);
+      if (el) observer.observe(el);
     }
 
-    updateActive();
-    globalThis.addEventListener("scroll", updateActive, { passive: true });
-    return () => globalThis.removeEventListener("scroll", updateActive);
+    return () => observer.disconnect();
   }, [items]);
 
   if (items.length === 0) return null;

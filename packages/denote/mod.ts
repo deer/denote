@@ -299,25 +299,33 @@ export function denote(options: DenoteOptions): App<unknown> {
         return new Response(null, { status: 204, headers: MCP_CORS_HEADERS });
       }
 
-      // Stateless: create a fresh server+transport per request.
-      // No session tracking — works reliably on Deno Deploy
-      const { WebStandardStreamableHTTPServerTransport } = await import(
-        "@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js"
-      );
-      const origin = new URL(ctx.req.url).origin;
-      const server = createMcpServer(ctx.state.denote, origin);
-      const transport = new WebStandardStreamableHTTPServerTransport({});
-      await server.connect(transport);
+      try {
+        // Stateless: create a fresh server+transport per request.
+        // No session tracking — works reliably on Deno Deploy
+        const { WebStandardStreamableHTTPServerTransport } = await import(
+          "@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js"
+        );
+        const origin = new URL(ctx.req.url).origin;
+        const server = createMcpServer(ctx.state.denote, origin);
+        const transport = new WebStandardStreamableHTTPServerTransport({});
+        await server.connect(transport);
 
-      const response = await transport.handleRequest(ctx.req);
+        const response = await transport.handleRequest(ctx.req);
 
-      // Add CORS headers
-      for (const [key, value] of Object.entries(MCP_CORS_HEADERS)) {
-        if (!response.headers.has(key)) {
-          response.headers.set(key, value);
+        // Add CORS headers
+        for (const [key, value] of Object.entries(MCP_CORS_HEADERS)) {
+          if (!response.headers.has(key)) {
+            response.headers.set(key, value);
+          }
         }
+        return response;
+      } catch (error) {
+        if (isDev) console.error("[denote] MCP handler error:", error);
+        return new Response("Internal Server Error", {
+          status: 500,
+          headers: MCP_CORS_HEADERS,
+        });
       }
-      return response;
     };
 
     // Intercept all methods on /mcp via global middleware
@@ -346,7 +354,10 @@ export function denote(options: DenoteOptions): App<unknown> {
     const { generateFullDocs } = await import("./lib/ai.ts");
     const txt = await generateFullDocs(ctx.state.denote);
     return new Response(txt, {
-      headers: { "Content-Type": "text/plain; charset=utf-8" },
+      headers: {
+        "Content-Type": "text/plain; charset=utf-8",
+        "Cache-Control": configCacheControl,
+      },
     });
   });
 

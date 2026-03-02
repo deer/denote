@@ -1,0 +1,170 @@
+/**
+ * HTTP-level integration tests for Denote endpoints.
+ *
+ * Uses denote() factory → app.handler() to test the full HTTP layer
+ * without starting a server. Covers AI endpoints, API endpoints,
+ * SEO endpoints, and MCP CORS preflight.
+ */
+import { assert, assertEquals, assertStringIncludes } from "jsr:@std/assert@1";
+import { denote } from "../mod.ts";
+
+// Prevent file watcher from starting during tests
+Deno.env.set("DENO_TESTING", "1");
+
+import { dirname, fromFileUrl, join } from "@std/path";
+
+const __dirname = dirname(fromFileUrl(import.meta.url));
+const contentDir = join(__dirname, "..", "..", "..", "docs", "content", "docs");
+
+function createHandler() {
+  const app = denote({
+    config: {
+      name: "Test Docs",
+      navigation: [
+        {
+          title: "Guide",
+          children: [
+            { title: "Introduction", href: "/docs/introduction" },
+            { title: "Installation", href: "/docs/installation" },
+          ],
+        },
+      ],
+      ai: { mcp: true },
+      seo: { url: "https://example.com" },
+    },
+    contentDir,
+    includeStaticFiles: false,
+    includeErrorHandlers: false,
+  });
+  return app.handler();
+}
+
+const handler = createHandler();
+
+async function request(
+  path: string,
+  init?: RequestInit,
+): Promise<Response> {
+  return await handler(new Request(`http://localhost${path}`, init));
+}
+
+// ── /llms.txt ──────────────────────────────────────────────
+
+Deno.test("GET /llms.txt - returns text with doc links", async () => {
+  const res = await request("/llms.txt");
+  assertEquals(res.status, 200);
+  assertEquals(res.headers.get("content-type"), "text/plain; charset=utf-8");
+  const text = await res.text();
+  assertStringIncludes(text, "# Test Docs");
+  assertStringIncludes(text, "introduction");
+  assertStringIncludes(text, "llms-full.txt");
+  assertStringIncludes(text, "/mcp");
+});
+
+// ── /llms-full.txt ─────────────────────────────────────────
+
+Deno.test("GET /llms-full.txt - returns full docs dump", async () => {
+  const res = await request("/llms-full.txt");
+  assertEquals(res.status, 200);
+  assertEquals(res.headers.get("content-type"), "text/plain; charset=utf-8");
+  assert(res.headers.has("cache-control"));
+  const text = await res.text();
+  assertStringIncludes(text, "Complete Documentation");
+  assertStringIncludes(text, "Introduction");
+});
+
+// ── /api/docs ──────────────────────────────────────────────
+
+Deno.test("GET /api/docs - returns structured JSON", async () => {
+  const res = await request("/api/docs");
+  assertEquals(res.status, 200);
+  assertEquals(res.headers.get("content-type"), "application/json");
+  assert(res.headers.has("cache-control"));
+  const json = await res.json();
+  assertEquals(json.name, "Test Docs");
+  assert(Array.isArray(json.pages));
+  assert(json.pages.length > 0);
+  // Should include MCP info since ai.mcp is enabled
+  assert(json.mcp);
+  assertEquals(json.mcp.transport, "Streamable HTTP");
+});
+
+// ── /api/search ────────────────────────────────────────────
+
+Deno.test("GET /api/search - returns search index", async () => {
+  const res = await request("/api/search");
+  assertEquals(res.status, 200);
+  assertEquals(res.headers.get("content-type"), "application/json");
+  assert(res.headers.has("cache-control"));
+  const json = await res.json();
+  assert(Array.isArray(json));
+  assert(json.length > 0);
+  // Each item should have title, slug, content
+  const item = json[0];
+  assert(typeof item.title === "string");
+  assert(typeof item.slug === "string");
+  assert(typeof item.content === "string");
+});
+
+// ── /sitemap.xml ───────────────────────────────────────────
+
+Deno.test("GET /sitemap.xml - returns valid XML", async () => {
+  const res = await request("/sitemap.xml");
+  assertEquals(res.status, 200);
+  assertStringIncludes(
+    res.headers.get("content-type") || "",
+    "application/xml",
+  );
+  const text = await res.text();
+  assertStringIncludes(text, '<?xml version="1.0"');
+  assertStringIncludes(text, "<urlset");
+  assertStringIncludes(text, "https://example.com");
+});
+
+// ── /robots.txt ────────────────────────────────────────────
+
+Deno.test("GET /robots.txt - returns robots directives", async () => {
+  const res = await request("/robots.txt");
+  assertEquals(res.status, 200);
+  const text = await res.text();
+  assertStringIncludes(text, "User-agent");
+  assertStringIncludes(text, "Sitemap");
+  assertStringIncludes(text, "https://example.com");
+});
+
+// ── /mcp ───────────────────────────────────────────────────
+
+Deno.test("OPTIONS /mcp - returns CORS preflight headers", async () => {
+  const res = await request("/mcp", { method: "OPTIONS" });
+  assertEquals(res.status, 204);
+  assertEquals(res.headers.get("access-control-allow-origin"), "*");
+  assertStringIncludes(
+    res.headers.get("access-control-allow-methods") || "",
+    "POST",
+  );
+  assertStringIncludes(
+    res.headers.get("access-control-allow-headers") || "",
+    "Content-Type",
+  );
+});
+
+// ── /docs redirect ─────────────────────────────────────────
+
+Deno.test("GET /docs - redirects to first nav page", async () => {
+  const res = await request("/docs");
+  assertEquals(res.status, 302);
+  assertEquals(res.headers.get("location"), "/docs/introduction");
+  await res.body?.cancel();
+});
+
+// ── Security headers ───────────────────────────────────────
+
+Deno.test("Responses include security headers", async () => {
+  const res = await request("/llms.txt");
+  // CSP and other security headers should be set by middleware
+  assert(
+    res.headers.has("content-security-policy") ||
+      res.headers.has("x-content-type-options"),
+  );
+  await res.text(); // consume body
+});

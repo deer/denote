@@ -95,6 +95,55 @@ Deno.test("validate - reports invalid hex color", async () => {
   );
 });
 
+Deno.test("validate - reports invalid seo.url", async () => {
+  const issues = await validate(ctx({
+    config: {
+      name: "Test",
+      navigation: [{ title: "Intro", href: "/docs/introduction" }],
+      seo: { url: "not-a-url" },
+    },
+  }));
+  assertEquals(
+    issues.some((i) =>
+      i.message.includes("seo.url") && i.message.includes("not a valid URL")
+    ),
+    true,
+  );
+});
+
+Deno.test("validate - reports invalid seo.ogImage", async () => {
+  const issues = await validate(ctx({
+    config: {
+      name: "Test",
+      navigation: [{ title: "Intro", href: "/docs/introduction" }],
+      seo: { ogImage: "bad-url" },
+    },
+  }));
+  assertEquals(
+    issues.some((i) =>
+      i.message.includes("seo.ogImage") && i.message.includes("not a valid URL")
+    ),
+    true,
+  );
+});
+
+Deno.test("validate - accepts valid seo config", async () => {
+  const issues = await validate(ctx({
+    config: {
+      name: "Test",
+      navigation: [{ title: "Intro", href: "/docs/introduction" }],
+      seo: {
+        url: "https://example.com",
+        ogImage: "https://example.com/og.png",
+      },
+    },
+  }));
+  assertEquals(
+    issues.some((i) => i.message.includes("seo.")),
+    false,
+  );
+});
+
 Deno.test("validate - skips external navigation links", async () => {
   const issues = await validate(ctx({
     config: {

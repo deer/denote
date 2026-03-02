@@ -16,6 +16,6 @@
     "start": "cd docs && deno task start",
     "validate": "cd docs && deno task validate",
     "test": "deno test -A",
-    "ok": "deno fmt --check && deno lint && deno check && deno task test"
+    "ok": "deno fmt --check && deno lint && deno check && deno task test && deno task validate"
   }
 }

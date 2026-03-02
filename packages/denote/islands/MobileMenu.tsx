@@ -77,6 +77,7 @@ export function MobileMenu(
       dispose();
       if (portalRef.current) {
         render(null, portalRef.current);
+        portalRef.current.remove();
       }
     };
   }, [currentPath]);
