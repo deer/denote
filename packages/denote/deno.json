@@ -5,7 +5,8 @@
   "license": "MIT",
   "exports": {
     ".": "./mod.ts",
-    "./cli": "./cli.ts",
+    "./vite": "./vite.ts",
+    "./validate": "./validate.ts",
     "./islands/ThemeToggle.tsx": "./islands/ThemeToggle.tsx",
     "./islands/MobileMenu.tsx": "./islands/MobileMenu.tsx",
     "./islands/Search.tsx": "./islands/Search.tsx",
@@ -13,12 +14,12 @@
     "./islands/CopyButton.tsx": "./islands/CopyButton.tsx",
     "./islands/ActiveToc.tsx": "./islands/ActiveToc.tsx",
     "./analytics": "./lib/analytics.ts",
-    "./types": "./denote.config.ts"
+    "./types": "./denote.config.ts",
+    "./styles.css": "./styles.css"
   },
   "tasks": {
     "test": "deno test --allow-read --allow-net --allow-env",
-    "ok": "deno fmt --check . && deno lint . && deno check && deno task test",
-    "extract-classes": "deno run --allow-read --allow-write scripts/extract-classes.ts"
+    "ok": "deno fmt --check . && deno lint . && deno check && deno task test"
   },
   "lint": {
     "rules": {
@@ -58,8 +59,7 @@
     "exclude": [
       "**/*_test.ts",
       "**/*_test.tsx",
-      "lib/test_config.ts",
-      "scripts/"
+      "lib/test_config.ts"
     ]
   },
   "compilerOptions": {

@@ -139,7 +139,7 @@ denote/
 ├── docs/                 # Documentation site (denote.sh)
 │   ├── content/docs/     # Markdown documentation files
 │   ├── denote.config.ts  # Site configuration
-│   └── .denote/           # Generated build files (gitignored)
+│   └── vite.config.ts    # Vite build configuration
 ├── deno.json             # Workspace root config
 └── Dockerfile
 ```

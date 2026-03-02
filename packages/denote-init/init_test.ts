@@ -92,7 +92,8 @@ async function patchDenoJson(projectDir: string) {
   const coreUrl = new URL("./", `file://${DENOTE_CORE_DIR}/`).href;
   config.imports["@denote/core"] = coreUrl + "mod.ts";
   config.imports["@denote/core/types"] = coreUrl + "denote.config.ts";
-  config.imports["@denote/core/cli"] = new URL("cli.ts", coreUrl).href;
+  config.imports["@denote/core/validate"] =
+    new URL("validate.ts", coreUrl).href;
   await Deno.writeTextFile(
     denoJsonPath,
     JSON.stringify(config, null, 2) + "\n",
@@ -111,7 +112,8 @@ async function patchDenoJsonFull(projectDir: string) {
 
   config.imports["@denote/core"] = coreUrl + "mod.ts";
   config.imports["@denote/core/types"] = coreUrl + "denote.config.ts";
-  config.imports["@denote/core/cli"] = new URL("cli.ts", coreUrl).href;
+  config.imports["@denote/core/validate"] =
+    new URL("validate.ts", coreUrl).href;
 
   // Copy core's deps — file:// imports don't get JSR's dep graph
   const coreDeno = JSON.parse(
@@ -142,6 +144,15 @@ async function patchDenoJsonFull(projectDir: string) {
     denoJsonPath,
     JSON.stringify(config, null, 2) + "\n",
   );
+
+  // Symlink node_modules/@denote/core → local package so Vite's CSS
+  // resolver can find @import "@denote/core/styles.css" (CSS @import
+  // doesn't use Deno's import map).
+  const nmCore = join(projectDir, "node_modules", "@denote", "core");
+  await Deno.mkdir(join(projectDir, "node_modules", "@denote"), {
+    recursive: true,
+  });
+  await Deno.symlink(DENOTE_CORE_DIR, nmCore);
 }
 
 /** Find a free port by briefly listening on port 0. */
@@ -226,6 +237,10 @@ Deno.test("scaffold creates expected files", async () => {
   // Files exist
   await expectProjectFile(tmp.path, "deno.json");
   await expectProjectFile(tmp.path, "denote.config.ts");
+  await expectProjectFile(tmp.path, "main.ts");
+  await expectProjectFile(tmp.path, "client.ts");
+  await expectProjectFile(tmp.path, "styles.css");
+  await expectProjectFile(tmp.path, "vite.config.ts");
   await expectProjectFile(tmp.path, "content/docs/introduction.md");
   await expectProjectFile(tmp.path, "content/docs/installation.md");
   await expectProjectFile(tmp.path, ".gitignore");
@@ -236,12 +251,13 @@ Deno.test("scaffold creates expected files", async () => {
   // deno.json has correct structure (Fresh base + vite/tailwind + Denote)
   const denoJson = JSON.parse(await readProjectFile(tmp.path, "deno.json"));
 
-  // Tasks
-  assertEquals(denoJson.tasks.dev, "deno run -A jsr:@denote/core/cli dev");
-  assertEquals(denoJson.tasks.build, "deno run -A jsr:@denote/core/cli build");
+  // Tasks — plain Fresh tasks, no CLI
+  assertEquals(denoJson.tasks.dev, "deno run -A npm:vite");
+  assertEquals(denoJson.tasks.build, "deno run -A npm:vite build");
+  assertEquals(denoJson.tasks.start, "deno serve -A _fresh/server.js");
   assertEquals(
     denoJson.tasks.validate,
-    "deno run -A jsr:@denote/core/cli validate",
+    "deno run -A jsr:@denote/core/validate",
   );
 
   // nodeModulesDir required for Vite's resolver
@@ -249,7 +265,7 @@ Deno.test("scaffold creates expected files", async () => {
 
   // Imports: Denote core
   assert(denoJson.imports["@denote/core"], "Should have @denote/core import");
-  // Imports: Vite + Tailwind (used by generated .denote/vite.config.ts & styles.css)
+  // Imports: Vite + Tailwind
   assert(denoJson.imports["vite"], "Should have vite import");
   assert(
     denoJson.imports["@fresh/plugin-vite"],
@@ -271,9 +287,10 @@ Deno.test("scaffold creates expected files", async () => {
   // Fresh lint rules
   assertEquals(denoJson.lint?.rules?.tags, ["fresh", "recommended"]);
 
-  // Compiler options (Fresh/Preact JSX)
+  // Compiler options (Fresh/Preact JSX + Vite client types)
   assertEquals(denoJson.compilerOptions?.jsx, "precompile");
   assertEquals(denoJson.compilerOptions?.jsxImportSource, "preact");
+  assertEquals(denoJson.compilerOptions?.types, ["vite/client"]);
 
   // Exclude build output
   assert(denoJson.exclude?.includes("**/_fresh/*"));
@@ -284,9 +301,24 @@ Deno.test("scaffold creates expected files", async () => {
 
   // .gitignore contains expected entries
   const gitignore = await readProjectFile(tmp.path, ".gitignore");
-  assertStringIncludes(gitignore, ".denote/");
   assertStringIncludes(gitignore, "_fresh/");
   assertStringIncludes(gitignore, ".DS_Store");
+
+  // main.ts imports denote
+  const mainTs = await readProjectFile(tmp.path, "main.ts");
+  assertStringIncludes(mainTs, 'import { denote } from "@denote/core"');
+  assertStringIncludes(mainTs, "export const app = denote(");
+
+  // vite.config.ts has Fresh plugin, island specifiers, and config HMR
+  const viteConfig = await readProjectFile(tmp.path, "vite.config.ts");
+  assertStringIncludes(viteConfig, "islandSpecifiers");
+  assertStringIncludes(viteConfig, "fresh");
+  assertStringIncludes(viteConfig, "denoteHmr()");
+
+  // styles.css imports core base CSS and scans for Tailwind classes
+  const stylesCss = await readProjectFile(tmp.path, "styles.css");
+  assertStringIncludes(stylesCss, '@import "@denote/core/styles.css"');
+  assertStringIncludes(stylesCss, "@denote/core/");
 
   // introduction.md references project name and has frontmatter
   const intro = await readProjectFile(tmp.path, "content/docs/introduction.md");
@@ -440,10 +472,18 @@ Deno.test({
     await patchDenoJsonFull(tmp.path);
 
     const port = getAvailablePort();
-    const cliPath = resolve(DENOTE_CORE_DIR, "cli.ts");
 
+    // Run via vite dev (same as `deno task dev` but with explicit port)
     const child = new Deno.Command(DENO_BIN, {
-      args: ["run", "-A", cliPath, "dev", "--port", String(port)],
+      args: [
+        "run",
+        "-A",
+        "npm:vite",
+        "--config",
+        "vite.config.ts",
+        "--port",
+        String(port),
+      ],
       cwd: tmp.path,
       stdout: "piped",
       stderr: "piped",

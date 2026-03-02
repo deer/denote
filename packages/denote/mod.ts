@@ -193,12 +193,21 @@ export function denote(options: DenoteOptions): App<unknown> {
     );
   });
 
-  // GFM syntax highlighting CSS
-  app.get("/gfm.css", () => {
-    return new Response(`${CSS}\n${HIGHLIGHT_CSS}`, {
+  // GFM syntax highlighting CSS — content is static per build, so use an
+  // ETag derived from content length. Browsers revalidate with If-None-Match;
+  // we return 304 if unchanged, avoiding stale-cache issues when @deer/gfm
+  // is upgraded.
+  const gfmCss = `${CSS}\n${HIGHLIGHT_CSS}`;
+  const gfmEtag = `W/"gfm-${gfmCss.length}"`;
+  app.get("/gfm.css", (ctx) => {
+    if (ctx.req.headers.get("If-None-Match") === gfmEtag) {
+      return new Response(null, { status: 304 });
+    }
+    return new Response(gfmCss, {
       headers: {
         "Content-Type": "text/css; charset=utf-8",
-        "Cache-Control": "public, max-age=86400",
+        "Cache-Control": "public, max-age=3600, must-revalidate",
+        "ETag": gfmEtag,
       },
     });
   });
