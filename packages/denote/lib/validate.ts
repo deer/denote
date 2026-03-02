@@ -4,21 +4,13 @@
  */
 import { HEX_COLOR_REGEX } from "./config.ts";
 import { getAllDocs } from "./docs.ts";
-import type { DenoteConfig, NavItem } from "../denote.config.ts";
+import { flattenNav } from "./nav.ts";
+import type { DenoteConfig } from "../denote.config.ts";
 import type { DenoteContext } from "../utils.ts";
 
 export interface ValidationIssue {
   severity: "error" | "warning";
   message: string;
-}
-
-function collectNavHrefs(items: NavItem[]): string[] {
-  const hrefs: string[] = [];
-  for (const item of items) {
-    if (item.href) hrefs.push(item.href);
-    if (item.children) hrefs.push(...collectNavHrefs(item.children));
-  }
-  return hrefs;
 }
 
 function validateConfig(config: DenoteConfig): ValidationIssue[] {
@@ -144,7 +136,7 @@ export async function validate(
   // 4. Navigation link validation
   const docsBasePath = denoteContext.docsBasePath;
   const slugs = new Set(docs.map((d) => `${docsBasePath}/${d.slug}`));
-  const navHrefs = collectNavHrefs(config.navigation);
+  const navHrefs = flattenNav(config.navigation).map((l) => l.href);
 
   for (const href of navHrefs) {
     if (href.startsWith("http://") || href.startsWith("https://")) continue;

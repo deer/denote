@@ -9,18 +9,7 @@
  */
 import { computed, effect, signal } from "@preact/signals";
 import { useEffect } from "preact/hooks";
-
-/** A single entry in the search index. */
-export interface SearchItem {
-  /** Page title. */
-  title: string;
-  /** Short description from frontmatter. */
-  description?: string;
-  /** URL slug (e.g. "introduction"). */
-  slug: string;
-  /** Full-text content for matching. */
-  content: string;
-}
+import type { SearchItem } from "../lib/docs.ts";
 
 /** Props for the {@linkcode Search} island. */
 export interface SearchProps {

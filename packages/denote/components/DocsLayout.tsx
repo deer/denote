@@ -6,7 +6,8 @@ import { Header } from "./Header.tsx";
 import { Sidebar } from "./Sidebar.tsx";
 import { ActiveToc } from "../islands/ActiveToc.tsx";
 import type { TocItem } from "../lib/markdown.ts";
-import type { Breadcrumb, NavLink } from "../lib/docs.ts";
+import type { Breadcrumb } from "../lib/docs.ts";
+import type { NavLink } from "../lib/nav.ts";
 import type { DenoteConfig } from "../denote.config.ts";
 
 interface DocsLayoutProps {

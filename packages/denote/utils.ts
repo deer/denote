@@ -29,3 +29,9 @@ export interface State {
 
 /** Type-safe Fresh route helper pre-bound to {@linkcode State}. */
 export const define = createDefine<State>();
+
+/** True when running locally (not on Deno Deploy and not NODE_ENV=production). */
+export function isDev(): boolean {
+  return !Deno.env.get("DENO_DEPLOYMENT_ID") &&
+    Deno.env.get("NODE_ENV") !== "production";
+}

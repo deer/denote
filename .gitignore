@@ -3,3 +3,5 @@ _fresh/
 .vite/
 .worktrees/
 .claude/settings.local.json
+.coverage/
+lcov.info

@@ -1,6 +1,18 @@
 ---
 title: Writing Content
 description: Learn how to write documentation with Denote's markdown syntax
+ai-summary: Write documentation in Markdown with YAML frontmatter (title, description, ai-summary, ai-keywords). Supports GFM syntax, code highlighting, tables, task lists, and single-line paragraph convention.
+ai-keywords: [
+  markdown,
+  frontmatter,
+  GFM,
+  content,
+  syntax highlighting,
+  tables,
+  ai-summary,
+  ai-keywords,
+  writing,
+]
 ---
 
 # Writing Content

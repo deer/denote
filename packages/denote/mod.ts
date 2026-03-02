@@ -26,7 +26,7 @@
  */
 import { App, staticFiles } from "fresh";
 export type { App } from "fresh";
-import type { DenoteConfig, NavItem } from "./denote.config.ts";
+import type { DenoteConfig } from "./denote.config.ts";
 import {
   getConfig,
   getContentDir,
@@ -39,9 +39,10 @@ import { csp } from "./lib/csp.ts";
 import { analyticsMiddleware } from "./lib/analytics.ts";
 import { darkModeScript, generateThemeCSS } from "./lib/theme.ts";
 import { CSS, HIGHLIGHT_CSS } from "@deer/gfm/style";
-import type { DenoteContext, State } from "./utils.ts";
+import { type DenoteContext, isDev, type State } from "./utils.ts";
 import { buildRobotsTxt, buildSitemapXml } from "./lib/seo.ts";
 import { buildSearchIndex, getAllDocs } from "./lib/docs.ts";
+import { findFirstHref } from "./lib/nav.ts";
 
 // Import page components for programmatic routing
 import { App as AppWrapper } from "./routes/_app.tsx";
@@ -51,22 +52,6 @@ import { HomePage } from "./routes/index.tsx";
 import { DocsPage } from "./routes/docs/[...slug].tsx";
 import { handler as docsMiddleware } from "./routes/docs/_middleware.ts";
 import { PageLayout } from "./components/PageLayout.tsx";
-
-// ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
-
-/** Walk the navigation tree and return the first item with an href. */
-function findFirstHref(items: NavItem[]): string | null {
-  for (const item of items) {
-    if (item.href) return item.href;
-    if (item.children) {
-      const found = findFirstHref(item.children);
-      if (found) return found;
-    }
-  }
-  return null;
-}
 
 // ---------------------------------------------------------------------------
 // Public API
@@ -176,9 +161,8 @@ export function denote(options: DenoteOptions): App<unknown> {
 
   // In dev mode, config-driven assets shouldn't be cached so that
   // config changes are reflected immediately on restart.
-  const isDev = !Deno.env.get("DENO_DEPLOYMENT_ID") &&
-    Deno.env.get("NODE_ENV") !== "production";
-  const configCacheControl = isDev ? "no-cache" : "public, max-age=3600";
+  const devMode = isDev();
+  const configCacheControl = devMode ? "no-cache" : "public, max-age=3600";
 
   // Theme detection script (render-blocking to prevent FOUC)
   app.get("/theme-init.js", (ctx) => {
@@ -279,7 +263,7 @@ export function denote(options: DenoteOptions): App<unknown> {
   });
 
   // ── Logger middleware ───────────────────────────────────────
-  if (isDev) {
+  if (devMode) {
     app.use((ctx) => {
       console.log(`${ctx.req.method} ${ctx.req.url}`);
       return ctx.next();
@@ -320,7 +304,7 @@ export function denote(options: DenoteOptions): App<unknown> {
         }
         return response;
       } catch (error) {
-        if (isDev) console.error("[denote] MCP handler error:", error);
+        if (devMode) console.error("[denote] MCP handler error:", error);
         return new Response("Internal Server Error", {
           status: 500,
           headers: MCP_CORS_HEADERS,
@@ -351,7 +335,7 @@ export function denote(options: DenoteOptions): App<unknown> {
   });
 
   app.get("/llms-full.txt", async (ctx) => {
-    const { generateFullDocs } = await import("./lib/ai.ts");
+    const { generateFullDocs } = await import("./lib/docs.ts");
     const txt = await generateFullDocs(ctx.state.denote);
     return new Response(txt, {
       headers: {

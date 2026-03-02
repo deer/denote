@@ -64,60 +64,6 @@ export async function generateLlmsTxt(
 }
 
 /**
- * Generate full markdown dump of all docs — optimized for AI context windows.
- * Result is cached in memory and cleared when content changes.
- */
-
-let cachedFullDocs: string | null = null;
-
-export async function generateFullDocs(
-  denoteContext: DenoteContext,
-): Promise<string> {
-  if (cachedFullDocs) return cachedFullDocs;
-
-  const config = denoteContext.config;
-  const docs = await getAllDocs(denoteContext);
-
-  const sections: string[] = [
-    `# ${config.name} — Complete Documentation`,
-    "",
-  ];
-
-  for (const doc of docs) {
-    sections.push(`---`);
-    sections.push("");
-    sections.push(`## ${doc.frontmatter.title}`);
-    if (doc.frontmatter["ai-summary"]) {
-      sections.push("");
-      sections.push(`*${doc.frontmatter["ai-summary"]}*`);
-    } else if (doc.frontmatter.description) {
-      sections.push("");
-      sections.push(`*${doc.frontmatter.description}*`);
-    }
-    if (
-      doc.frontmatter["ai-keywords"] &&
-      doc.frontmatter["ai-keywords"].length > 0
-    ) {
-      sections.push("");
-      sections.push(
-        `Keywords: ${doc.frontmatter["ai-keywords"].join(", ")}`,
-      );
-    }
-    sections.push("");
-    sections.push(doc.content);
-    sections.push("");
-  }
-
-  cachedFullDocs = sections.join("\n");
-  return cachedFullDocs;
-}
-
-/** Clear the full docs cache (called on content invalidation) */
-export function clearFullDocsCache(): void {
-  cachedFullDocs = null;
-}
-
-/**
  * Get all docs as structured JSON for API consumption.
  */
 export async function getDocsJson(

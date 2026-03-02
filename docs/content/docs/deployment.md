@@ -1,6 +1,17 @@
 ---
 title: Deployment
 description: Deploy your Denote documentation site to production
+ai-summary: Deploy Denote to Deno Deploy (recommended one-click), Docker, or any Deno-capable host. Covers production builds, environment variables, GitHub Actions CI/CD, and custom domain setup.
+ai-keywords: [
+  deployment,
+  Deno Deploy,
+  Docker,
+  production build,
+  CI/CD,
+  GitHub Actions,
+  environment variables,
+  hosting,
+]
 ---
 
 # Deployment
@@ -214,6 +225,27 @@ server {
     }
 }
 ```
+
+## Security Headers
+
+Denote automatically sets security headers on every response — no reverse proxy
+configuration needed:
+
+| Header                      | Value                                          |
+| --------------------------- | ---------------------------------------------- |
+| `Strict-Transport-Security` | `max-age=63072000; includeSubDomains; preload` |
+| `X-Content-Type-Options`    | `nosniff`                                      |
+| `X-Frame-Options`           | `DENY`                                         |
+| `Referrer-Policy`           | `strict-origin-when-cross-origin`              |
+| `Content-Security-Policy`   | Default policy (customizable via `csp` config) |
+
+These headers are always active in both development and production. CSP
+directives can be customized through the `csp` option in your config. Hashed
+static assets (files matching `/_fresh/` or `.[hash].(js|css|...)`) also receive
+`Cache-Control: public, max-age=31536000, immutable` for aggressive caching.
+
+If you run Denote behind a reverse proxy, the proxy's headers will merge with
+these. No extra proxy configuration is needed for basic security compliance.
 
 ## Next Steps
 

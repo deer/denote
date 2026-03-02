@@ -9,16 +9,7 @@
  */
 import { useEffect } from "preact/hooks";
 import { signal } from "@preact/signals";
-
-/** A single heading entry in the table of contents. */
-export interface TocItem {
-  /** The heading's HTML id attribute. */
-  id: string;
-  /** Display text of the heading. */
-  title: string;
-  /** Heading depth (2 for h2, 3 for h3, etc.). */
-  level: number;
-}
+import type { TocItem } from "../lib/markdown.ts";
 
 /** Props for the {@linkcode ActiveToc} island. */
 export interface ActiveTocProps {

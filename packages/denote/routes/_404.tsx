@@ -1,10 +1,13 @@
 import type { PageProps } from "fresh";
 import { define, type State } from "../utils.ts";
 import { Header } from "../components/Header.tsx";
+import { findFirstHref } from "../lib/nav.ts";
 
 /** 404 page component — exported for programmatic routing */
 export function NotFoundPage(ctx: PageProps<unknown, State>) {
   const config = ctx.state.denote.config;
+  const docsHref = findFirstHref(config.navigation) ||
+    ctx.state.denote.docsBasePath;
   // Popular pages to suggest
   const suggestions = config.navigation
     .flatMap((section) =>
@@ -34,7 +37,7 @@ export function NotFoundPage(ctx: PageProps<unknown, State>) {
           {/* Actions */}
           <div class="flex flex-col sm:flex-row items-center justify-center gap-3 mb-12">
             <a
-              href="/docs/introduction"
+              href={docsHref}
               class="inline-flex items-center gap-2 px-5 py-2.5 bg-[var(--denote-primary)] hover:bg-[var(--denote-primary-hover)] text-[var(--denote-text-inverse)] rounded-lg transition-colors text-sm font-medium"
             >
               <svg

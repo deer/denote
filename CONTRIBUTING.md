@@ -6,7 +6,7 @@ Thanks for your interest in contributing! This guide will help you get started.
 
 ### Prerequisites
 
-- [Deno](https://deno.land) v2.x or later
+- [Deno](https://deno.com) v2.x or later
 
 ### Getting Started
 
@@ -53,13 +53,18 @@ Open [http://localhost:8000](http://localhost:8000) to see the site.
 
 ### Project Structure
 
-- **`content/docs/`** — Markdown documentation files
-- **`denote.config.ts`** — Navigation and site configuration
-- **`components/`** — Server-rendered Preact components
-- **`islands/`** — Client-side interactive components
-- **`lib/`** — Core utilities (markdown parsing, doc loading, syntax
-  highlighting)
-- **`routes/`** — Fresh file-based routes
+```
+denote/
+├── packages/
+│   ├── denote/           # Core library (@denote/core)
+│   │   ├── components/   # Server-rendered Preact components
+│   │   ├── islands/      # Client-side interactive components
+│   │   ├── lib/          # Utilities (markdown, search, AI)
+│   │   └── routes/       # Fresh file-based routes
+│   └── denote-init/      # Scaffolding CLI (@denote/init)
+└── docs/                 # Documentation site (denote.sh)
+    └── content/docs/     # Markdown documentation files
+```
 
 ### Writing Documentation
 

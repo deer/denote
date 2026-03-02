@@ -1,6 +1,19 @@
 ---
 title: Configuration
 description: Configure your Denote documentation site
+ai-summary: Configure Denote via denote.config.ts. Covers site name, navigation tree, colors, fonts, layout, SEO metadata, analytics, social links, landing page, and AI features (MCP, llms.txt).
+ai-keywords: [
+  config,
+  denote.config.ts,
+  navigation,
+  colors,
+  fonts,
+  SEO,
+  analytics,
+  landing page,
+  MCP,
+  DenoteConfig,
+]
 ---
 
 # Configuration
@@ -356,6 +369,79 @@ analytics: {
 Set `ANALYTICS_SITE_ID` in your hosting platform's environment variables (Deno
 Deploy, Docker, etc.). If the env var is missing, analytics are silently
 disabled — your site still works fine.
+
+## Advanced Options
+
+The `denote()` factory function accepts a `DenoteOptions` object that goes
+beyond `DenoteConfig`. Use these to customize paths or disable built-in
+features:
+
+```typescript
+import { denote } from "@denote/core";
+import { config } from "./denote.config.ts";
+
+const app = denote({
+  config,
+  contentDir: "./my-docs", // Default: "./content/docs"
+  docsBasePath: "/guide", // Default: "/docs"
+  includeLandingPage: false, // Default: true
+  includeStaticFiles: false, // Default: true
+  includeSeo: false, // Default: true
+  includeErrorHandlers: false, // Default: true
+});
+```
+
+| Option                 | Default            | Description                                  |
+| ---------------------- | ------------------ | -------------------------------------------- |
+| `contentDir`           | `"./content/docs"` | Path to your markdown content directory      |
+| `docsBasePath`         | `"/docs"`          | URL prefix where doc pages are served        |
+| `includeLandingPage`   | `true`             | Include the default landing page at `/`      |
+| `includeStaticFiles`   | `true`             | Include static file serving middleware       |
+| `includeSeo`           | `true`             | Include SEO routes (sitemap.xml, robots.txt) |
+| `includeErrorHandlers` | `true`             | Include built-in 404/error pages             |
+
+Disabling features is useful when embedding Denote into a larger Fresh app where
+you provide your own error pages, static file handling, or landing page.
+
+## Config Hot Reload
+
+During development, config changes hot-reload without restarting the server. The
+`denoteHmr()` Vite plugin watches `denote.config.ts` for changes, re-imports the
+module, and triggers a browser refresh:
+
+```typescript
+// vite.config.ts (already included in scaffolded projects)
+import { denoteHmr } from "@denote/core/vite";
+
+export default {
+  plugins: [denoteHmr()],
+};
+```
+
+When you save `denote.config.ts`, you'll see `[denote] Config reloaded` in the
+terminal. If there's a syntax error, the previous config stays active and an
+error message is shown — no crash, no restart needed.
+
+## Content Validation
+
+Run `deno task validate` to check your config, content, and navigation for
+common issues:
+
+```bash
+deno task validate
+```
+
+The validator checks:
+
+- **Config fields** — `name` is present and non-empty
+- **Content directory** — exists and contains markdown files
+- **Frontmatter** — each page has a valid `title`
+- **Navigation links** — every internal nav href matches an existing doc page
+- **SEO URLs** — `seo.url` and `seo.ogImage` are valid URLs when set
+- **Hex colors** — all color values in `colors` and `colors.dark` are valid hex
+
+Errors block deployment; warnings are informational. Add this to your CI
+pipeline to catch broken links and missing metadata before they go live.
 
 ## Full Example
 

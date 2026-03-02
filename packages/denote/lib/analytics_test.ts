@@ -61,6 +61,9 @@ const customConfig: AnalyticsConfig = {
 // Analytics fires background fetch requests that are intentionally not awaited.
 const opts = { sanitizeOps: false, sanitizeResources: false };
 
+/** Wait for background analytics fetch to complete. */
+const flushAnalytics = () => new Promise<void>((r) => setTimeout(r, 50));
+
 Deno.test(
   "analyticsMiddleware - passes through and returns response",
   opts,
@@ -119,7 +122,7 @@ Deno.test("analyticsMiddleware - skips asset paths", opts, async () => {
     await handler(ctx as any);
 
     // Give the microtask a chance to run
-    await new Promise((r) => setTimeout(r, 50));
+    await flushAnalytics();
     assertSpyCalls(fetchSpy, 0);
   } finally {
     fetchSpy.restore();
@@ -178,7 +181,7 @@ Deno.test(
         // deno-lint-ignore no-explicit-any
         await handler(ctx as any);
 
-        await new Promise((r) => setTimeout(r, 50));
+        await flushAnalytics();
         assertSpyCalls(fetchSpy, 0);
       } finally {
         fetchSpy.restore();
@@ -214,7 +217,7 @@ Deno.test("analyticsMiddleware - umami payload shape", opts, async () => {
     await handler(ctx as any);
 
     // Let the async sendEvent fire
-    await new Promise((r) => setTimeout(r, 50));
+    await flushAnalytics();
 
     assertSpyCalls(fetchSpy, 1);
     const [url, init] = fetchSpy.calls[0].args;
@@ -240,7 +243,7 @@ Deno.test("analyticsMiddleware - plausible payload shape", opts, async () => {
     // deno-lint-ignore no-explicit-any
     await handler(ctx as any);
 
-    await new Promise((r) => setTimeout(r, 50));
+    await flushAnalytics();
 
     assertSpyCalls(fetchSpy, 1);
     const [url, init] = fetchSpy.calls[0].args;
@@ -264,7 +267,7 @@ Deno.test("analyticsMiddleware - custom payload shape", opts, async () => {
     // deno-lint-ignore no-explicit-any
     await handler(ctx as any);
 
-    await new Promise((r) => setTimeout(r, 50));
+    await flushAnalytics();
 
     assertSpyCalls(fetchSpy, 1);
     const [url, init] = fetchSpy.calls[0].args;
@@ -298,7 +301,7 @@ Deno.test(
       assertEquals(res.status, 200);
 
       // Let the async error handler run
-      await new Promise((r) => setTimeout(r, 50));
+      await flushAnalytics();
 
       assertEquals(
         errorSpy.calls.some((c) => String(c.args[1]).includes("network down")),

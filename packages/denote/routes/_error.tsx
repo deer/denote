@@ -1,13 +1,16 @@
 import type { PageProps } from "fresh";
-import { define, type State } from "../utils.ts";
+import { define, isDev, type State } from "../utils.ts";
 import { Header } from "../components/Header.tsx";
+import { findFirstHref } from "../lib/nav.ts";
 
 /** Error page component — exported for programmatic routing */
 export function ErrorPage(ctx: PageProps<unknown, State>) {
   const config = ctx.state.denote.config;
   const error = ctx.error;
   const message = error instanceof Error ? error.message : "An error occurred";
-  const isDev = Deno.env.get("DENO_ENV") !== "production";
+  const devMode = isDev();
+  const docsHref = findFirstHref(config.navigation) ||
+    ctx.state.denote.docsBasePath;
 
   return (
     <div class="min-h-screen bg-[var(--denote-bg)]">
@@ -25,7 +28,7 @@ export function ErrorPage(ctx: PageProps<unknown, State>) {
             {message}
           </p>
 
-          {isDev && error instanceof Error && error.stack && (
+          {devMode && error instanceof Error && error.stack && (
             <pre class="text-left text-xs text-[var(--denote-text-muted)] bg-[var(--denote-bg-tertiary)] rounded-lg p-4 mb-8 overflow-x-auto">
               {error.stack}
             </pre>
@@ -33,7 +36,7 @@ export function ErrorPage(ctx: PageProps<unknown, State>) {
 
           <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
             <a
-              href="/docs/introduction"
+              href={docsHref}
               class="inline-flex items-center gap-2 px-5 py-2.5 bg-[var(--denote-primary)] hover:bg-[var(--denote-primary-hover)] text-[var(--denote-text-inverse)] rounded-lg transition-colors text-sm font-medium"
             >
               Browse Documentation

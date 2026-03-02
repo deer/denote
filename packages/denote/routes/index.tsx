@@ -1,19 +1,7 @@
 import { type PageProps } from "fresh";
 import { define, type State } from "../utils.ts";
-import type { NavItem } from "../denote.config.ts";
 import { Header } from "../components/Header.tsx";
-
-/** Find the first href in a navigation tree */
-function firstNavHref(items: NavItem[]): string | undefined {
-  for (const item of items) {
-    if (item.href) return item.href;
-    if (item.children) {
-      const found = firstNavHref(item.children);
-      if (found) return found;
-    }
-  }
-  return undefined;
-}
+import { findFirstHref } from "../lib/nav.ts";
 
 /** Main page component that handles both redirect and render cases.
  *  Must be async so Fresh checks the return value for Response objects. */
@@ -22,7 +10,7 @@ export async function HomePage(ctx: PageProps<unknown, State>) {
   const config = ctx.state.denote.config;
   if (config.landing?.enabled === false) {
     const target = config.landing?.redirectTo ||
-      firstNavHref(config.navigation) || "/docs";
+      findFirstHref(config.navigation) || "/docs";
     return new Response(null, {
       status: 302,
       headers: { Location: target },
@@ -88,7 +76,7 @@ export function Home(props: PageProps<unknown, State>) {
 
   // CTAs
   const primaryCta = l.cta?.primary ??
-    { text: "Get Started", href: firstNavHref(config.navigation) || "/docs" };
+    { text: "Get Started", href: findFirstHref(config.navigation) || "/docs" };
   const secondaryCta = l.cta?.secondary ??
     (config.social?.github
       ? { text: "View on GitHub", href: config.social.github }

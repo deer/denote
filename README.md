@@ -7,6 +7,8 @@
 
 **Documentation that speaks to machines and humans.**
 
+**Live demo:** [denote.sh](https://denote.sh)
+
 The open-source docs framework with llms.txt, MCP server, and structured JSON
 API built in. Every AI feature free.
 
@@ -146,7 +148,7 @@ denote/
 
 ## Tech Stack
 
-- [Deno](https://deno.land) — Runtime
+- [Deno](https://deno.com) — Runtime
 - [Fresh](https://fresh.deno.dev) — Web framework
 - [Preact](https://preactjs.com) — UI rendering
 - [Tailwind CSS v4](https://tailwindcss.com) — Styling
