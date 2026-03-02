@@ -279,10 +279,12 @@ export function denote(options: DenoteOptions): App<unknown> {
   });
 
   // ── Logger middleware ───────────────────────────────────────
-  app.use((ctx) => {
-    console.log(`${ctx.req.method} ${ctx.req.url}`);
-    return ctx.next();
-  });
+  if (isDev) {
+    app.use((ctx) => {
+      console.log(`${ctx.req.method} ${ctx.req.url}`);
+      return ctx.next();
+    });
+  }
 
   // ── MCP Endpoint ────────────────────────────────────────────
 
@@ -353,14 +355,20 @@ export function denote(options: DenoteOptions): App<unknown> {
     const baseUrl = new URL(ctx.req.url).origin;
     const json = await getDocsJson(ctx.state.denote, baseUrl);
     return new Response(JSON.stringify(json, null, 2), {
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        "Cache-Control": configCacheControl,
+      },
     });
   });
 
   app.get("/api/search", async (ctx) => {
     const index = await buildSearchIndex(ctx.state.denote);
     return new Response(JSON.stringify(index), {
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        "Cache-Control": configCacheControl,
+      },
     });
   });
 
