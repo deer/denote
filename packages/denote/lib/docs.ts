@@ -243,9 +243,6 @@ export async function getAllDocs(
 // Navigation helpers
 // ---------------------------------------------------------------------------
 
-/** Re-export NavLink for consumers that import from docs.ts */
-export type { NavLink } from "./nav.ts";
-
 /**
  * Get previous and next pages for a given path
  */

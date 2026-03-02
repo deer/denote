@@ -59,6 +59,10 @@ jobs:
         with:
           deno-version: v2.x
 
+      - name: Install dependencies
+        if: steps.filter.outputs.deploy == 'true'
+        run: deno install --frozen
+
       - name: Build
         if: steps.filter.outputs.deploy == 'true'
         run: deno task build
