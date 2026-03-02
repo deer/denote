@@ -250,6 +250,9 @@ export const config: DenoteConfig = {
   search: {
     enabled: true,
   },
+  ai: {
+    mcp: true,
+  },
 };
 `;
   await Deno.writeTextFile(`${projectDir}/denote.config.ts`, docsConfig);
@@ -299,7 +302,7 @@ Get started with ${projectName} in minutes.
 
 ## Prerequisites
 
-- [Deno](https://deno.land) v2.0 or later
+- [Deno](https://deno.com) v2.0 or later
 
 ## Quick Start
 
