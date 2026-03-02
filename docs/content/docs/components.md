@@ -1,6 +1,19 @@
 ---
 title: Components
 description: Built-in UI components and interactive islands in Denote
+ai-summary: Built-in server components (Header, Sidebar, DocsLayout, PageLayout, EditLink) and Preact islands (Search, CollapsibleNav, ActiveToc, ThemeToggle, CopyButton, MobileMenu) with their props and behavior.
+ai-keywords: [
+  components,
+  islands,
+  Header,
+  Sidebar,
+  Search,
+  ThemeToggle,
+  CollapsibleNav,
+  ActiveToc,
+  CopyButton,
+  Preact,
+]
 ---
 
 # Components

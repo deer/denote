@@ -1,6 +1,18 @@
 ---
 title: Theming & Styling
 description: Customize colors, fonts, layout, and CSS through config alone
+ai-summary: Theme Denote via CSS custom properties (--denote-* tokens) driven by config. Covers color palette with auto-derived dark mode, font imports, layout dimensions, roundedness presets, and custom CSS injection.
+ai-keywords: [
+  theming,
+  CSS custom properties,
+  colors,
+  dark mode,
+  fonts,
+  layout,
+  roundedness,
+  design tokens,
+  customization,
+]
 ---
 
 # Theming & Styling

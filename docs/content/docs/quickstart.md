@@ -1,6 +1,16 @@
 ---
 title: Quick Start
 description: Get your first documentation page up in 5 minutes
+ai-summary: Step-by-step guide to create your first Denote documentation page. Covers creating markdown files with frontmatter, adding navigation entries, and running the dev server.
+ai-keywords: [
+  quickstart,
+  tutorial,
+  markdown,
+  frontmatter,
+  navigation,
+  dev server,
+  first page,
+]
 ---
 
 # Quick Start

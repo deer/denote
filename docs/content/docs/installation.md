@@ -1,6 +1,17 @@
 ---
 title: Installation
 description: How to install and set up Denote for your project
+ai-summary: Install Denote via deno init with the @denote/init scaffolder. Requires Deno 2.x. Creates a ready-to-run project with config, content directory, routes, and dev server.
+ai-keywords: [
+  install,
+  deno,
+  scaffold,
+  init,
+  setup,
+  prerequisites,
+  project structure,
+  dev server,
+]
 ---
 
 # Installation

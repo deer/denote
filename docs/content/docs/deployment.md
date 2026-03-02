@@ -1,6 +1,17 @@
 ---
 title: Deployment
 description: Deploy your Denote documentation site to production
+ai-summary: Deploy Denote to Deno Deploy (recommended one-click), Docker, or any Deno-capable host. Covers production builds, environment variables, GitHub Actions CI/CD, and custom domain setup.
+ai-keywords: [
+  deployment,
+  Deno Deploy,
+  Docker,
+  production build,
+  CI/CD,
+  GitHub Actions,
+  environment variables,
+  hosting,
+]
 ---
 
 # Deployment

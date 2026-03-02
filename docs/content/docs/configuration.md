@@ -1,6 +1,19 @@
 ---
 title: Configuration
 description: Configure your Denote documentation site
+ai-summary: Configure Denote via denote.config.ts. Covers site name, navigation tree, colors, fonts, layout, SEO metadata, analytics, social links, landing page, and AI features (MCP, llms.txt).
+ai-keywords: [
+  config,
+  denote.config.ts,
+  navigation,
+  colors,
+  fonts,
+  SEO,
+  analytics,
+  landing page,
+  MCP,
+  DenoteConfig,
+]
 ---
 
 # Configuration
