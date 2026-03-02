@@ -1,16 +1,20 @@
 /* ========================================
    Denote - Documentation Styles
+
+   This file provides design tokens, markdown overrides, and animations
+   for Denote sites. It MUST be imported in your project's CSS:
+
+     @import "tailwindcss";
+     @import "@denote/core/styles.css";
+
+   Removing this import will silently lose all design tokens and the
+   site will render with unstyled defaults.
    ======================================== */
 
 /* ========================================
    Design Tokens
    CSS Custom Properties for full theming support.
    Override via denote.config.ts — no component edits needed.
-
-   Note: These live directly in styles.css (not @import'd) so that
-   Tailwind v4 processes them in the correct cascade layer. An @import
-   gets placed in a lower-priority layer where .dark vars lose to
-   Tailwind utilities.
    ======================================== */
 
 :root {
