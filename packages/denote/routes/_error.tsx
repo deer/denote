@@ -1,6 +1,7 @@
 import type { PageProps } from "fresh";
 import { define, isDev, type State } from "../utils.ts";
 import { Header } from "../components/Header.tsx";
+import { findFirstHref } from "../lib/nav.ts";
 
 /** Error page component — exported for programmatic routing */
 export function ErrorPage(ctx: PageProps<unknown, State>) {
@@ -8,6 +9,7 @@ export function ErrorPage(ctx: PageProps<unknown, State>) {
   const error = ctx.error;
   const message = error instanceof Error ? error.message : "An error occurred";
   const devMode = isDev();
+  const docsHref = findFirstHref(config.navigation) || "/docs";
 
   return (
     <div class="min-h-screen bg-[var(--denote-bg)]">
@@ -33,7 +35,7 @@ export function ErrorPage(ctx: PageProps<unknown, State>) {
 
           <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
             <a
-              href="/docs/introduction"
+              href={docsHref}
               class="inline-flex items-center gap-2 px-5 py-2.5 bg-[var(--denote-primary)] hover:bg-[var(--denote-primary-hover)] text-[var(--denote-text-inverse)] rounded-lg transition-colors text-sm font-medium"
             >
               Browse Documentation
