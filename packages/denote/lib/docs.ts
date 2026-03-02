@@ -15,7 +15,6 @@ import {
 import type { NavItem } from "../denote.config.ts";
 import type { DenoteContext } from "../utils.ts";
 import { resolve } from "@std/path";
-import { clearFullDocsCache } from "./ai.ts";
 
 export interface DocPage extends ParsedDoc {
   slug: string;
@@ -354,4 +353,61 @@ export async function buildSearchIndex(
 /** Clear the search index cache (useful for testing or after content changes) */
 export function clearSearchIndexCache(): void {
   cachedSearchIndex = null;
+}
+
+// ---------------------------------------------------------------------------
+// Full docs generation (moved from ai.ts to break circular dependency)
+// ---------------------------------------------------------------------------
+
+let cachedFullDocs: string | null = null;
+
+/**
+ * Generate full markdown dump of all docs — optimized for AI context windows.
+ * Result is cached in memory and cleared when content changes.
+ */
+export async function generateFullDocs(
+  denoteContext: DenoteContext,
+): Promise<string> {
+  if (cachedFullDocs) return cachedFullDocs;
+
+  const config = denoteContext.config;
+  const docs = await getAllDocs(denoteContext);
+
+  const sections: string[] = [
+    `# ${config.name} — Complete Documentation`,
+    "",
+  ];
+
+  for (const doc of docs) {
+    sections.push(`---`);
+    sections.push("");
+    sections.push(`## ${doc.frontmatter.title}`);
+    if (doc.frontmatter["ai-summary"]) {
+      sections.push("");
+      sections.push(`*${doc.frontmatter["ai-summary"]}*`);
+    } else if (doc.frontmatter.description) {
+      sections.push("");
+      sections.push(`*${doc.frontmatter.description}*`);
+    }
+    if (
+      doc.frontmatter["ai-keywords"] &&
+      doc.frontmatter["ai-keywords"].length > 0
+    ) {
+      sections.push("");
+      sections.push(
+        `Keywords: ${doc.frontmatter["ai-keywords"].join(", ")}`,
+      );
+    }
+    sections.push("");
+    sections.push(doc.content);
+    sections.push("");
+  }
+
+  cachedFullDocs = sections.join("\n");
+  return cachedFullDocs;
+}
+
+/** Clear the full docs cache (called on content invalidation) */
+export function clearFullDocsCache(): void {
+  cachedFullDocs = null;
 }

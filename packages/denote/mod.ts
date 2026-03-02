@@ -351,7 +351,7 @@ export function denote(options: DenoteOptions): App<unknown> {
   });
 
   app.get("/llms-full.txt", async (ctx) => {
-    const { generateFullDocs } = await import("./lib/ai.ts");
+    const { generateFullDocs } = await import("./lib/docs.ts");
     const txt = await generateFullDocs(ctx.state.denote);
     return new Response(txt, {
       headers: {

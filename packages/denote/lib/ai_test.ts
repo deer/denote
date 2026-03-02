@@ -1,11 +1,7 @@
 import { testContext } from "./test_config.ts";
 import { assertEquals, assertStringIncludes } from "jsr:@std/assert@1";
-import {
-  clearFullDocsCache,
-  generateFullDocs,
-  generateLlmsTxt,
-  getDocsJson,
-} from "./ai.ts";
+import { generateLlmsTxt, getDocsJson } from "./ai.ts";
+import { clearFullDocsCache, generateFullDocs } from "./docs.ts";
 
 Deno.test("generateLlmsTxt - includes doc links", async () => {
   const txt = await generateLlmsTxt(testContext, "http://localhost:8000");
