@@ -226,6 +226,25 @@ server {
 }
 ```
 
+## Security Headers
+
+Denote automatically sets security headers on every response — no reverse proxy
+configuration needed:
+
+| Header                      | Value                                          |
+| --------------------------- | ---------------------------------------------- |
+| `Strict-Transport-Security` | `max-age=63072000; includeSubDomains; preload` |
+| `X-Content-Type-Options`    | `nosniff`                                      |
+| `X-Frame-Options`           | `DENY`                                         |
+| `Referrer-Policy`           | `strict-origin-when-cross-origin`              |
+
+These headers are always active in both development and production. Hashed
+static assets (files matching `/_fresh/` or `.[hash].(js|css|...)`) also receive
+`Cache-Control: public, max-age=31536000, immutable` for aggressive caching.
+
+If you run Denote behind a reverse proxy, the proxy's headers will merge with
+these. No extra proxy configuration is needed for basic security compliance.
+
 ## Next Steps
 
 - [Configuration](/docs/configuration) — Customize your site before deploying
