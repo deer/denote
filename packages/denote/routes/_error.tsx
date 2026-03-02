@@ -9,7 +9,8 @@ export function ErrorPage(ctx: PageProps<unknown, State>) {
   const error = ctx.error;
   const message = error instanceof Error ? error.message : "An error occurred";
   const devMode = isDev();
-  const docsHref = findFirstHref(config.navigation) || "/docs";
+  const docsHref = findFirstHref(config.navigation) ||
+    ctx.state.denote.docsBasePath;
 
   return (
     <div class="min-h-screen bg-[var(--denote-bg)]">

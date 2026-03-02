@@ -6,7 +6,8 @@ import { findFirstHref } from "../lib/nav.ts";
 /** 404 page component — exported for programmatic routing */
 export function NotFoundPage(ctx: PageProps<unknown, State>) {
   const config = ctx.state.denote.config;
-  const docsHref = findFirstHref(config.navigation) || "/docs";
+  const docsHref = findFirstHref(config.navigation) ||
+    ctx.state.denote.docsBasePath;
   // Popular pages to suggest
   const suggestions = config.navigation
     .flatMap((section) =>
