@@ -65,10 +65,16 @@ export async function generateLlmsTxt(
 
 /**
  * Generate full markdown dump of all docs — optimized for AI context windows.
+ * Result is cached in memory and cleared when content changes.
  */
+
+let cachedFullDocs: string | null = null;
+
 export async function generateFullDocs(
   denoteContext: DenoteContext,
 ): Promise<string> {
+  if (cachedFullDocs) return cachedFullDocs;
+
   const config = denoteContext.config;
   const docs = await getAllDocs(denoteContext);
 
@@ -102,7 +108,13 @@ export async function generateFullDocs(
     sections.push("");
   }
 
-  return sections.join("\n");
+  cachedFullDocs = sections.join("\n");
+  return cachedFullDocs;
+}
+
+/** Clear the full docs cache (called on content invalidation) */
+export function clearFullDocsCache(): void {
+  cachedFullDocs = null;
 }
 
 /**

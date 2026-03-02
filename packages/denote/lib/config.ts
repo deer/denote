@@ -105,7 +105,7 @@ let _config: DenoteConfig | null = null;
 export function getConfig(): DenoteConfig {
   if (!_config) {
     throw new Error(
-      "Denote config not initialized. Call setConfig() or import denote.config.ts first.",
+      "Denote config not initialized. Ensure denote.config.ts exports a 'config' object and that denote() is called in main.ts before the server starts.",
     );
   }
   return _config;
@@ -117,7 +117,9 @@ export function setConfig(config: DenoteConfig): void {
   if (!result.success) {
     for (const issue of result.error.issues) {
       const path = issue.path.length > 0 ? issue.path.join(".") : "config";
-      console.warn(`Warning: Config validation — ${path}: ${issue.message}`);
+      console.warn(
+        `Warning: Config validation — ${path}: ${issue.message}. Check this field in denote.config.ts.`,
+      );
     }
   }
   _config = config;

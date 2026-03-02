@@ -70,6 +70,30 @@ function validateConfig(config: DenoteConfig): ValidationIssue[] {
     }
   }
 
+  // Validate SEO fields
+  if (config.seo?.url) {
+    try {
+      new URL(config.seo.url);
+    } catch {
+      issues.push({
+        severity: "error",
+        message:
+          `Config: seo.url "${config.seo.url}" is not a valid URL. Use a full URL like "https://example.com".`,
+      });
+    }
+  }
+  if (config.seo?.ogImage) {
+    try {
+      new URL(config.seo.ogImage);
+    } catch {
+      issues.push({
+        severity: "error",
+        message:
+          `Config: seo.ogImage "${config.seo.ogImage}" is not a valid URL. Use a full URL like "https://example.com/og.png".`,
+      });
+    }
+  }
+
   return issues;
 }
 
@@ -92,7 +116,8 @@ export async function validate(
   } catch {
     issues.push({
       severity: "error",
-      message: `Content directory not found: ${contentDir}`,
+      message:
+        `Content directory not found: ${contentDir} — create it with mkdir -p content/docs and add at least one .md file.`,
     });
     return issues;
   }
@@ -102,7 +127,8 @@ export async function validate(
   if (docs.length === 0) {
     issues.push({
       severity: "warning",
-      message: "No markdown files found in content directory.",
+      message:
+        `No markdown files found in ${contentDir}. Add .md files with YAML frontmatter (title, description) to populate your docs.`,
     });
   }
 
@@ -125,7 +151,10 @@ export async function validate(
     if (!slugs.has(href)) {
       issues.push({
         severity: "error",
-        message: `Navigation link "${href}" does not match any document.`,
+        message:
+          `Navigation link "${href}" does not match any document. Expected a file at content/docs/${
+            href.replace(docsBasePath + "/", "")
+          }.md or update the href in denote.config.ts.`,
       });
     }
   }

@@ -15,6 +15,7 @@ import {
 import type { NavItem } from "../denote.config.ts";
 import type { DenoteContext } from "../utils.ts";
 import { resolve } from "@std/path";
+import { clearFullDocsCache } from "./ai.ts";
 
 export interface DocPage extends ParsedDoc {
   slug: string;
@@ -53,6 +54,7 @@ function invalidate(filePath?: string): void {
     renderCache.clear();
     allDocsLoaded = false;
     clearSearchIndexCache();
+    clearFullDocsCache();
     return;
   }
 
@@ -65,6 +67,7 @@ function invalidate(filePath?: string): void {
   }
   allDocsLoaded = false;
   clearSearchIndexCache();
+  clearFullDocsCache();
 }
 
 /**

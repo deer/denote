@@ -1,6 +1,11 @@
 import { testContext } from "./test_config.ts";
 import { assertEquals, assertStringIncludes } from "jsr:@std/assert@1";
-import { generateFullDocs, generateLlmsTxt, getDocsJson } from "./ai.ts";
+import {
+  clearFullDocsCache,
+  generateFullDocs,
+  generateLlmsTxt,
+  getDocsJson,
+} from "./ai.ts";
 
 Deno.test("generateLlmsTxt - includes doc links", async () => {
   const txt = await generateLlmsTxt(testContext, "http://localhost:8000");
@@ -23,6 +28,15 @@ Deno.test("getDocsJson - returns structured data", async () => {
   };
   assertEquals(json.name, "Denote");
   assertEquals(json.pages.length > 0, true);
+});
+
+Deno.test("generateFullDocs - returns cached result on second call", async () => {
+  clearFullDocsCache();
+  const first = await generateFullDocs(testContext);
+  const second = await generateFullDocs(testContext);
+  // Exact same reference — served from cache, not regenerated
+  assertEquals(first === second, true);
+  clearFullDocsCache();
 });
 
 Deno.test("generateLlmsTxt - includes MCP section when enabled", async () => {

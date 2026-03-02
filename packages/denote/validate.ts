@@ -31,7 +31,12 @@ async function loadConfig(): Promise<DenoteConfig> {
       return mod.config || mod.default;
     } catch (e) {
       if (!(e instanceof Deno.errors.NotFound)) {
-        console.error(`  [denote] Error loading ${name}:`, e);
+        console.error(red(`Error loading ${name}:`), e);
+        console.error(
+          `  Check for syntax errors in your config file, or re-scaffold with ${
+            cyan("deno run -Ar jsr:@denote/init")
+          }`,
+        );
       }
     }
   }

@@ -49,7 +49,9 @@ export function denoteHmr(): import("vite").Plugin {
             server.hot.send({ type: "full-reload" });
           } catch (e: unknown) {
             const msg = e instanceof Error ? e.message : String(e);
-            console.error("  [denote] Config reload error:", msg);
+            console.error(
+              `  [denote] Config reload error: ${msg}\n  Check denote.config.ts for syntax errors. The previous config is still active.`,
+            );
           }
         }
       });
