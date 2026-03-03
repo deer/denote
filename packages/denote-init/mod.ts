@@ -365,7 +365,7 @@ dist/
   // Pin to a specific Deno version for reproducible builds. Users should
   // update this when upgrading Deno.
   const dockerfile = `# Build stage
-FROM denoland/deno:2.3.5 AS builder
+FROM denoland/deno:2.7.1 AS builder
 
 WORKDIR /app
 
@@ -376,21 +376,18 @@ COPY . .
 RUN deno task build
 
 # Runtime stage
-FROM denoland/deno:2.3.5
+FROM denoland/deno:2.7.1
 
 WORKDIR /app
 
 COPY --from=builder /app/_fresh ./_fresh
 COPY --from=builder /app/content ./content
 COPY --from=builder /app/denote.config.ts ./denote.config.ts
-COPY --from=builder /app/deno.json ./deno.json
 COPY --from=builder /app/static ./static
-
-RUN deno install
 
 EXPOSE 8000
 
-CMD ["deno", "task", "start"]
+CMD ["deno", "serve", "-A", "_fresh/server.js"]
 `;
   if (!await fileExists(`${projectDir}/Dockerfile`)) {
     await Deno.writeTextFile(`${projectDir}/Dockerfile`, dockerfile);
