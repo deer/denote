@@ -202,6 +202,11 @@ content/docs/
     └── reference.md     # /docs/api/reference
 ```
 
+> [!NOTE]
+> Pages must be added to `navigation` in `denote.config.ts` to appear in the
+> sidebar. Files in `content/docs/` are accessible by URL but won't show in
+> navigation until configured.
+
 ## Extended Markdown Features
 
 Denote uses `@deer/gfm` which supports GitHub Flavored Markdown extensions.
@@ -283,3 +288,9 @@ URLs and email addresses are automatically linked:
 4. **Use code examples** — show, don't just tell
 5. **Keep pages focused** — one topic per page
 6. **Use nested lists** — organize complex information hierarchically
+
+## Next Steps
+
+- [Components](/docs/components) — Built-in UI components and islands
+- [Configuration](/docs/configuration) — Customize your site settings
+- [Theming & Styling](/docs/theming) — Colors, dark mode, and CSS variables

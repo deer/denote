@@ -147,7 +147,8 @@ export const app = denote({ config });
   console.log(`  ${green("✓")} main.ts`);
 
   // Create client.ts — client-side entry for CSS
-  const clientTs = `// Fresh client entry point — this file is bundled for the browser.
+  const clientTs =
+    `// Fresh client entry point — this file is bundled for the browser.
 // Importing CSS here ensures Tailwind styles are included in the client bundle.
 import "./styles.css";
 `;
@@ -389,8 +390,10 @@ EXPOSE 8000
 
 CMD ["deno", "task", "start"]
 `;
-  await Deno.writeTextFile(`${projectDir}/Dockerfile`, dockerfile);
-  console.log(`  ${green("✓")} Dockerfile`);
+  if (!await fileExists(`${projectDir}/Dockerfile`)) {
+    await Deno.writeTextFile(`${projectDir}/Dockerfile`, dockerfile);
+    console.log(`  ${green("✓")} Dockerfile`);
+  }
 
   // Create README.md
   const readmeMd = `# ${projectName}
@@ -435,8 +438,10 @@ docker build -t ${projectName} .
 docker run -p 8000:8000 ${projectName}
 \`\`\`
 `;
-  await Deno.writeTextFile(`${projectDir}/README.md`, readmeMd);
-  console.log(`  ${green("✓")} README.md`);
+  if (!await fileExists(`${projectDir}/README.md`)) {
+    await Deno.writeTextFile(`${projectDir}/README.md`, readmeMd);
+    console.log(`  ${green("✓")} README.md`);
+  }
 
   // Done! Skip "cd" instruction when scaffolding into the current directory.
   const isCwd = projectDir === Deno.cwd();

@@ -47,6 +47,8 @@ Pretty simple, right?
 Update your `denote.config.ts` to include the new page:
 
 ```typescript
+import type { DenoteConfig } from "@denote/core";
+
 export const config: DenoteConfig = {
   name: "My Docs",
   navigation: [
@@ -60,6 +62,11 @@ export const config: DenoteConfig = {
   ],
 };
 ```
+
+> [!NOTE]
+> Pages must be added to `navigation` in `denote.config.ts` to appear in the
+> sidebar. Files in `content/docs/` are accessible by URL but won't show in
+> navigation until configured.
 
 ## Step 3: View Your Page
 

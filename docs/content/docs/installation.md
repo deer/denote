@@ -49,8 +49,13 @@ my-docs/
 │       ├── introduction.md
 │       └── installation.md
 ├── static/
+├── client.ts
 ├── denote.config.ts
 ├── deno.json
+├── Dockerfile
+├── main.ts
+├── styles.css
+├── vite.config.ts
 └── .gitignore
 ```
 
@@ -69,7 +74,30 @@ site.
 
 - `content/docs/` - Your documentation markdown files
 - `denote.config.ts` - Site configuration (navigation, branding, etc.)
+- `main.ts` - Fresh app entry point
+- `vite.config.ts` - Vite build configuration
+- `client.ts` - Client-side entry for CSS
+- `styles.css` - Tailwind CSS imports
 - `static/` - Static assets (images, fonts, etc.)
+- `Dockerfile` - Production Docker image
+
+## Validate Your Project
+
+Run the built-in validation to catch common issues:
+
+```bash
+deno task validate
+```
+
+This checks your project for:
+
+- **Config errors** — missing `name`, invalid hex colors, malformed URLs
+- **Content issues** — missing `content/docs/` directory, files without a
+  `title` in frontmatter
+- **Broken navigation links** — any `href` in your `navigation` config that
+  doesn't match an existing markdown file
+
+Fix any errors before deploying to avoid broken links or missing pages.
 
 ## Next Steps
 

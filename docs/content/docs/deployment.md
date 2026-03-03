@@ -42,8 +42,8 @@ Your site will be available at [http://localhost:8000](http://localhost:8000).
 Denote is a Fresh app, follow the standard
 [Fresh deployment guide](https://fresh.deno.dev/docs/deployment).
 
-The quickest option is connecting your GitHub repository for automatic deploys on
-every push — no CLI needed.
+The quickest option is connecting your GitHub repository for automatic deploys
+on every push — no CLI needed.
 
 ### Manual Deploy
 

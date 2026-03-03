@@ -59,23 +59,26 @@ denote/
 │   ├── denote/           # Core library (@denote/core)
 │   │   ├── components/   # Server-rendered Preact components
 │   │   ├── islands/      # Client-side interactive components
-│   │   ├── lib/          # Utilities (markdown, search, AI)
-│   │   └── routes/       # Fresh file-based routes
+│   │   ├── lib/          # Core utilities (markdown, docs, AI)
+│   │   ├── routes/       # Fresh file-based routes
+│   │   └── denote.config.ts  # Config type definitions
 │   └── denote-init/      # Scaffolding CLI (@denote/init)
 └── docs/                 # Documentation site (denote.sh)
-    └── content/docs/     # Markdown documentation files
+    ├── content/docs/     # Markdown documentation files
+    └── denote.config.ts  # Docs site configuration
 ```
 
 ### Writing Documentation
 
-- Place `.md` files in `content/docs/`
+- Place `.md` files in `docs/content/docs/`
 - Use YAML frontmatter for `title` and `description`
-- Add new pages to the `navigation` array in `denote.config.ts`
+- Add new pages to the `navigation` array in `docs/denote.config.ts`
 - Keep paragraphs on single lines (the markdown parser is regex-based)
 
 ### Tests
 
-- Tests live next to their source files (`lib/foo.ts` → `lib/foo_test.ts`)
+- Tests live next to their source files (`packages/denote/lib/foo.ts` →
+  `packages/denote/lib/foo_test.ts`)
 - Run tests with `deno task test`
 - Add tests for new functionality where practical
 

@@ -134,15 +134,10 @@ endpoint:
 
 ## Available tools and resources
 
-The MCP server exposes:
-
-- **Tools**: `search_docs` (find pages by keyword), `get_doc` (read a single
-  page), `get_all_docs` (full documentation dump)
-- **Resources**: `docs://index` (page listing), `docs://{slug}` (individual
-  pages)
-
-All responses include canonical web URLs back to your docs site, so AI agents
-can link users to the source.
+The MCP server exposes tools for searching, reading, and dumping your docs, plus
+resources for listing and accessing individual pages. See the
+[API Reference — MCP Server](/docs/api#mcp-server) for the full list of tools
+and resources.
 
 ## Content Tags
 
