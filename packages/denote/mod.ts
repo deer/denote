@@ -376,7 +376,23 @@ export function denote(options: DenoteOptions): App<unknown> {
       const baseUrl = seoBase || new URL(ctx.req.url).origin;
       const docs = await getAllDocs(denoteCtx);
 
-      const xml = buildSitemapXml(baseUrl, denoteCtx.docsBasePath, docs);
+      // Read file modification times for accurate lastmod dates
+      const sitemapDocs = await Promise.all(
+        docs.map(async (doc) => {
+          try {
+            const stat = await Deno.stat(doc.path);
+            const mtime = stat.mtime ?? new Date();
+            return {
+              slug: doc.slug,
+              lastmod: mtime.toISOString().slice(0, 10),
+            };
+          } catch {
+            return { slug: doc.slug };
+          }
+        }),
+      );
+
+      const xml = buildSitemapXml(baseUrl, denoteCtx.docsBasePath, sitemapDocs);
 
       return new Response(xml, {
         headers: { "Content-Type": "application/xml; charset=utf-8" },

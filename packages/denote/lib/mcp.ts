@@ -83,11 +83,16 @@ export function createMcpServer(
     async (uri, { slug }) => {
       // Validate slug before passing to getDoc
       if (!SLUG_PATTERN.test(slug as string)) {
+        const hint = (slug as string) !== (slug as string).toLowerCase()
+          ? ` Slugs must be lowercase. Try "${
+            (slug as string).toLowerCase()
+          }" instead.`
+          : "";
         return {
           contents: [{
             uri: uri.href,
             mimeType: "text/plain",
-            text: `Invalid slug: ${slug}`,
+            text: `Invalid slug: "${slug}".${hint}`,
           }],
         };
       }
@@ -204,6 +209,15 @@ export function createMcpServer(
       ),
     },
     async ({ slug }: { slug: string }) => {
+      if (slug !== slug.toLowerCase()) {
+        return {
+          content: [{
+            type: "text" as const,
+            text:
+              `Invalid slug: "${slug}". Slugs must be lowercase. Try "${slug.toLowerCase()}" instead.`,
+          }],
+        };
+      }
       const doc = await getDoc(slug, denoteContext);
       if (!doc) {
         return {

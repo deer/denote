@@ -94,6 +94,23 @@ Deno.test("buildSitemapXml - lists all doc pages", () => {
   assertEquals(xml.includes("/docs/guides/advanced</loc>"), true);
 });
 
+Deno.test("buildSitemapXml - uses per-doc lastmod when provided", () => {
+  const docs = [
+    { slug: "intro", lastmod: "2025-12-01" },
+    { slug: "install" },
+  ];
+  const xml = buildSitemapXml("https://example.com", "/docs", docs);
+  assertEquals(xml.includes("<lastmod>2025-12-01</lastmod>"), true);
+  // Doc without lastmod falls back to today
+  const today = new Date().toISOString().slice(0, 10);
+  const lastmods = [...xml.matchAll(/<lastmod>([^<]+)<\/lastmod>/g)].map(
+    (m) => m[1],
+  );
+  // home and index use today, install uses today, intro uses 2025-12-01
+  assertEquals(lastmods.filter((d) => d === today).length, 3);
+  assertEquals(lastmods.filter((d) => d === "2025-12-01").length, 1);
+});
+
 // ---------------------------------------------------------------------------
 // buildRobotsTxt
 // ---------------------------------------------------------------------------
