@@ -85,10 +85,9 @@ configuration needed:
 | `X-Content-Type-Options`    | `nosniff`                                      |
 | `X-Frame-Options`           | `DENY`                                         |
 | `Referrer-Policy`           | `strict-origin-when-cross-origin`              |
-| `Content-Security-Policy`   | Default policy (customizable via `csp` config) |
+| `Content-Security-Policy`   | Auto-configured policy                         |
 
-These headers are always active in both development and production. CSP
-directives can be customized through the `csp` option in your config. Hashed
+These headers are always active in both development and production. Hashed
 static assets (files matching `/_fresh/` or `.[hash].(js|css|...)`) also receive
 `Cache-Control: public, max-age=31536000, immutable` for aggressive caching.
 

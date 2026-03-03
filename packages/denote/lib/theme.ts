@@ -199,11 +199,10 @@ export function darkModeScript(
   if (mode === "dark") {
     return `(function(){document.documentElement.classList.add('dark')})();`;
   }
-  // "toggle" defaults to dark, "auto" (default) uses system preference
-  const defaultDark = mode === "toggle";
+  // Both "toggle" and "auto" respect system preference, then localStorage
   return `(function(){
     var s;try{s=localStorage.getItem('theme')}catch(e){}
     var p=window.matchMedia('(prefers-color-scheme: dark)').matches;
-    if(s==='dark'||(!s&&(p||${defaultDark}))){document.documentElement.classList.add('dark')}
+    if(s==='dark'||(!s&&p)){document.documentElement.classList.add('dark')}
   })();`;
 }
