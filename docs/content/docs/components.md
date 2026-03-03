@@ -72,3 +72,10 @@ preference is saved in `localStorage`.
 
 On smaller screens, the sidebar collapses into a hamburger menu accessible from
 the header.
+
+## Next Steps
+
+- [Theming & Styling](/docs/theming) — Customize colors, dark mode, and CSS
+  variables
+- [Custom Pages](/docs/custom-pages) — Add standalone pages outside the docs
+  layout

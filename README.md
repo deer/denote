@@ -90,6 +90,8 @@ Write your documentation here with full Markdown support.
 Edit `denote.config.ts` to customize navigation, branding, and more:
 
 ```typescript
+import type { DenoteConfig } from "@denote/core";
+
 export const config: DenoteConfig = {
   name: "My Docs",
   colors: {
@@ -114,10 +116,9 @@ export const config: DenoteConfig = {
 
 ### Deno Deploy
 
-```bash
-deno task build
-deployctl deploy --project=my-docs _fresh/server.js
-```
+Connect your GitHub repo to [Deno Deploy](https://deno.com/deploy) for automatic
+deployments on every push. See the
+[Fresh deployment guide](https://fresh.deno.dev/docs/deployment).
 
 ### Docker
 

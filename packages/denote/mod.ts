@@ -8,9 +8,10 @@
  *
  * @example Usage
  * ```ts
+ * // main.ts
  * import { denote } from "@denote/core";
  *
- * const app = denote({
+ * export const app = denote({
  *   config: {
  *     name: "My Docs",
  *     navigation: [
@@ -20,8 +21,7 @@
  *     ],
  *   },
  * });
- *
- * app.listen();
+ * // Run with: deno serve -A main.ts
  * ```
  */
 import { App, staticFiles } from "fresh";
@@ -96,9 +96,10 @@ export interface DenoteOptions {
  *
  * @example Usage
  * ```ts
+ * // main.ts
  * import { denote } from "@denote/core";
  *
- * const app = denote({
+ * export const app = denote({
  *   config: {
  *     name: "My Docs",
  *     navigation: [
@@ -108,8 +109,7 @@ export interface DenoteOptions {
  *     ],
  *   },
  * });
- *
- * app.listen();
+ * // Run with: deno serve -A main.ts
  * ```
  */
 export function denote(options: DenoteOptions): App<unknown> {

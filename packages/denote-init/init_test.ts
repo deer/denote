@@ -244,6 +244,8 @@ Deno.test("scaffold creates expected files", async () => {
   await expectProjectFile(tmp.path, "content/docs/introduction.md");
   await expectProjectFile(tmp.path, "content/docs/installation.md");
   await expectProjectFile(tmp.path, ".gitignore");
+  await expectProjectFile(tmp.path, "Dockerfile");
+  await expectProjectFile(tmp.path, "README.md");
 
   // Directories exist
   await expectProjectDir(tmp.path, "static");
@@ -388,17 +390,21 @@ Deno.test("project name propagates to all files", async () => {
 Deno.test("scaffold into existing directory preserves files", async () => {
   await using tmp = await useTempDir("denote_init_preserve_");
 
-  // Create a pre-existing file
+  // Create pre-existing files
   const readmePath = join(tmp.path, "README.md");
   await Deno.writeTextFile(readmePath, "# Existing README\n");
+  const dockerfilePath = join(tmp.path, "Dockerfile");
+  await Deno.writeTextFile(dockerfilePath, "FROM custom:latest\n");
 
   await withSuppressedConsole(() =>
     initProject({ dir: tmp.path, name: "preserve-test" })
   );
 
-  // Pre-existing file should still be there
+  // Pre-existing files should still be there
   const readme = await Deno.readTextFile(readmePath);
   assertEquals(readme, "# Existing README\n");
+  const dockerfile = await Deno.readTextFile(dockerfilePath);
+  assertEquals(dockerfile, "FROM custom:latest\n");
 
   // Scaffolded files should also exist
   await expectProjectFile(tmp.path, "denote.config.ts");

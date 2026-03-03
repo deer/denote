@@ -97,3 +97,8 @@ consistent with the site theme:
 ```
 
 See the [Theming & Styling](/docs/theming) page for all available tokens.
+
+## Next Steps
+
+- [Theming & Styling](/docs/theming) — All available CSS variables and dark mode
+- [Deployment](/docs/deployment) — Deploy to Deno Deploy or Docker
