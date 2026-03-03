@@ -329,7 +329,7 @@ hello("world");
 
 ## Configuration
 
-See the [Configuration](/docs/introduction) page for all available options.
+See the [Introduction](/docs/introduction) page for an overview.
 
 ---
 
@@ -362,6 +362,8 @@ dist/
   console.log(`  ${green("✓")} .gitignore`);
 
   // Create Dockerfile
+  // Pin to a specific Deno version for reproducible builds. Users should
+  // update this when upgrading Deno.
   const dockerfile = `# Build stage
 FROM denoland/deno:2.3.5 AS builder
 

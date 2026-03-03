@@ -148,6 +148,12 @@ For richer AI integration, Denote includes a built-in
 Register custom API routes on the Fresh app instance in your `main.ts`:
 
 ```typescript
+// main.ts
+import { denote } from "@denote/core";
+import { config } from "./denote.config.ts";
+
+export const app = denote({ config });
+
 app.get("/api/custom", (ctx) => {
   return new Response(JSON.stringify({ hello: "world" }), {
     headers: { "Content-Type": "application/json" },

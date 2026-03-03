@@ -54,6 +54,7 @@ my-docs/
 ├── deno.json
 ├── Dockerfile
 ├── main.ts
+├── README.md
 ├── styles.css
 ├── vite.config.ts
 └── .gitignore
