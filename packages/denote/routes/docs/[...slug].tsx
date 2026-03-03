@@ -35,7 +35,6 @@ export async function DocsPage(ctx: PageProps<unknown, State>) {
   return (
     <DocsLayout
       config={config}
-      title={doc.frontmatter.title}
       description={doc.frontmatter.description}
       toc={toc}
       currentPath={currentPath}

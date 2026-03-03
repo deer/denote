@@ -12,7 +12,6 @@ import type { DenoteConfig } from "../denote.config.ts";
 
 interface DocsLayoutProps {
   config: DenoteConfig;
-  title: string;
   description?: string;
   children: ComponentChildren;
   toc?: TocItem[];
@@ -24,7 +23,6 @@ interface DocsLayoutProps {
 
 export function DocsLayout({
   config,
-  title,
   description,
   children,
   toc = [],
@@ -94,17 +92,12 @@ export function DocsLayout({
             </nav>
           )}
 
-          {/* Page header */}
-          <header class="mb-8">
-            <h1 class="text-4xl font-bold text-[var(--denote-text)] mb-2">
-              {title}
-            </h1>
-            {description && (
-              <p class="text-lg text-[var(--denote-text-secondary)]">
-                {description}
-              </p>
-            )}
-          </header>
+          {/* Description (title comes from the markdown H1 via gfm) */}
+          {description && (
+            <p class="text-lg text-[var(--denote-text-secondary)] mb-8">
+              {description}
+            </p>
+          )}
 
           {/* Content */}
           <div class="max-w-none">

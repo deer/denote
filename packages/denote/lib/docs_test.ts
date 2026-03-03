@@ -12,7 +12,7 @@ import {
 Deno.test("getDoc - returns introduction page", async () => {
   const doc = await getDoc("introduction", testContext);
   assertNotEquals(doc, null);
-  assertEquals(doc!.frontmatter.title, "Introduction");
+  assertEquals(doc!.frontmatter.title, "Welcome to Denote");
   assertEquals(doc!.slug, "introduction");
 });
 

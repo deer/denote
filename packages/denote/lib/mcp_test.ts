@@ -212,7 +212,7 @@ Deno.test("get_doc - returns existing page", mcpTestOpts, async () => {
   });
 
   const text = toolText(result);
-  assertStringIncludes(text, "# Introduction");
+  assertStringIncludes(text, "# Welcome to Denote");
 
   await close();
 });
@@ -364,7 +364,7 @@ Deno.test(
     assertEquals((result.contents[0] as Any).mimeType, "text/markdown");
 
     const text = resourceText(result);
-    assertStringIncludes(text, "# Introduction");
+    assertStringIncludes(text, "# Welcome to Denote");
 
     await close();
   },
