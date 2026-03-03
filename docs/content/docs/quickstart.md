@@ -78,8 +78,9 @@ deno task dev
 
 Your new page is now live! 🎉
 
-## What's Next?
+## Next Steps
 
-- Learn about [frontmatter options](/docs/content#frontmatter)
-- Explore [built-in components](/docs/components)
-- Customize your [theme](/docs/theming)
+- [Writing Content](/docs/content) — Frontmatter options and markdown syntax
+- [Configuration](/docs/configuration) — Customize navigation, branding, and
+  more
+- [Components](/docs/components) — Built-in UI components and islands

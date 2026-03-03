@@ -403,3 +403,10 @@ config.
 3. **Use the config first** — most customizations belong in `denote.config.ts`,
    not custom CSS
 4. **Test both modes** — toggle dark mode to verify contrast and readability
+
+## Next Steps
+
+- [Components](/docs/components) — Built-in UI components and islands
+- [Custom Pages](/docs/custom-pages) — Add standalone pages outside the docs
+  layout
+- [Configuration](/docs/configuration) — Full config reference

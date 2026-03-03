@@ -4,7 +4,7 @@ FROM denoland/deno:2.7.1 AS builder
 WORKDIR /app
 
 # Cache dependencies
-COPY deno.json deno.lock ./
+COPY deno.json deno.lock* ./
 COPY packages/denote/deno.json ./packages/denote/
 COPY packages/denote-init/deno.json ./packages/denote-init/
 COPY docs/deno.json ./docs/

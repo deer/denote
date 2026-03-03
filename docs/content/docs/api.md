@@ -145,7 +145,9 @@ For richer AI integration, Denote includes a built-in
 
 ## Custom Endpoints
 
-Register custom API routes on the Fresh app instance in your `main.ts`:
+Register custom API routes on the Fresh app instance in your `main.ts`. The
+`app` returned by `denote()` is a standard Fresh app, so you can add routes with
+`app.get()`, `app.post()`, etc.:
 
 ```typescript
 // main.ts
@@ -166,3 +168,9 @@ app.get("/api/custom", (ctx) => {
 Denote is built on [Fresh](https://fresh.deno.dev/docs/). For details on
 routing, middleware, and app configuration, see the
 [Fresh documentation](https://fresh.deno.dev/docs/).
+
+## Next Steps
+
+- [AI Native](/docs/ai-native) — Design philosophy behind these endpoints
+- [Custom Pages](/docs/custom-pages) — Add standalone routes to your app
+- [Deployment](/docs/deployment) — Deploy to Deno Deploy or Docker
