@@ -54,7 +54,7 @@ export const config: DenoteConfig = {
     imports: ["/fonts.css"],
   },
   style: {
-    darkMode: "auto",
+    darkMode: "toggle",
     roundedness: "lg",
   },
   seo: {

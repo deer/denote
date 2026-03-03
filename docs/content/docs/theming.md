@@ -118,12 +118,12 @@ export const config: DenoteConfig = {
 };
 ```
 
-| Mode     | Behavior                                         |
-| -------- | ------------------------------------------------ |
-| `auto`   | Follow system preference, show toggle (default)  |
-| `light`  | Force light mode, hide toggle                    |
-| `dark`   | Force dark mode, hide toggle                     |
-| `toggle` | Default to dark, show toggle for users to switch |
+| Mode     | Behavior                                                  |
+| -------- | --------------------------------------------------------- |
+| `auto`   | Follow system preference, no toggle (default)             |
+| `light`  | Force light mode, no toggle                               |
+| `dark`   | Force dark mode, no toggle                                |
+| `toggle` | Follow system preference, show toggle for users to switch |
 
 ### When to Use `dark:` Prefixes
 

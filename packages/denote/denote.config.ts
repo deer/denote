@@ -97,7 +97,7 @@ export interface FontConfig {
 export interface StyleConfig {
   /** Border radius scale: none=0, sm=0.25rem, md=0.5rem (default), lg=0.75rem, xl=1rem */
   roundedness?: "none" | "sm" | "md" | "lg" | "xl";
-  /** Dark mode behavior: auto (system preference), light (force light), dark (force dark), toggle (system preference + toggle) */
+  /** Dark mode behavior: auto (system preference, no toggle), light (force light), dark (force dark), toggle (system preference + user toggle) */
   darkMode?: "auto" | "light" | "dark" | "toggle";
   /** Path to a custom CSS file relative to the docs directory, loaded after all theme tokens */
   customCss?: string;

@@ -34,8 +34,8 @@ export interface ThemeToggleProps {
 export function ThemeToggle(
   { darkMode }: ThemeToggleProps,
 ): preact.JSX.Element | null {
-  // Hide toggle when theme is forced
-  if (darkMode === "light" || darkMode === "dark") {
+  // Hide toggle when theme is forced or fully automatic
+  if (darkMode === "light" || darkMode === "dark" || darkMode === "auto") {
     return null;
   }
 
@@ -44,8 +44,7 @@ export function ThemeToggle(
     const stored = localStorage.getItem("theme");
     const prefersDark =
       globalThis.matchMedia("(prefers-color-scheme: dark)").matches;
-    isDark.value = stored === "dark" ||
-      (!stored && (prefersDark || darkMode === "toggle"));
+    isDark.value = stored === "dark" || (!stored && prefersDark);
     mounted.value = true;
   }
 
@@ -56,9 +55,17 @@ export function ThemeToggle(
       class="p-2 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
       aria-label="Toggle theme"
     >
-      {/* Sun icon (shown in dark mode) */}
+      {
+        /* Sun icon (shown in dark mode)
+         Before hydration: CSS dark: variant handles visibility (IIFE sets .dark before paint)
+         After hydration: signals take over */
+      }
       <svg
-        class={`w-5 h-5 ${isDark.value && mounted.value ? "block" : "hidden"}`}
+        class={`w-5 h-5 ${
+          mounted.value
+            ? (isDark.value ? "block" : "hidden")
+            : "hidden dark:block"
+        }`}
         fill="none"
         stroke="currentColor"
         viewBox="0 0 24 24"
@@ -73,7 +80,9 @@ export function ThemeToggle(
       {/* Moon icon (shown in light mode) */}
       <svg
         class={`w-5 h-5 ${
-          !isDark.value || !mounted.value ? "block" : "hidden"
+          mounted.value
+            ? (isDark.value ? "hidden" : "block")
+            : "block dark:hidden"
         }`}
         fill="none"
         stroke="currentColor"
