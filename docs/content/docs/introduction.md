@@ -1,15 +1,16 @@
 ---
-title: Introduction
+title: Welcome to Denote
 description: Denote — the open-source, AI-native documentation framework
 ai-summary: Denote is an open-source, AI-native documentation framework. It auto-generates llms.txt, JSON API, and MCP server endpoints so AI agents can consume your docs as structured data. Zero config, server-rendered, markdown-first.
-ai-keywords:
-  - documentation
-  - deno
-  - fresh
-  - ai-native
-  - open-source
-  - llms.txt
-  - mcp
+ai-keywords: [
+  documentation,
+  deno,
+  fresh,
+  ai-native,
+  open-source,
+  llms.txt,
+  mcp,
+]
 ---
 
 # Welcome to Denote
@@ -83,3 +84,9 @@ deno run -Ar jsr:@denote/init
 ```
 
 Or head to the [Installation guide](/docs/installation) for more options.
+
+## Next Steps
+
+- [Quick Start](/docs/quickstart) — Create your first page in 5 minutes
+- [Installation](/docs/installation) — Full setup guide and project structure
+- [AI Native](/docs/ai-native) — How AI agents consume your docs

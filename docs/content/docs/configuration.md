@@ -501,3 +501,10 @@ export const config: DenoteConfig = {
   editUrl: "https://github.com/acme/docs/edit/main/docs/content/docs",
 };
 ```
+
+## Next Steps
+
+- [Theming & Styling](/docs/theming) — Colors, fonts, dark mode, and CSS
+  variables
+- [Writing Content](/docs/content) — Markdown syntax and frontmatter options
+- [Deployment](/docs/deployment) — Deploy to Deno Deploy or Docker

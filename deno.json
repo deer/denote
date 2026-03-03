@@ -1,6 +1,4 @@
 {
-  "name": "@denote/monorepo",
-  "exports": "./packages/denote/mod.ts",
   "nodeModulesDir": "auto",
   "workspace": [
     "packages/denote",

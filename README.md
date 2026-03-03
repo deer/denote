@@ -133,10 +133,11 @@ docker run -p 8000:8000 my-docs
 denote/
 ├── packages/
 │   ├── denote/           # Core library (@denote/core)
-│   │   ├── components/   # Server-rendered components
-│   │   ├── islands/      # Interactive client components
-│   │   ├── lib/          # Utilities (markdown, search, AI)
+│   │   ├── components/   # Server-rendered Preact components
+│   │   ├── islands/      # Client-side interactive components
+│   │   ├── lib/          # Core utilities (markdown, docs, AI)
 │   │   ├── routes/       # Fresh file-based routes
+│   │   ├── denote.config.ts  # Config type definitions
 │   │   └── mod.ts        # Library entry point
 │   └── denote-init/      # Scaffolding CLI (@denote/init)
 ├── docs/                 # Documentation site (denote.sh)

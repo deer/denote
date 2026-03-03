@@ -102,6 +102,6 @@ Fix any errors before deploying to avoid broken links or missing pages.
 
 ## Next Steps
 
-- [Quick Start](/docs/quickstart) - Build your first doc page
-- [Configuration](/docs/configuration) - Customize your site
-- [Writing Content](/docs/content) - Learn the markdown syntax
+- [Quick Start](/docs/quickstart) — Build your first doc page
+- [Configuration](/docs/configuration) — Customize your site
+- [Writing Content](/docs/content) — Learn the markdown syntax

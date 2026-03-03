@@ -2,16 +2,17 @@
 title: AI Native
 description: How Denote makes your documentation a first-class data source for AI agents
 ai-summary: Denote serves docs to both humans and AI agents. Three layers of AI access - llms.txt for discovery, JSON API for structured data and RAG pipelines, and MCP server for live tool integration with Cursor, Claude, and ChatGPT. All auto-generated from markdown, zero config.
-ai-keywords:
-  - ai
-  - llms.txt
-  - mcp
-  - json-api
-  - rag
-  - embeddings
-  - cursor
-  - claude
-  - chatgpt
+ai-keywords: [
+  ai,
+  llms.txt,
+  mcp,
+  json-api,
+  rag,
+  embeddings,
+  cursor,
+  claude,
+  chatgpt,
+]
 ---
 
 # AI Native
@@ -22,7 +23,7 @@ ai-keywords:
 Every Denote site is designed to serve two audiences: humans browsing your docs,
 and AI agents consuming your knowledge programmatically.
 
-## Why it matters
+## Why It Matters
 
 AI coding assistants like Cursor, Claude, and ChatGPT are now the primary way
 many developers interact with documentation. When someone asks "how do I
@@ -32,7 +33,7 @@ in a format it understands.
 Most documentation frameworks treat AI access as an afterthought. Denote builds
 it in from day one.
 
-## Three layers of AI access
+## Three Layers of AI Access
 
 ### 1. llms.txt — AI Discovery
 
@@ -93,7 +94,7 @@ export const config = {
 };
 ```
 
-## MCP on your deployed site
+## MCP on Your Deployed Site
 
 When `mcp: true` is set, your **deployed docs site itself becomes an MCP
 endpoint** at `/mcp`. No local setup needed — AI agents connect directly to your
@@ -132,7 +133,7 @@ endpoint:
 }
 ```
 
-## Available tools and resources
+## Available Tools and Resources
 
 The MCP server exposes tools for searching, reading, and dumping your docs, plus
 resources for listing and accessing individual pages. See the
@@ -156,8 +157,16 @@ ai-keywords:
 
 See [Writing Content](/docs/content) for full details on AI content tags.
 
-## Zero configuration
+## Zero Configuration
 
 All AI endpoints are generated automatically from your Markdown files. No
 plugins, no API keys, no indexing pipeline. Write your docs, and the AI layer
 just works.
+
+## Next Steps
+
+- [API Reference](/docs/api) — Full endpoint documentation for JSON API, MCP,
+  and llms.txt
+- [Writing Content](/docs/content) — Frontmatter fields including AI content
+  tags
+- [Configuration](/docs/configuration) — Enable MCP and other AI options
