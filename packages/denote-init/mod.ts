@@ -91,6 +91,7 @@ async function scaffold(projectDir: string, projectName: string) {
       dev: "deno run -A npm:vite",
       build: "deno run -A npm:vite build",
       start: "deno serve -A _fresh/server.js",
+      ok: "deno fmt --check && deno lint && deno check && deno task validate",
       validate: "deno run -A jsr:@denote/core/validate",
     },
     imports: {
@@ -179,6 +180,7 @@ import { denoteHmr } from "@denote/core/vite";
 import { islandSpecifiers } from "@denote/core";
 
 export default defineConfig({
+  server: { port: 8000 },
   plugins: [
     denoteHmr(),
     fresh({

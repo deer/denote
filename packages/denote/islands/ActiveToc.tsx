@@ -39,7 +39,14 @@ export function ActiveToc(
           }
         }
       },
-      { rootMargin: "-100px 0px -66% 0px" },
+      {
+        rootMargin: `-${
+          Number.parseInt(
+            getComputedStyle(document.documentElement)
+              .getPropertyValue("--denote-header-height") || "64",
+          ) + 36
+        }px 0px -66% 0px`,
+      },
     );
 
     for (const id of headingIds) {

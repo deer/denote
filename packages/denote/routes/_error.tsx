@@ -18,7 +18,7 @@ export function ErrorPage(ctx: PageProps<unknown, State>) {
 
       <main class="flex items-center justify-center min-h-[calc(100vh-4rem)]">
         <div class="text-center px-4 py-16 max-w-lg">
-          <div class="text-6xl mb-4">⚠️</div>
+          <div class="text-6xl mb-4" aria-hidden="true">⚠️</div>
 
           <h1 class="text-2xl font-semibold text-[var(--denote-text)] mb-3">
             Something went wrong

@@ -261,6 +261,10 @@ Deno.test("scaffold creates expected files", async () => {
     denoJson.tasks.validate,
     "deno run -A jsr:@denote/core/validate",
   );
+  assertEquals(
+    denoJson.tasks.ok,
+    "deno fmt --check && deno lint && deno check && deno task validate",
+  );
 
   // nodeModulesDir required for Vite's resolver
   assertEquals(denoJson.nodeModulesDir, "auto");
@@ -311,11 +315,12 @@ Deno.test("scaffold creates expected files", async () => {
   assertStringIncludes(mainTs, 'import { denote } from "@denote/core"');
   assertStringIncludes(mainTs, "export const app = denote(");
 
-  // vite.config.ts has Fresh plugin, island specifiers, and config HMR
+  // vite.config.ts has Fresh plugin, island specifiers, port, and config HMR
   const viteConfig = await readProjectFile(tmp.path, "vite.config.ts");
   assertStringIncludes(viteConfig, "islandSpecifiers");
   assertStringIncludes(viteConfig, "fresh");
   assertStringIncludes(viteConfig, "denoteHmr()");
+  assertStringIncludes(viteConfig, "server: { port: 8000 }");
 
   // styles.css imports core base CSS and scans for Tailwind classes
   const stylesCss = await readProjectFile(tmp.path, "styles.css");

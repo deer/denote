@@ -1,5 +1,5 @@
 import { assertEquals, assertStringIncludes } from "jsr:@std/assert@1";
-import { generateThemeCSS } from "./theme.ts";
+import { darkModeScript, generateThemeCSS } from "./theme.ts";
 import type { DenoteConfig } from "../denote.config.ts";
 
 /** Helper: minimal config */
@@ -322,4 +322,38 @@ Deno.test("generateThemeCSS - no dark block without primary/accent/dark", () => 
   }));
   // primary IS set so dark block IS generated (auto-derived)
   assertStringIncludes(css, "html:root.dark {");
+});
+
+// --- darkModeScript ---
+
+Deno.test("darkModeScript - light mode removes dark class", () => {
+  const script = darkModeScript("light");
+  assertStringIncludes(script, "classList.remove('dark')");
+  assertEquals(script.includes("localStorage"), false);
+});
+
+Deno.test("darkModeScript - dark mode adds dark class", () => {
+  const script = darkModeScript("dark");
+  assertStringIncludes(script, "classList.add('dark')");
+  assertEquals(script.includes("localStorage"), false);
+});
+
+Deno.test("darkModeScript - auto respects system preference", () => {
+  const script = darkModeScript("auto");
+  assertStringIncludes(script, "localStorage.getItem('theme')");
+  assertStringIncludes(script, "prefers-color-scheme: dark");
+  assertStringIncludes(script, "s==='dark'||(!s&&p)");
+});
+
+Deno.test("darkModeScript - toggle respects system preference", () => {
+  const script = darkModeScript("toggle");
+  assertStringIncludes(script, "localStorage.getItem('theme')");
+  assertStringIncludes(script, "prefers-color-scheme: dark");
+  // toggle should NOT hardcode dark — should use system preference like auto
+  assertStringIncludes(script, "s==='dark'||(!s&&p)");
+});
+
+Deno.test("darkModeScript - undefined defaults to auto behavior", () => {
+  const script = darkModeScript();
+  assertEquals(script, darkModeScript("auto"));
 });
