@@ -201,3 +201,117 @@ Deno.test("setConfig - warns on landing.hero missing title", () => {
     true,
   );
 });
+
+// ---------------------------------------------------------------------------
+// Strict mode — unrecognized keys (audit #2)
+// ---------------------------------------------------------------------------
+
+Deno.test("setConfig - warns on unrecognized top-level key", () => {
+  const warnings = captureWarnings(() => {
+    setConfig({
+      name: "Test",
+      navigation: [{ title: "X", href: "/docs/x" }],
+      // @ts-ignore: intentionally testing unknown key
+      darkmode: "toggle",
+    });
+  });
+  assertEquals(warnings.some((w) => w.includes("darkmode")), true);
+});
+
+// ---------------------------------------------------------------------------
+// New field validation (audit #2)
+// ---------------------------------------------------------------------------
+
+Deno.test("setConfig - warns on invalid style.darkMode enum", () => {
+  const warnings = captureWarnings(() => {
+    setConfig({
+      name: "Test",
+      navigation: [{ title: "X", href: "/docs/x" }],
+      // @ts-ignore: intentionally testing invalid enum
+      style: { darkMode: "maybe" },
+    });
+  });
+  assertEquals(warnings.some((w) => w.includes("style")), true);
+});
+
+Deno.test("setConfig - warns on invalid style.roundedness enum", () => {
+  const warnings = captureWarnings(() => {
+    setConfig({
+      name: "Test",
+      navigation: [{ title: "X", href: "/docs/x" }],
+      // @ts-ignore: intentionally testing invalid enum
+      style: { roundedness: "huge" },
+    });
+  });
+  assertEquals(warnings.some((w) => w.includes("style")), true);
+});
+
+Deno.test("setConfig - warns on invalid analytics.provider enum", () => {
+  const warnings = captureWarnings(() => {
+    setConfig({
+      name: "Test",
+      navigation: [{ title: "X", href: "/docs/x" }],
+      // @ts-ignore: intentionally testing invalid enum
+      analytics: { provider: "google" },
+    });
+  });
+  assertEquals(warnings.some((w) => w.includes("analytics")), true);
+});
+
+Deno.test("setConfig - warns on invalid layout.sidebarWidth type", () => {
+  const warnings = captureWarnings(() => {
+    setConfig({
+      name: "Test",
+      navigation: [{ title: "X", href: "/docs/x" }],
+      // @ts-ignore: intentionally testing invalid type
+      layout: { sidebarWidth: "wide" },
+    });
+  });
+  assertEquals(warnings.some((w) => w.includes("layout")), true);
+});
+
+Deno.test("setConfig - accepts full valid config without warnings", () => {
+  const warnings = captureWarnings(() => {
+    setConfig({
+      name: "Test",
+      navigation: [{ title: "X", href: "/docs/x" }],
+      logo: { text: "test", suffix: ".dev" },
+      favicon: "/favicon.svg",
+      colors: { primary: "#ff0000" },
+      fonts: {
+        body: "Inter",
+        heading: "Inter",
+        mono: "Fira Code",
+        imports: ["/fonts.css"],
+      },
+      style: {
+        darkMode: "toggle",
+        roundedness: "lg",
+        customCss: "/custom.css",
+      },
+      layout: {
+        sidebarWidth: 280,
+        headerHeight: 64,
+        toc: true,
+        breadcrumbs: true,
+        footer: true,
+      },
+      topNav: [{ title: "Docs", href: "/docs" }],
+      footer: {
+        copyright: "2026",
+        links: [{ title: "GH", href: "https://github.com" }],
+      },
+      social: { github: "https://github.com/example" },
+      search: { enabled: true },
+      analytics: { provider: "umami" },
+      editUrl: "https://github.com/org/repo/edit/main/docs",
+      seo: { url: "https://example.com" },
+      landing: { enabled: true, hero: { title: "Hello" } },
+      ai: { mcp: true },
+    });
+  });
+  assertEquals(
+    warnings.filter((w) => w.includes("Config validation")).length,
+    0,
+  );
+});
