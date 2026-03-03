@@ -53,7 +53,6 @@
   --denote-border-strong: #d1d5db;
 
   /* Shadows */
-  --denote-shadow-color: rgba(0, 0, 0, 0.1);
   --denote-shadow-primary: rgba(79, 70, 229, 0.25);
 
   /* Fonts */
@@ -96,7 +95,6 @@
   --denote-border: #1f2937;
   --denote-border-strong: #374151;
 
-  --denote-shadow-color: rgba(0, 0, 0, 0.3);
   --denote-shadow-primary: rgba(129, 140, 248, 0.15);
 
   --gfm-inline-code-color: #f87171;

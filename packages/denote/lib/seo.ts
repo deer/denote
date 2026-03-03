@@ -7,6 +7,8 @@ import type { DenoteConfig } from "../denote.config.ts";
 /** Minimal doc shape needed by sitemap builder */
 export interface SitemapDoc {
   slug: string;
+  /** ISO date string (YYYY-MM-DD) for lastmod. Falls back to today if unset. */
+  lastmod?: string;
 }
 
 /**
@@ -60,7 +62,7 @@ export function buildSitemapXml(
   const docUrls = docs.map((doc) =>
     `  <url>
     <loc>${baseUrl}${docsBasePath}/${doc.slug}</loc>
-    <lastmod>${today}</lastmod>
+    <lastmod>${doc.lastmod ?? today}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>`
