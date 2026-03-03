@@ -92,11 +92,18 @@ deno task validate
 
 This checks your project for:
 
-- **Config errors** — missing `name`, invalid hex colors, malformed URLs
+- **Config errors** — missing `name`, invalid hex colors, malformed URLs,
+  unrecognized keys
 - **Content issues** — missing `content/docs/` directory, files without a
   `title` in frontmatter
 - **Broken navigation links** — any `href` in your `navigation` config that
   doesn't match an existing markdown file
+
+If your project uses custom paths, pass `--content-dir` and `--docs-base-path`:
+
+```bash
+deno run -A jsr:@denote/core/validate --content-dir=./my-content --docs-base-path=/reference
+```
 
 Fix any errors before deploying to avoid broken links or missing pages.
 

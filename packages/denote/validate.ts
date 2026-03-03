@@ -7,9 +7,14 @@
  * Reads `denote.config.ts` from the current directory and validates
  * content, navigation links, and configuration.
  *
- * @example
+ * @example Default paths
  * ```sh
  * deno run -A jsr:@denote/core/validate
+ * ```
+ *
+ * @example Custom content directory and base path
+ * ```sh
+ * deno run -A jsr:@denote/core/validate --content-dir=./my-content --docs-base-path=/reference
  * ```
  */
 
@@ -48,12 +53,28 @@ async function loadConfig(): Promise<DenoteConfig> {
   Deno.exit(1);
 }
 
+function parseArgs(
+  args: string[],
+): { contentDir: string; docsBasePath: string } {
+  let contentDir = "./content/docs";
+  let docsBasePath = "/docs";
+  for (const arg of args) {
+    if (arg.startsWith("--content-dir=")) {
+      contentDir = arg.slice("--content-dir=".length);
+    } else if (arg.startsWith("--docs-base-path=")) {
+      docsBasePath = arg.slice("--docs-base-path=".length);
+    }
+  }
+  return { contentDir, docsBasePath };
+}
+
 if (import.meta.main) {
   const config = await loadConfig();
+  const { contentDir, docsBasePath } = parseArgs(Deno.args);
   const denoteContext: DenoteContext = {
     config,
-    contentDir: resolve("./content/docs"),
-    docsBasePath: "/docs",
+    contentDir: resolve(contentDir),
+    docsBasePath,
   };
   const errorCount = await validateAndPrint(denoteContext);
   Deno.exit(errorCount > 0 ? 1 : 0);

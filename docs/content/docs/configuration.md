@@ -433,12 +433,22 @@ deno task validate
 
 The validator checks:
 
-- **Config fields** — `name` is present and non-empty
+- **Config fields** — all fields are validated against their expected types and
+  values; unrecognized keys are flagged (catches typos like `darkmode` instead
+  of `style.darkMode`)
 - **Content directory** — exists and contains markdown files
 - **Frontmatter** — each page has a valid `title`
 - **Navigation links** — every internal nav href matches an existing doc page
 - **SEO URLs** — `seo.url` and `seo.ogImage` are valid URLs when set
 - **Hex colors** — all color values in `colors` and `colors.dark` are valid hex
+- **Enums** — `style.darkMode`, `style.roundedness`, and `analytics.provider`
+  must be valid values
+
+If your project uses custom content or base paths, pass them as CLI args:
+
+```bash
+deno run -A jsr:@denote/core/validate --content-dir=./my-content --docs-base-path=/reference
+```
 
 Errors block deployment; warnings are informational. Add this to your CI
 pipeline to catch broken links and missing metadata before they go live.

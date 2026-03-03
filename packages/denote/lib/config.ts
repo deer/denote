@@ -80,16 +80,91 @@ const LandingSchema = z.object({
   })).optional(),
 }).optional();
 
+const LogoSchema = z.object({
+  light: z.string().optional(),
+  dark: z.string().optional(),
+  text: z.string().optional(),
+  suffix: z.string().optional(),
+}).optional();
+
+const FontSchema = z.object({
+  body: z.string().optional(),
+  heading: z.string().optional(),
+  mono: z.string().optional(),
+  imports: z.array(z.string()).optional(),
+}).optional();
+
+const StyleSchema = z.object({
+  roundedness: z.enum(["none", "sm", "md", "lg", "xl"]).optional(),
+  darkMode: z.enum(["auto", "light", "dark", "toggle"]).optional(),
+  customCss: z.string().optional(),
+}).optional();
+
+const LayoutSchema = z.object({
+  sidebarWidth: z.number().positive().optional(),
+  maxContentWidth: z.number().positive().optional(),
+  headerHeight: z.number().positive().optional(),
+  tocWidth: z.number().positive().optional(),
+  toc: z.boolean().optional(),
+  breadcrumbs: z.boolean().optional(),
+  footer: z.boolean().optional(),
+}).optional();
+
+const TopNavSchema = z.array(z.object({
+  title: z.string(),
+  href: z.string(),
+})).optional();
+
+const FooterSchema = z.object({
+  links: z.array(z.object({
+    title: z.string(),
+    href: z.string(),
+  })).optional(),
+  copyright: z.string().optional(),
+}).optional();
+
+const SocialSchema = z.object({
+  github: z.string().optional(),
+  twitter: z.string().optional(),
+  discord: z.string().optional(),
+}).optional();
+
+const SearchSchema = z.object({
+  enabled: z.boolean(),
+}).optional();
+
+const AnalyticsSchema = z.object({
+  provider: z.enum(["umami", "plausible", "custom"]),
+  endpoint: z.string().optional(),
+  siteId: z.string().optional(),
+}).optional();
+
+const AiSchema = z.object({
+  mcp: z.boolean().optional(),
+}).optional();
+
 const ConfigSchema = z.object({
   name: z.string().min(1, "Config 'name' is required"),
   navigation: z.array(NavItemSchema).min(
     1,
     "Config 'navigation' must have at least one item",
   ),
+  logo: LogoSchema,
+  favicon: z.string().optional(),
   colors: ColorSchema,
+  fonts: FontSchema,
+  style: StyleSchema,
+  layout: LayoutSchema,
+  topNav: TopNavSchema,
+  footer: FooterSchema,
+  social: SocialSchema,
+  search: SearchSchema,
+  analytics: AnalyticsSchema,
+  editUrl: z.string().optional(),
   seo: SeoSchema,
   landing: LandingSchema,
-}).passthrough();
+  ai: AiSchema,
+}).strict();
 
 // ---------------------------------------------------------------------------
 // Config
