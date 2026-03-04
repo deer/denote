@@ -15,9 +15,6 @@ import { parse as parseYaml } from "jsr:@std/yaml@1";
 export interface DocFrontmatter {
   title: string;
   description?: string;
-  icon?: string;
-  sidebarTitle?: string;
-  order?: number;
   /** OG image URL for this page (overrides config.seo.ogImage) */
   image?: string;
   /** Short AI-optimized summary for LLM context and embeddings */

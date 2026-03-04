@@ -28,11 +28,22 @@ export function Header(
           <a href="/" class="flex items-center gap-2 font-semibold text-lg">
             {config.logo?.light
               ? (
-                <img
-                  src={config.logo.light}
-                  alt={config.name}
-                  class="h-8 w-auto"
-                />
+                <>
+                  <img
+                    src={config.logo.light}
+                    alt={config.name}
+                    class={`h-8 w-auto${
+                      config.logo.dark ? " dark:hidden" : ""
+                    }`}
+                  />
+                  {config.logo.dark && (
+                    <img
+                      src={config.logo.dark}
+                      alt={config.name}
+                      class="h-8 w-auto hidden dark:block"
+                    />
+                  )}
+                </>
               )
               : (
                 <span

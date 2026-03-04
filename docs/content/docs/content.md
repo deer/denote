@@ -27,24 +27,18 @@ Every documentation page starts with frontmatter:
 ---
 title: Page Title
 description: A brief description of this page
-icon: 📚
-sidebarTitle: Short Title
-order: 1
 ---
 ```
 
 ### Frontmatter Options
 
-| Property       | Description                                              |
-| -------------- | -------------------------------------------------------- |
-| `title`        | The page title (required)                                |
-| `description`  | A brief description for SEO and previews                 |
-| `icon`         | An emoji or icon for the sidebar                         |
-| `sidebarTitle` | A shorter title for the sidebar                          |
-| `order`        | Sort order within the section                            |
-| `image`        | OG image URL for social sharing (overrides site default) |
-| `ai-summary`   | AI-optimized summary for LLM context/embeddings          |
-| `ai-keywords`  | Keywords for AI retrieval and classification             |
+| Property      | Description                                              |
+| ------------- | -------------------------------------------------------- |
+| `title`       | The page title (required)                                |
+| `description` | A brief description for SEO and previews                 |
+| `image`       | OG image URL for social sharing (overrides site default) |
+| `ai-summary`  | AI-optimized summary for LLM context/embeddings          |
+| `ai-keywords` | Keywords for AI retrieval and classification             |
 
 ### AI Content Tags
 
