@@ -1,11 +1,6 @@
 import { HttpError, type PageProps } from "fresh";
 import { define, type State } from "../../utils.ts";
-import {
-  buildSearchIndex,
-  getBreadcrumbs,
-  getPrevNext,
-  getRenderedDoc,
-} from "../../lib/docs.ts";
+import { getBreadcrumbs, getPrevNext, getRenderedDoc } from "../../lib/docs.ts";
 import { DocsLayout } from "../../components/DocsLayout.tsx";
 import { Search } from "../../islands/Search.tsx";
 import { CopyButton } from "../../islands/CopyButton.tsx";
@@ -27,7 +22,6 @@ export async function DocsPage(ctx: PageProps<unknown, State>) {
   }
 
   const { doc, html, toc } = rendered;
-  const searchIndex = await buildSearchIndex(denoteContext);
   const currentPath = `/docs/${slug}`;
   const { prev, next } = getPrevNext(currentPath, denoteContext);
   const breadcrumbs = getBreadcrumbs(currentPath, denoteContext);
@@ -42,7 +36,7 @@ export async function DocsPage(ctx: PageProps<unknown, State>) {
       next={next}
       breadcrumbs={breadcrumbs}
     >
-      <Search items={searchIndex} />
+      <Search />
       <CopyButton />
       <div
         class="markdown-body"

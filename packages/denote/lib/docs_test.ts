@@ -1,6 +1,7 @@
 import { testContext } from "./test_config.ts";
-import { assertEquals, assertNotEquals } from "jsr:@std/assert@1";
+import { assert, assertEquals, assertNotEquals } from "jsr:@std/assert@1";
 import {
+  buildMiniSearchJSON,
   buildSearchIndex,
   clearSearchIndexCache,
   getAllDocs,
@@ -88,5 +89,20 @@ Deno.test("buildSearchIndex - returns cached result on second call", async () =>
   const first = await buildSearchIndex(testContext);
   const second = await buildSearchIndex(testContext);
   // Should be the exact same object reference (cached)
+  assertEquals(first === second, true);
+});
+
+Deno.test("buildMiniSearchJSON - returns valid JSON string", async () => {
+  clearSearchIndexCache();
+  const json = await buildMiniSearchJSON(testContext);
+  assert(typeof json === "string");
+  const parsed = JSON.parse(json);
+  assert(typeof parsed === "object" && !Array.isArray(parsed));
+});
+
+Deno.test("buildMiniSearchJSON - returns cached result on second call", async () => {
+  clearSearchIndexCache();
+  const first = await buildMiniSearchJSON(testContext);
+  const second = await buildMiniSearchJSON(testContext);
   assertEquals(first === second, true);
 });

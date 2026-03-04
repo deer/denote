@@ -69,6 +69,7 @@ graph TB
 │   │   │   ├── mcp.ts              MCP server factory (search, get, list tools)
 │   │   │   ├── analytics.ts        Server-side analytics middleware (Umami/Plausible)
 │   │   │   ├── csp.ts              Content Security Policy middleware
+│   │   │   ├── search-options.ts    Shared MiniSearch config (server + client)
 │   │   │   ├── seo.ts              JSON-LD, sitemap, robots.txt generators
 │   │   │   ├── theme.ts            CSS custom property generation + dark mode script
 │   │   │   ├── validate.ts         Config/content/navigation validation
@@ -158,18 +159,19 @@ public types
 
 ### `lib/` — Core Library Modules
 
-| File           | Purpose                                                                   | Key Exports                                                                                      |
-| -------------- | ------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
-| `config.ts`    | Singleton config registry with Zod validation                             | `getConfig`, `setConfig`, `getContentDir`, `setContentDir`, `getDocsBasePath`, `setDocsBasePath` |
-| `docs.ts`      | Doc loading, two-level cache (parse + render), file watcher, search index | `getDoc`, `getRenderedDoc`, `getAllDocs`, `buildSearchIndex`, `getPrevNext`, `getBreadcrumbs`    |
-| `markdown.ts`  | YAML frontmatter parsing + GFM rendering with TOC extraction              | `parseFrontmatter`, `renderDoc`, `parseDocument`, `DocFrontmatter`, `TocItem`                    |
-| `ai.ts`        | llmstxt.org standard: index, full dump, structured JSON                   | `generateLlmsTxt`, `generateFullDocs`, `getDocsJson`                                             |
-| `mcp.ts`       | MCP server with `search_docs`, `get_doc`, `get_all_docs` tools            | `createMcpServer`, `MCP_CORS_HEADERS`                                                            |
-| `analytics.ts` | Server-side analytics (no client JS, no cookies)                          | `analyticsMiddleware`, `AnalyticsConfig`                                                         |
-| `csp.ts`       | CSP middleware with map-keyed deduplication                               | `csp`, `CSPOptions`                                                                              |
-| `seo.ts`       | Pure functions for JSON-LD, sitemap, robots.txt                           | `buildJsonLd`, `buildSitemapXml`, `buildRobotsTxt`                                               |
-| `theme.ts`     | CSS custom property generation + dark mode IIFE                           | `generateThemeCSS`, `darkModeScript`                                                             |
-| `validate.ts`  | Config + content + nav link validation                                    | `validate`, `validateAndPrint`                                                                   |
+| File                | Purpose                                                                   | Key Exports                                                                                                          |
+| ------------------- | ------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| `config.ts`         | Singleton config registry with Zod validation                             | `getConfig`, `setConfig`, `getContentDir`, `setContentDir`, `getDocsBasePath`, `setDocsBasePath`                     |
+| `docs.ts`           | Doc loading, two-level cache (parse + render), file watcher, search index | `getDoc`, `getRenderedDoc`, `getAllDocs`, `buildSearchIndex`, `buildMiniSearchJSON`, `getPrevNext`, `getBreadcrumbs` |
+| `markdown.ts`       | YAML frontmatter parsing + GFM rendering with TOC extraction              | `parseFrontmatter`, `renderDoc`, `parseDocument`, `DocFrontmatter`, `TocItem`                                        |
+| `ai.ts`             | llmstxt.org standard: index, full dump, structured JSON                   | `generateLlmsTxt`, `generateFullDocs`, `getDocsJson`                                                                 |
+| `mcp.ts`            | MCP server with `search_docs`, `get_doc`, `get_all_docs` tools            | `createMcpServer`, `MCP_CORS_HEADERS`                                                                                |
+| `analytics.ts`      | Server-side analytics (no client JS, no cookies)                          | `analyticsMiddleware`, `AnalyticsConfig`                                                                             |
+| `csp.ts`            | CSP middleware with map-keyed deduplication                               | `csp`, `CSPOptions`                                                                                                  |
+| `seo.ts`            | Pure functions for JSON-LD, sitemap, robots.txt                           | `buildJsonLd`, `buildSitemapXml`, `buildRobotsTxt`                                                                   |
+| `theme.ts`          | CSS custom property generation + dark mode IIFE                           | `generateThemeCSS`, `darkModeScript`                                                                                 |
+| `search-options.ts` | Shared MiniSearch config (idField, fields, boost, fuzzy/prefix options)   | `SEARCH_OPTIONS`                                                                                                     |
+| `validate.ts`       | Config + content + nav link validation                                    | `validate`, `validateAndPrint`                                                                                       |
 
 ### Components (Server-Rendered)
 
@@ -183,14 +185,14 @@ public types
 
 ### Islands (Client-Side Interactive)
 
-| File                 | Purpose                           | State Pattern                                                                            |
-| -------------------- | --------------------------------- | ---------------------------------------------------------------------------------------- |
-| `ActiveToc.tsx`      | Scroll-tracking heading highlight | Module-level signal; passive scroll listener                                             |
-| `CollapsibleNav.tsx` | Sidebar with expand/collapse      | Module-level signal (`Set<string>`); localStorage persistence                            |
-| `CopyButton.tsx`     | Code block copy buttons           | Returns `null`; uses `useEffect` to mutate server-rendered DOM                           |
-| `MobileMenu.tsx`     | Full-screen mobile nav overlay    | Portal via `preact.render()` into `document.body`; body scroll lock via signal `effect`  |
-| `Search.tsx`         | Cmd+K search modal                | Module-level signals; `computed` for filtered results; full search index as island props |
-| `ThemeToggle.tsx`    | Dark/light toggle                 | Module-level signals; initialization in render function (not useEffect) to prevent FOUC  |
+| File                 | Purpose                           | State Pattern                                                                                   |
+| -------------------- | --------------------------------- | ----------------------------------------------------------------------------------------------- |
+| `ActiveToc.tsx`      | Scroll-tracking heading highlight | Module-level signal; passive scroll listener                                                    |
+| `CollapsibleNav.tsx` | Sidebar with expand/collapse      | Module-level signal (`Set<string>`); localStorage persistence                                   |
+| `CopyButton.tsx`     | Code block copy buttons           | Returns `null`; uses `useEffect` to mutate server-rendered DOM                                  |
+| `MobileMenu.tsx`     | Full-screen mobile nav overlay    | Portal via `preact.render()` into `document.body`; body scroll lock via signal `effect`         |
+| `Search.tsx`         | Cmd+K search modal                | Module-level signals; `computed` for filtered results; lazy-fetches `/api/search` on first open |
+| `ThemeToggle.tsx`    | Dark/light toggle                 | Module-level signals; initialization in render function (not useEffect) to prevent FOUC         |
 
 **Common patterns**: All islands use `@preact/signals` (not `useState`).
 Module-level signals for persistent state. Module-level `effect()` for DOM side
@@ -206,7 +208,7 @@ effects that bypass component lifecycle.
 | `index.tsx`           | Landing page (if `config.landing.enabled`) or redirect to first nav link  |
 | `docs/_middleware.ts` | Injects `pageTitle/pageDescription/pageUrl/pageImage` into state          |
 | `docs/index.tsx`      | 302 redirect `/docs` → `/docs/introduction`                               |
-| `docs/[...slug].tsx`  | Doc page: loads markdown, renders HTML, provides search index to island   |
+| `docs/[...slug].tsx`  | Doc page: loads markdown, renders HTML                                    |
 
 ### `denote-init` — Project Scaffolder
 
@@ -248,6 +250,7 @@ sequenceDiagram
     participant DocsLib as lib/docs.ts
     participant Markdown as lib/markdown.ts
     participant Islands
+    participant SearchAPI as /api/search
 
     Browser->>Fresh: GET /docs/getting-started
     Fresh->>Middleware: Context → Analytics → CSP → Security
@@ -261,9 +264,16 @@ sequenceDiagram
     Fresh->>DocsLib: getRenderedDoc(slug)
     DocsLib->>Markdown: renderDoc(content)
     Markdown-->>DocsLib: { html, toc }
-    Fresh->>DocsLib: buildSearchIndex()
-    Fresh-->>Browser: HTML (server-rendered)
+    Fresh-->>Browser: HTML (server-rendered, no search index)
     Browser->>Islands: Hydrate (ThemeToggle, CollapsibleNav, Search, CopyButton, ActiveToc)
+
+    Note over Browser,SearchAPI: Search index loaded lazily on first Cmd+K
+    Browser->>Islands: User presses Cmd+K
+    Islands->>SearchAPI: fetch("/api/search")
+    SearchAPI->>DocsLib: buildMiniSearchJSON(ctx)
+    DocsLib-->>SearchAPI: Serialized MiniSearch index (cached)
+    SearchAPI-->>Islands: JSON response
+    Islands->>Islands: MiniSearch.loadJSON(json, SEARCH_OPTIONS)
 ```
 
 ### AI Access Layers
@@ -345,9 +355,9 @@ extends ParsedDoc { frontmatter, content } + { slug, path }
 
 ## Gotchas
 
-- **Search index serialization**: The full search index (all doc content) is
-  serialized into every doc page as island props JSON — significant payload for
-  large sites
+- **Search index lazy-fetch**: The search index is fetched from `/api/search` on
+  first Cmd+K open (not serialized into page HTML); the server caches the
+  serialized MiniSearch JSON after first build
 - **MCP is stateless per-request**: New `McpServer` created for every HTTP
   request (Deno Deploy compatibility)
 - **Config singleton timing**: `getConfig()` throws if called before

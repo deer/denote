@@ -5,6 +5,10 @@
  * markdown parsing. The cache is populated on first access and invalidated
  * automatically via Deno.watchFs in development. In production the cache
  * lives for the lifetime of the process (content is immutable after deploy).
+ *
+ * Also builds the serialized MiniSearch index served at `/api/search` via
+ * {@linkcode buildMiniSearchJSON}. The index is cached alongside the doc
+ * cache and invalidated on content changes.
  */
 import {
   type ParsedDoc,
@@ -16,6 +20,9 @@ import type { NavItem } from "../denote.config.ts";
 import type { DenoteContext } from "../utils.ts";
 import { resolve } from "@std/path";
 import { flattenNav, type NavLink } from "./nav.ts";
+import MiniSearch from "minisearch";
+import { SEARCH_OPTIONS } from "./search-options.ts";
+export { SEARCH_OPTIONS } from "./search-options.ts";
 
 export interface DocPage extends ParsedDoc {
   slug: string;
@@ -328,15 +335,36 @@ export async function buildSearchIndex(
     aiSummary: doc.frontmatter["ai-summary"],
     aiKeywords: doc.frontmatter["ai-keywords"],
     slug: doc.slug,
-    content: doc.content.slice(0, 500), // First 500 chars for search preview
+    content: doc.content,
   }));
 
   return cachedSearchIndex;
 }
 
+let cachedMiniSearchJSON: string | null = null;
+
+export async function buildMiniSearchJSON(
+  denoteContext: DenoteContext,
+): Promise<string> {
+  if (cachedMiniSearchJSON) return cachedMiniSearchJSON;
+
+  const items = await buildSearchIndex(denoteContext);
+  const ms = new MiniSearch<SearchItem>({
+    ...SEARCH_OPTIONS,
+    extractField: (doc, fieldName) => {
+      if (fieldName === "aiKeywords") return doc.aiKeywords?.join(" ") ?? "";
+      return (doc[fieldName as keyof SearchItem] as string) ?? "";
+    },
+  });
+  ms.addAll(items);
+  cachedMiniSearchJSON = JSON.stringify(ms);
+  return cachedMiniSearchJSON;
+}
+
 /** Clear the search index cache (useful for testing or after content changes) */
 export function clearSearchIndexCache(): void {
   cachedSearchIndex = null;
+  cachedMiniSearchJSON = null;
 }
 
 // ---------------------------------------------------------------------------
