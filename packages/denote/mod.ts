@@ -369,15 +369,17 @@ export function denote(options: DenoteOptions): App<unknown> {
     });
   });
 
-  app.get("/api/search", async (ctx) => {
-    const json = await buildMiniSearchJSON(ctx.state.denote);
-    return new Response(json, {
-      headers: {
-        "Content-Type": "application/json",
-        "Cache-Control": configCacheControl,
-      },
+  if (config.search?.enabled !== false) {
+    app.get("/api/search", async (ctx) => {
+      const json = await buildMiniSearchJSON(ctx.state.denote);
+      return new Response(json, {
+        headers: {
+          "Content-Type": "application/json",
+          "Cache-Control": configCacheControl,
+        },
+      });
     });
-  });
+  }
 
   // ── SEO Endpoints ──────────────────────────────────────────
 

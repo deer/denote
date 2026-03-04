@@ -20,6 +20,7 @@ export function App({ Component, state }: PageProps<unknown, State>) {
   const fontImports = config.fonts?.imports || [];
   const locale = config.seo?.locale || "en";
   const seoUrl = config.seo?.url?.replace(/\/$/, "");
+  const faviconHref = config.favicon || "/favicon.svg";
 
   // OG image dimensions: use configured values, or defaults when an image exists
   const ogImageWidth = pageImage
@@ -36,7 +37,11 @@ export function App({ Component, state }: PageProps<unknown, State>) {
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>{pageTitle}</title>
         <meta name="description" content={pageDescription} />
-        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+        <link
+          rel="icon"
+          type={faviconHref.endsWith(".svg") ? "image/svg+xml" : undefined}
+          href={faviconHref}
+        />
         <link
           rel="apple-touch-icon"
           sizes="180x180"

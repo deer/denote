@@ -36,7 +36,7 @@ export async function DocsPage(ctx: PageProps<unknown, State>) {
       next={next}
       breadcrumbs={breadcrumbs}
     >
-      <Search />
+      {config.search?.enabled !== false && <Search />}
       <CopyButton />
       <div
         class="markdown-body"

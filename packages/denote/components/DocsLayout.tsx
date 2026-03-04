@@ -37,7 +37,11 @@ export function DocsLayout({
 
   return (
     <div class="min-h-screen bg-[var(--denote-bg)]">
-      <Header config={config} currentPath={currentPath} />
+      <Header
+        config={config}
+        showSearch={config.search?.enabled !== false}
+        currentPath={currentPath}
+      />
       <Sidebar config={config} currentPath={currentPath} />
 
       <main
