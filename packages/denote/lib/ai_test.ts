@@ -1,9 +1,10 @@
 import { testContext } from "./test_config.ts";
 import { assertEquals, assertStringIncludes } from "jsr:@std/assert@1";
-import { generateLlmsTxt, getDocsJson } from "./ai.ts";
+import { clearAiCache, generateLlmsTxt, getDocsJson } from "./ai.ts";
 import { clearFullDocsCache, generateFullDocs } from "./docs.ts";
 
 Deno.test("generateLlmsTxt - includes doc links", async () => {
+  clearAiCache();
   const txt = await generateLlmsTxt(testContext, "http://localhost:8000");
   assertEquals(txt.includes("# Denote"), true);
   assertEquals(txt.includes("introduction"), true);
@@ -18,6 +19,7 @@ Deno.test("generateFullDocs - includes all content", async () => {
 });
 
 Deno.test("getDocsJson - returns structured data", async () => {
+  clearAiCache();
   const json = await getDocsJson(testContext) as {
     name: string;
     pages: unknown[];
@@ -35,7 +37,24 @@ Deno.test("generateFullDocs - returns cached result on second call", async () =>
   clearFullDocsCache();
 });
 
+Deno.test("generateLlmsTxt - returns cached result on second call", async () => {
+  clearAiCache();
+  const first = await generateLlmsTxt(testContext, "http://localhost:8000");
+  const second = await generateLlmsTxt(testContext, "http://localhost:8000");
+  assertEquals(first === second, true);
+  clearAiCache();
+});
+
+Deno.test("getDocsJson - returns cached result on second call", async () => {
+  clearAiCache();
+  const first = await getDocsJson(testContext);
+  const second = await getDocsJson(testContext);
+  assertEquals(first === second, true);
+  clearAiCache();
+});
+
 Deno.test("generateLlmsTxt - includes MCP section when enabled", async () => {
+  clearAiCache();
   const mcpContext = {
     ...testContext,
     config: { ...testContext.config, ai: { mcp: true } },
@@ -47,6 +66,7 @@ Deno.test("generateLlmsTxt - includes MCP section when enabled", async () => {
 });
 
 Deno.test("generateLlmsTxt - omits MCP section when disabled", async () => {
+  clearAiCache();
   const noMcpContext = {
     ...testContext,
     config: { ...testContext.config, ai: undefined },
