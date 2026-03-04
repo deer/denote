@@ -344,22 +344,40 @@ export async function buildSearchIndex(
   return cachedSearchIndex;
 }
 
+let cachedMiniSearch: MiniSearch<SearchItem> | null = null;
 let cachedMiniSearchJSON: string | null = null;
 
-export async function buildMiniSearchJSON(
+/** Get a live MiniSearch instance for querying (cached). */
+export async function getMiniSearchInstance(
   denoteContext: DenoteContext,
-): Promise<string> {
-  if (cachedMiniSearchJSON) return cachedMiniSearchJSON;
+): Promise<MiniSearch<SearchItem>> {
+  if (cachedMiniSearch) return cachedMiniSearch;
 
   const items = await buildSearchIndex(denoteContext);
-  const ms = new MiniSearch<SearchItem>({
+  cachedMiniSearch = new MiniSearch<SearchItem>({
     ...SEARCH_OPTIONS,
     extractField: (doc, fieldName) => {
       if (fieldName === "aiKeywords") return doc.aiKeywords?.join(" ") ?? "";
       return (doc[fieldName as keyof SearchItem] as string) ?? "";
     },
   });
-  ms.addAll(items);
+  cachedMiniSearch.addAll(items);
+  return cachedMiniSearch;
+}
+
+/** Get MiniSearch instance and the source items it was built from (single await). */
+export async function getMiniSearchWithItems(
+  denoteContext: DenoteContext,
+): Promise<{ ms: MiniSearch<SearchItem>; items: SearchItem[] }> {
+  const ms = await getMiniSearchInstance(denoteContext);
+  return { ms, items: cachedSearchIndex! };
+}
+
+export async function buildMiniSearchJSON(
+  denoteContext: DenoteContext,
+): Promise<string> {
+  if (cachedMiniSearchJSON) return cachedMiniSearchJSON;
+  const ms = await getMiniSearchInstance(denoteContext);
   cachedMiniSearchJSON = JSON.stringify(ms);
   return cachedMiniSearchJSON;
 }
@@ -367,6 +385,7 @@ export async function buildMiniSearchJSON(
 /** Clear the search index cache (useful for testing or after content changes) */
 export function clearSearchIndexCache(): void {
   cachedSearchIndex = null;
+  cachedMiniSearch = null;
   cachedMiniSearchJSON = null;
 }
 

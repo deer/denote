@@ -8,7 +8,7 @@ import {
   McpServer,
   ResourceTemplate,
 } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { buildSearchIndex, getAllDocs, getDoc } from "./docs.ts";
+import { getAllDocs, getDoc, getMiniSearchWithItems } from "./docs.ts";
 import type { DenoteContext } from "../utils.ts";
 import { z } from "zod";
 
@@ -141,22 +141,12 @@ export function createMcpServer(
 
   server.tool(
     "search_docs",
-    `Search ${name} documentation by keyword. Returns matching page titles, descriptions, and content snippets with match context. Use this first to find relevant pages before fetching full content with get_doc.`,
+    `Search ${name} documentation with fuzzy matching and prefix support. Returns matching page titles, descriptions, and content snippets with match context. Use this first to find relevant pages before fetching full content with get_doc.`,
     { query: z.string().min(1).max(200).describe("Search query") },
     async ({ query }: { query: string }) => {
-      const index = await buildSearchIndex(denoteContext);
-      const q = query.toLowerCase();
-
-      const results = index
-        .filter(
-          (item) =>
-            item.title.toLowerCase().includes(q) ||
-            item.content.toLowerCase().includes(q) ||
-            item.description?.toLowerCase().includes(q) ||
-            item.aiSummary?.toLowerCase().includes(q) ||
-            item.aiKeywords?.some((k) => k.toLowerCase().includes(q)),
-        )
-        .slice(0, 10);
+      const { ms, items: index } = await getMiniSearchWithItems(denoteContext);
+      const searchResults = ms.search(query);
+      const results = searchResults.slice(0, 10);
 
       if (results.length === 0) {
         return {
@@ -167,8 +157,14 @@ export function createMcpServer(
         };
       }
 
+      // Build a slug → SearchItem lookup for metadata and snippet extraction
+      const itemBySlug = new Map(index.map((item) => [item.slug, item]));
+
       const text = results
-        .map((r) => {
+        .map((result) => {
+          const r = itemBySlug.get(result.id as string);
+          if (!r) return null;
+
           const parts = [`## ${r.title}`, `Slug: ${r.slug}`];
           const url = webUrl(r.slug);
           if (url) parts.push(`Web: ${url}`);
@@ -177,13 +173,28 @@ export function createMcpServer(
           if (r.aiKeywords && r.aiKeywords.length > 0) {
             parts.push(`Keywords: ${r.aiKeywords.join(", ")}`);
           }
-          // Show snippet around the match position, not just the beginning
+
+          // Show snippet around the first matched term in content
           const contentLower = r.content.toLowerCase();
-          const matchIdx = contentLower.indexOf(q);
+          const terms = result.terms ?? [];
+          let matchIdx = -1;
+          let matchLen = 0;
+          for (const term of terms) {
+            const idx = contentLower.indexOf(term.toLowerCase());
+            if (idx >= 0) {
+              matchIdx = idx;
+              matchLen = term.length;
+              break;
+            }
+          }
+
           let snippet: string;
           if (matchIdx >= 0) {
             const start = Math.max(0, matchIdx - 100);
-            const end = Math.min(r.content.length, matchIdx + q.length + 200);
+            const end = Math.min(
+              r.content.length,
+              matchIdx + matchLen + 200,
+            );
             snippet = (start > 0 ? "..." : "") +
               r.content.slice(start, end) +
               (end < r.content.length ? "..." : "");
@@ -194,6 +205,7 @@ export function createMcpServer(
           parts.push("", snippet);
           return parts.join("\n");
         })
+        .filter(Boolean)
         .join("\n\n---\n\n");
 
       return { content: [{ type: "text" as const, text }] };
