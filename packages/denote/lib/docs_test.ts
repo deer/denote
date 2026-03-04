@@ -1,5 +1,10 @@
 import { testContext } from "./test_config.ts";
-import { assert, assertEquals, assertNotEquals } from "jsr:@std/assert@1";
+import {
+  assert,
+  assertEquals,
+  assertNotEquals,
+  assertStringIncludes,
+} from "jsr:@std/assert@1";
 import {
   buildMiniSearchJSON,
   buildSearchIndex,
@@ -8,6 +13,7 @@ import {
   getBreadcrumbs,
   getDoc,
   getPrevNext,
+  stripMarkdown,
 } from "./docs.ts";
 
 Deno.test("getDoc - returns introduction page", async () => {
@@ -105,4 +111,98 @@ Deno.test("buildMiniSearchJSON - returns cached result on second call", async ()
   const first = await buildMiniSearchJSON(testContext);
   const second = await buildMiniSearchJSON(testContext);
   assertEquals(first === second, true);
+});
+
+// ---------------------------------------------------------------------------
+// stripMarkdown
+// ---------------------------------------------------------------------------
+
+Deno.test("stripMarkdown - strips headings", () => {
+  assertEquals(stripMarkdown("## Hello world"), "Hello world");
+  assertEquals(stripMarkdown("# H1\n## H2\n### H3"), "H1\nH2\nH3");
+});
+
+Deno.test("stripMarkdown - strips bold and italic", () => {
+  assertEquals(stripMarkdown("**bold**"), "bold");
+  assertEquals(stripMarkdown("__bold__"), "bold");
+  assertEquals(stripMarkdown("*italic*"), "italic");
+  assertEquals(stripMarkdown("_italic_"), "italic");
+  assertEquals(stripMarkdown("***both***"), "both");
+});
+
+Deno.test("stripMarkdown - strips links, keeps text", () => {
+  assertEquals(
+    stripMarkdown("[click here](https://example.com)"),
+    "click here",
+  );
+});
+
+Deno.test("stripMarkdown - strips images, keeps alt", () => {
+  assertEquals(stripMarkdown("![alt text](image.png)"), "alt text");
+});
+
+Deno.test("stripMarkdown - strips inline code backticks", () => {
+  assertEquals(stripMarkdown("use `deno run`"), "use deno run");
+});
+
+Deno.test("stripMarkdown - strips fenced code block markers", () => {
+  const input = "```ts\nconst x = 1;\n```";
+  const result = stripMarkdown(input);
+  assert(!result.includes("```"));
+  assertStringIncludes(result, "const x = 1;");
+});
+
+Deno.test("stripMarkdown - strips horizontal rules", () => {
+  assertEquals(stripMarkdown("above\n---\nbelow"), "above\n\nbelow");
+});
+
+Deno.test("stripMarkdown - strips HTML tags", () => {
+  assertEquals(stripMarkdown("<div>content</div>"), "content");
+});
+
+Deno.test("stripMarkdown - collapses excessive newlines", () => {
+  const result = stripMarkdown("a\n\n\n\n\nb");
+  assertEquals(result, "a\n\nb");
+});
+
+// ---------------------------------------------------------------------------
+// Search index strips markdown
+// ---------------------------------------------------------------------------
+
+Deno.test("buildSearchIndex - content has markdown stripped", async () => {
+  clearSearchIndexCache();
+  const items = await buildSearchIndex(testContext);
+  for (const item of items) {
+    assertEquals(
+      item.content.includes("##"),
+      false,
+      `"##" found in ${item.slug}`,
+    );
+  }
+  clearSearchIndexCache();
+});
+
+// ---------------------------------------------------------------------------
+// Promise dedup: concurrent calls share one build
+// ---------------------------------------------------------------------------
+
+Deno.test("getAllDocs - concurrent calls return same result", async () => {
+  clearSearchIndexCache();
+  const [a, b, c] = await Promise.all([
+    getAllDocs(testContext),
+    getAllDocs(testContext),
+    getAllDocs(testContext),
+  ]);
+  assertEquals(a, b);
+  assertEquals(b, c);
+});
+
+Deno.test("buildSearchIndex - concurrent calls return same reference", async () => {
+  clearSearchIndexCache();
+  const [a, b] = await Promise.all([
+    buildSearchIndex(testContext),
+    buildSearchIndex(testContext),
+  ]);
+  assertEquals(a === b, true);
+  clearSearchIndexCache();
 });
