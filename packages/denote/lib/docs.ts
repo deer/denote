@@ -349,8 +349,14 @@ export async function buildMiniSearchJSON(
   if (cachedMiniSearchJSON) return cachedMiniSearchJSON;
 
   const items = await buildSearchIndex(denoteContext);
-  const ms = new MiniSearch(SEARCH_OPTIONS);
-  ms.addAll(items as unknown as Record<string, unknown>[]);
+  const ms = new MiniSearch<SearchItem>({
+    ...SEARCH_OPTIONS,
+    extractField: (doc, fieldName) => {
+      if (fieldName === "aiKeywords") return doc.aiKeywords?.join(" ") ?? "";
+      return (doc[fieldName as keyof SearchItem] as string) ?? "";
+    },
+  });
+  ms.addAll(items);
   cachedMiniSearchJSON = JSON.stringify(ms);
   return cachedMiniSearchJSON;
 }

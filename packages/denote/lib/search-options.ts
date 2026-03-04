@@ -16,10 +16,4 @@ export const SEARCH_OPTIONS = {
     fuzzy: 0.2,
     prefix: true,
   },
-  extractField: (doc: Record<string, unknown>, fieldName: string): string => {
-    if (fieldName === "aiKeywords") {
-      return (doc.aiKeywords as string[] | undefined)?.join(" ") ?? "";
-    }
-    return (doc[fieldName] as string) ?? "";
-  },
 };
