@@ -11,11 +11,29 @@
  */
 import { launch } from "jsr:@astral/astral@0.5.5";
 import { assert, assertEquals } from "jsr:@std/assert@1";
+import { deadline as withDeadline } from "jsr:@std/async@1/deadline";
 import { dirname, fromFileUrl, join } from "@std/path";
 
 const __dirname = dirname(fromFileUrl(import.meta.url));
 const docsDir = join(__dirname, "..", "..", "..", "docs");
 const serverEntry = join(docsDir, "_fresh", "server.js");
+
+/** Wait for a condition, polling via page.evaluate. No leaked timers. */
+async function waitFor(
+  page: Awaited<ReturnType<Awaited<ReturnType<typeof launch>>["newPage"]>>,
+  fn: () => boolean,
+  timeout = 5000,
+): Promise<void> {
+  const end = Date.now() + timeout;
+  while (Date.now() < end) {
+    const result = await page.evaluate(fn);
+    if (result) return;
+    await page.evaluate(() =>
+      new Promise((r) => requestAnimationFrame(() => r(undefined)))
+    );
+  }
+  throw new Error("waitFor timed out");
+}
 
 Deno.test("search e2e", async (t) => {
   // Verify the docs site is built
@@ -39,25 +57,19 @@ Deno.test("search e2e", async (t) => {
   let BASE = "";
   const decoder = new TextDecoder();
   const reader = serverProcess.stderr.getReader();
-  const deadline = Date.now() + 30_000;
-  while (Date.now() < deadline) {
-    const { value, done } = await Promise.race([
-      reader.read(),
-      new Promise<never>((_, reject) =>
-        setTimeout(
-          () => reject(new Error("Timed out waiting for server")),
-          30_000,
-        )
-      ),
-    ]);
-    if (done) break;
-    const text = decoder.decode(value);
-    const match = text.match(/Listening on http:\/\/[^:]+:(\d+)/);
-    if (match) {
-      BASE = `http://localhost:${match[1]}`;
-      reader.releaseLock();
-      break;
+  try {
+    while (true) {
+      const { value, done } = await withDeadline(reader.read(), 30_000);
+      if (done) break;
+      const text = decoder.decode(value);
+      const match = text.match(/Listening on http:\/\/[^:]+:(\d+)/);
+      if (match) {
+        BASE = `http://localhost:${match[1]}`;
+        break;
+      }
     }
+  } finally {
+    reader.releaseLock();
   }
 
   if (!BASE) throw new Error("Failed to detect server port");
@@ -89,14 +101,15 @@ Deno.test("search e2e", async (t) => {
       );
 
       // Wait for index to load (loading state disappears)
-      await page.waitForFunction(() => {
+      await waitFor(page, () => {
         const el = document.querySelector(".py-8.text-center");
         return !el?.textContent?.includes("Loading");
       });
 
       await page.keyboard.type("introduction");
 
-      await page.waitForFunction(
+      await waitFor(
+        page,
         () => document.querySelectorAll("a[href^='/docs/']").length > 0,
       );
 
@@ -108,16 +121,22 @@ Deno.test("search e2e", async (t) => {
 
     // ── 3. Fuzzy matching ───────────────────────────────────
     await t.step("fuzzy: 'instalation' finds Installation", async () => {
-      // Select all text in input, then type new query
       await page.keyboard.down("Control");
       await page.keyboard.press("a");
       await page.keyboard.up("Control");
       await page.keyboard.type("instalation"); // one L
 
-      await new Promise((r) => setTimeout(r, 300));
+      await waitFor(
+        page,
+        () =>
+          document.querySelectorAll("a[href^='/docs/'] .font-medium").length >
+            0,
+      );
 
       const titles: string[] = await page.evaluate(() =>
-        Array.from(document.querySelectorAll("a[href^='/docs/'] .font-medium"))
+        Array.from(
+          document.querySelectorAll("a[href^='/docs/'] .font-medium"),
+        )
           .map((el) => el.textContent ?? "")
       );
       const found = titles.some((t) => t.toLowerCase().includes("install"));
@@ -131,10 +150,17 @@ Deno.test("search e2e", async (t) => {
       await page.keyboard.up("Control");
       await page.keyboard.type("conf");
 
-      await new Promise((r) => setTimeout(r, 300));
+      await waitFor(
+        page,
+        () =>
+          document.querySelectorAll("a[href^='/docs/'] .font-medium").length >
+            0,
+      );
 
       const titles: string[] = await page.evaluate(() =>
-        Array.from(document.querySelectorAll("a[href^='/docs/'] .font-medium"))
+        Array.from(
+          document.querySelectorAll("a[href^='/docs/'] .font-medium"),
+        )
           .map((el) => el.textContent ?? "")
       );
       assert(titles.length > 0, "No prefix results");
@@ -145,7 +171,15 @@ Deno.test("search e2e", async (t) => {
     // ── 5. Cached on reopen (no loading state) ──────────────
     await t.step("reopen shows results instantly (cached)", async () => {
       await page.keyboard.press("Escape");
-      await new Promise((r) => setTimeout(r, 200));
+
+      // Wait for modal to close
+      await waitFor(
+        page,
+        () =>
+          !document.querySelector(
+            "input[placeholder='Search documentation...']",
+          ),
+      );
 
       // Reopen — should skip loading state entirely
       await page.keyboard.down("Control");
@@ -156,7 +190,11 @@ Deno.test("search e2e", async (t) => {
       );
 
       await page.keyboard.type("install");
-      await new Promise((r) => setTimeout(r, 300));
+
+      await waitFor(
+        page,
+        () => document.querySelectorAll("a[href^='/docs/']").length > 0,
+      );
 
       const hasLoading = await page.evaluate(() =>
         document.querySelector(".py-8.text-center")?.textContent?.includes(
