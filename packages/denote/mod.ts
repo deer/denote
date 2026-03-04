@@ -257,6 +257,10 @@ export function denote(options: DenoteOptions): App<unknown> {
     resp.headers.set("X-Content-Type-Options", "nosniff");
     resp.headers.set("X-Frame-Options", "DENY");
     resp.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
+    resp.headers.set(
+      "Permissions-Policy",
+      "camera=(), microphone=(), geolocation=()",
+    );
 
     // Cache hashed static assets aggressively
     const url = new URL(ctx.req.url);

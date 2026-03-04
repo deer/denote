@@ -15,7 +15,7 @@ export function App({ Component, state }: PageProps<unknown, State>) {
 
   const jsonLd = JSON.stringify(
     buildJsonLd(config, pageDescription, pageUrl),
-  );
+  ).replaceAll("</", "<\\/");
 
   const fontImports = config.fonts?.imports || [];
   const locale = config.seo?.locale || "en";
