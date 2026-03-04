@@ -14,20 +14,20 @@ import { extractToc } from "@deer/gfm/parse";
 
 /** Cache key for llms.txt includes the baseUrl since output varies by origin. */
 let cachedLlmsTxt: string | null = null;
-let cachedLlmsTxtBaseUrl: string | null = null;
+let cachedLlmsTxtBaseUrl: string = "";
 let buildingLlmsTxt: Promise<string> | null = null;
 
 let cachedDocsJson: object | null = null;
-let cachedDocsJsonBaseUrl: string | undefined | null = null;
+let cachedDocsJsonBaseUrl: string | undefined = undefined;
 let buildingDocsJson: Promise<object> | null = null;
 
 /** Clear all AI output caches. Called on content invalidation via hook. */
 export function clearAiCache(): void {
   cachedLlmsTxt = null;
-  cachedLlmsTxtBaseUrl = null;
+  cachedLlmsTxtBaseUrl = "";
   buildingLlmsTxt = null;
   cachedDocsJson = null;
-  cachedDocsJsonBaseUrl = null;
+  cachedDocsJsonBaseUrl = undefined;
   buildingDocsJson = null;
 }
 
@@ -51,9 +51,12 @@ export function generateLlmsTxt(
     return Promise.resolve(cachedLlmsTxt);
   }
 
-  // baseUrl changed — invalidate stale cache before rebuilding
-  cachedLlmsTxt = null;
-  buildingLlmsTxt = null;
+  // baseUrl changed — invalidate stale cache and in-flight build
+  if (cachedLlmsTxtBaseUrl !== baseUrl) {
+    cachedLlmsTxt = null;
+    buildingLlmsTxt = null;
+    cachedLlmsTxtBaseUrl = baseUrl;
+  }
 
   return buildingLlmsTxt ??= _generateLlmsTxtInner(denoteContext, baseUrl);
 }
@@ -131,9 +134,12 @@ export function getDocsJson(
     return Promise.resolve(cachedDocsJson);
   }
 
-  // baseUrl changed — invalidate stale cache before rebuilding
-  cachedDocsJson = null;
-  buildingDocsJson = null;
+  // baseUrl changed — invalidate stale cache and in-flight build
+  if (cachedDocsJsonBaseUrl !== baseUrl) {
+    cachedDocsJson = null;
+    buildingDocsJson = null;
+    cachedDocsJsonBaseUrl = baseUrl;
+  }
 
   return buildingDocsJson ??= _getDocsJsonInner(denoteContext, baseUrl);
 }

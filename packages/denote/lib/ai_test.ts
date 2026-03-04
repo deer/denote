@@ -74,3 +74,44 @@ Deno.test("generateLlmsTxt - omits MCP section when disabled", async () => {
   const txt = await generateLlmsTxt(noMcpContext, "http://localhost:8000");
   assertEquals(txt.includes("## MCP"), false);
 });
+
+Deno.test("clearAiCache - invalidates cached llms.txt", async () => {
+  clearAiCache();
+  const first = await generateLlmsTxt(testContext, "http://a.com");
+  // Change baseUrl — without clearing, cache still holds the old baseUrl result
+  clearAiCache();
+  const second = await generateLlmsTxt(testContext, "http://b.com");
+  // Content differs because baseUrl is embedded in the output
+  assertStringIncludes(first, "http://a.com");
+  assertStringIncludes(second, "http://b.com");
+  clearAiCache();
+});
+
+Deno.test("clearAiCache - invalidates cached docsJson", async () => {
+  clearAiCache();
+  const first = await getDocsJson(testContext);
+  clearAiCache();
+  const second = await getDocsJson(testContext);
+  assertEquals(first === second, false);
+  clearAiCache();
+});
+
+Deno.test("generateLlmsTxt - concurrent calls return same reference", async () => {
+  clearAiCache();
+  const [a, b] = await Promise.all([
+    generateLlmsTxt(testContext, "http://localhost:8000"),
+    generateLlmsTxt(testContext, "http://localhost:8000"),
+  ]);
+  assertEquals(a === b, true);
+  clearAiCache();
+});
+
+Deno.test("getDocsJson - concurrent calls return same reference", async () => {
+  clearAiCache();
+  const [a, b] = await Promise.all([
+    getDocsJson(testContext),
+    getDocsJson(testContext),
+  ]);
+  assertEquals(a === b, true);
+  clearAiCache();
+});
