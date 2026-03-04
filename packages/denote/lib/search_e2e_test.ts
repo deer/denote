@@ -74,7 +74,11 @@ Deno.test("search e2e", async (t) => {
 
   if (!BASE) throw new Error("Failed to detect server port");
 
-  const browser = await launch();
+  const browser = await launch({
+    args: (Deno.env.get("CI") && Deno.build.os === "linux")
+      ? ["--no-sandbox"]
+      : [],
+  });
 
   try {
     // ── 1. API-level check ──────────────────────────────────
