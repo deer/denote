@@ -193,7 +193,7 @@ export function setConfig(config: DenoteConfig): void {
     for (const issue of result.error.issues) {
       const path = issue.path.length > 0 ? issue.path.join(".") : "config";
       console.warn(
-        `Warning: Config validation — ${path}: ${issue.message}. Check this field in denote.config.ts.`,
+        `[denote] Config validation — ${path}: ${issue.message}. Check this field in denote.config.ts.`,
       );
     }
   }

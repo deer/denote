@@ -97,12 +97,16 @@ function startWatcher(contentDir: string): void {
             }
           }
         }
-      } catch {
+      } catch (e) {
         // Watcher was closed — expected during shutdown
+        if (!(e instanceof Deno.errors.BadResource)) {
+          console.error("[denote] File watcher error:", e);
+        }
       }
     })();
-  } catch {
+  } catch (e) {
     // watchFs not available — cache is still valid, just won't auto-refresh
+    console.warn("[denote] File watcher unavailable:", e);
     watcher = null;
   }
 }
@@ -227,7 +231,7 @@ export async function getAllDocs(
     } catch {
       if (dir === docsDir) {
         console.warn(
-          `Warning: content directory not found at ${docsDir}. No docs will be served.`,
+          `[denote] Content directory not found at ${docsDir}. No docs will be served.`,
         );
       }
     }
