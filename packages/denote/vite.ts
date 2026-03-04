@@ -45,12 +45,12 @@ export function denoteHmr(): import("vite").Plugin {
           try {
             const mod = await import(`file://${file}?t=${Date.now()}`);
             setConfig(mod.config || mod.default);
-            console.log("  [denote] Config reloaded");
+            console.log("[denote] Config reloaded");
             server.hot.send({ type: "full-reload" });
           } catch (e: unknown) {
             const msg = e instanceof Error ? e.message : String(e);
             console.error(
-              `  [denote] Config reload error: ${msg}\n  Check denote.config.ts for syntax errors. The previous config is still active.`,
+              `[denote] Config reload error: ${msg}\n  Check denote.config.ts for syntax errors. The previous config is still active.`,
             );
           }
         }

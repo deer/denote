@@ -36,7 +36,7 @@ function resolveConfig(
   const siteId = config.siteId || Deno.env.get("ANALYTICS_SITE_ID");
   if (!siteId) {
     console.warn(
-      "Analytics: no siteId configured and ANALYTICS_SITE_ID env var is not set — analytics disabled.",
+      "[denote] Analytics: no siteId configured and ANALYTICS_SITE_ID env var is not set — analytics disabled.",
     );
     return null;
   }
@@ -44,7 +44,7 @@ function resolveConfig(
   const endpoint = config.endpoint || DEFAULT_ENDPOINTS[config.provider];
   if (!endpoint) {
     console.warn(
-      `Analytics: no endpoint configured for provider "${config.provider}" — analytics disabled.`,
+      `[denote] Analytics: no endpoint configured for provider "${config.provider}" — analytics disabled.`,
     );
     return null;
   }
@@ -216,6 +216,6 @@ function sendEvent(
       body: payload.body,
     });
   }).catch((err) => {
-    console.error("Analytics reporting error:", err);
+    console.error("[denote] Analytics reporting error:", err);
   });
 }

@@ -25,39 +25,40 @@ export async function HomePage(ctx: PageProps<unknown, State>) {
 
 const defaultFeatures = [
   {
-    icon: "🤖",
-    title: "AI-Native",
+    icon: "🧭",
+    title: "Easy to Navigate",
     description:
-      "Built-in MCP server, llms.txt, and JSON API. Your docs are a first-class data source for AI agents — not an afterthought.",
+      "Organized sidebar, breadcrumbs, and table of contents make it simple to find what you need.",
   },
   {
     icon: "📝",
-    title: "Markdown First",
+    title: "Markdown Powered",
     description:
-      "Write docs in Markdown with frontmatter. No MDX compilation step. Just files.",
+      "Write documentation in Markdown with frontmatter. Focus on content, not tooling.",
   },
   {
     icon: "⚡",
-    title: "Lightning Fast",
+    title: "Fast & Lightweight",
     description:
-      "Server-rendered with island architecture. Minimal client JavaScript.",
+      "Server-rendered pages with minimal client-side JavaScript for instant load times.",
   },
   {
     icon: "🔍",
     title: "Built-in Search",
     description:
-      "Instant full-text search with keyboard navigation. No external service required.",
+      "Full-text search with keyboard navigation. No external service required.",
   },
   {
-    icon: "🦕",
-    title: "Deno Native",
-    description: "Built on Deno's secure runtime. TypeScript-first.",
-  },
-  {
-    icon: "🚀",
-    title: "Deploy Anywhere",
+    icon: "🌗",
+    title: "Dark Mode",
     description:
-      "One-click Deno Deploy, or self-host on anything that runs Deno.",
+      "Automatic dark mode support that respects your visitors' system preferences.",
+  },
+  {
+    icon: "📱",
+    title: "Mobile Friendly",
+    description:
+      "Responsive layout that works great on phones, tablets, and desktops alike.",
   },
 ];
 

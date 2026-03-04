@@ -265,7 +265,7 @@ export function denote(options: DenoteOptions): App<unknown> {
   // ── Logger middleware ───────────────────────────────────────
   if (devMode) {
     app.use((ctx) => {
-      console.log(`${ctx.req.method} ${ctx.req.url}`);
+      console.log(`[denote] ${ctx.req.method} ${ctx.req.url}`);
       return ctx.next();
     });
   }
