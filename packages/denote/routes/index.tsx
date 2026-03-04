@@ -9,8 +9,10 @@ import { findFirstHref } from "../lib/nav.ts";
 export async function HomePage(ctx: PageProps<unknown, State>) {
   const config = ctx.state.denote.config;
   if (config.landing?.enabled === false) {
-    const target = config.landing?.redirectTo ||
+    const raw = config.landing?.redirectTo ||
       findFirstHref(config.navigation) || "/docs";
+    // Prevent open redirect: only allow local paths (starts with / but not //)
+    const target = raw.startsWith("/") && !raw.startsWith("//") ? raw : "/docs";
     return new Response(null, {
       status: 302,
       headers: { Location: target },

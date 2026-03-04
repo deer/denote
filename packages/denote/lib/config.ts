@@ -60,7 +60,13 @@ const SeoSchema = z.object({
 
 const LandingSchema = z.object({
   enabled: z.boolean().optional(),
-  redirectTo: z.string().optional(),
+  redirectTo: z.string().min(1).startsWith(
+    "/",
+    "redirectTo must be a local path starting with /",
+  ).refine(
+    (s) => !s.startsWith("//"),
+    "redirectTo must not start with // (protocol-relative URL)",
+  ).optional(),
   hero: z.object({
     badge: z.string().optional(),
     title: z.string(),
