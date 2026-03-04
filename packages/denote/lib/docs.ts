@@ -16,6 +16,7 @@ import type { NavItem } from "../denote.config.ts";
 import type { DenoteContext } from "../utils.ts";
 import { resolve } from "@std/path";
 import { flattenNav, type NavLink } from "./nav.ts";
+import MiniSearch from "minisearch";
 
 export interface DocPage extends ParsedDoc {
   slug: string;
@@ -334,9 +335,27 @@ export async function buildSearchIndex(
   return cachedSearchIndex;
 }
 
+import { SEARCH_OPTIONS } from "./search-options.ts";
+export { SEARCH_OPTIONS } from "./search-options.ts";
+
+let cachedMiniSearchJSON: string | null = null;
+
+export async function buildMiniSearchJSON(
+  denoteContext: DenoteContext,
+): Promise<string> {
+  if (cachedMiniSearchJSON) return cachedMiniSearchJSON;
+
+  const items = await buildSearchIndex(denoteContext);
+  const ms = new MiniSearch(SEARCH_OPTIONS);
+  ms.addAll(items as unknown as Record<string, unknown>[]);
+  cachedMiniSearchJSON = JSON.stringify(ms);
+  return cachedMiniSearchJSON;
+}
+
 /** Clear the search index cache (useful for testing or after content changes) */
 export function clearSearchIndexCache(): void {
   cachedSearchIndex = null;
+  cachedMiniSearchJSON = null;
 }
 
 // ---------------------------------------------------------------------------

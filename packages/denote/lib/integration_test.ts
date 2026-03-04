@@ -91,19 +91,14 @@ Deno.test("GET /api/docs - returns structured JSON", async () => {
 
 // ── /api/search ────────────────────────────────────────────
 
-Deno.test("GET /api/search - returns search index", async () => {
+Deno.test("GET /api/search - returns MiniSearch index", async () => {
   const res = await request("/api/search");
   assertEquals(res.status, 200);
   assertEquals(res.headers.get("content-type"), "application/json");
   assert(res.headers.has("cache-control"));
   const json = await res.json();
-  assert(Array.isArray(json));
-  assert(json.length > 0);
-  // Each item should have title, slug, content
-  const item = json[0];
-  assert(typeof item.title === "string");
-  assert(typeof item.slug === "string");
-  assert(typeof item.content === "string");
+  // MiniSearch serialized index is an object, not an array
+  assert(typeof json === "object" && !Array.isArray(json));
 });
 
 // ── /sitemap.xml ───────────────────────────────────────────

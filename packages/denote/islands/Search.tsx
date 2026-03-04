@@ -4,22 +4,20 @@
  * @module
  *
  * Signal-driven search modal activated by the Cmd+K / Ctrl+K keyboard
- * shortcut. Performs client-side full-text search over the docs index and
- * renders results with keyboard navigation.
+ * shortcut. Lazily fetches the search index from `/api/search` on first open,
+ * then performs client-side full-text search with keyboard navigation.
  */
 import { computed, effect, signal } from "@preact/signals";
 import { useEffect } from "preact/hooks";
-import type { SearchItem } from "../lib/docs.ts";
-
-/** Props for the {@linkcode Search} island. */
-export interface SearchProps {
-  /** Pre-built search index entries. */
-  items: SearchItem[];
-}
+import MiniSearch from "minisearch";
+import { SEARCH_OPTIONS } from "../lib/search-options.ts";
 
 const isOpen = signal(false);
 const query = signal("");
 const selectedIndex = signal(0);
+const searchIndex = signal<MiniSearch | null>(null);
+const isLoading = signal(false);
+const fetchError = signal(false);
 
 // Reset selection when query changes
 effect(() => {
@@ -28,18 +26,11 @@ effect(() => {
 });
 
 /** Full-text search modal activated by Cmd+K / Ctrl+K. */
-export function Search({ items }: SearchProps): preact.JSX.Element | null {
+export function Search(): preact.JSX.Element | null {
   const results = computed(() => {
-    const q = query.value.trim().toLowerCase();
-    if (!q) return [];
-    return items
-      .filter(
-        (item) =>
-          item.title.toLowerCase().includes(q) ||
-          item.content.toLowerCase().includes(q) ||
-          item.description?.toLowerCase().includes(q),
-      )
-      .slice(0, 10);
+    const q = query.value.trim();
+    if (!q || !searchIndex.value) return [];
+    return searchIndex.value.search(q).slice(0, 10);
   });
 
   // Keyboard shortcuts
@@ -74,7 +65,7 @@ export function Search({ items }: SearchProps): preact.JSX.Element | null {
         e.preventDefault();
         const item = results.value[selectedIndex.value];
         if (item) {
-          globalThis.location.href = `/docs/${item.slug}`;
+          globalThis.location.href = `/docs/${item.id}`;
           isOpen.value = false;
         }
       }
@@ -92,6 +83,20 @@ export function Search({ items }: SearchProps): preact.JSX.Element | null {
     return () =>
       triggers.forEach((el) => el.removeEventListener("click", open));
   }, []);
+
+  // Fetch search index on first open
+  useEffect(() => {
+    if (!isOpen.value || searchIndex.value !== null || isLoading.value) return;
+    isLoading.value = true;
+    fetchError.value = false;
+    fetch("/api/search")
+      .then((r) => r.text())
+      .then((json) =>
+        searchIndex.value = MiniSearch.loadJSON(json, SEARCH_OPTIONS)
+      )
+      .catch(() => (fetchError.value = true))
+      .finally(() => (isLoading.value = false));
+  }, [isOpen.value]);
 
   if (!isOpen.value) return null;
 
@@ -136,7 +141,20 @@ export function Search({ items }: SearchProps): preact.JSX.Element | null {
 
           {/* Results */}
           <div class="max-h-[60vh] overflow-y-auto p-2">
-            {query.value.trim() && results.value.length === 0 && (
+            {isLoading.value && (
+              <div class="py-8 text-center text-[var(--denote-text-muted)]">
+                Loading...
+              </div>
+            )}
+
+            {fetchError.value && (
+              <div class="py-8 text-center text-[var(--denote-text-muted)]">
+                Search unavailable
+              </div>
+            )}
+
+            {!isLoading.value && !fetchError.value && query.value.trim() &&
+              results.value.length === 0 && (
               <div class="py-8 text-center text-[var(--denote-text-muted)]">
                 No results found for "{query.value}"
               </div>
@@ -144,7 +162,7 @@ export function Search({ items }: SearchProps): preact.JSX.Element | null {
 
             {results.value.map((item, i) => (
               <a
-                href={`/docs/${item.slug}`}
+                href={`/docs/${item.id}`}
                 class={`block px-4 py-3 rounded-lg transition-colors ${
                   i === selectedIndex.value
                     ? "bg-[var(--denote-primary-subtle)]"
@@ -163,7 +181,7 @@ export function Search({ items }: SearchProps): preact.JSX.Element | null {
               </a>
             ))}
 
-            {!query.value.trim() && (
+            {!isLoading.value && !fetchError.value && !query.value.trim() && (
               <div class="py-8 text-center text-[var(--denote-text-muted)]">
                 Start typing to search...
               </div>

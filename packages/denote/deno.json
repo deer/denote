@@ -52,6 +52,7 @@
     "vite": "npm:vite@^7.3.1",
     "tailwindcss": "npm:tailwindcss@^4.1.10",
     "@tailwindcss/vite": "npm:@tailwindcss/vite@^4.1.12",
+    "minisearch": "npm:minisearch@^7.2.0",
     "zod": "npm:zod@^4.3.6",
     "preact-render-to-string": "npm:preact-render-to-string@^6.5.0"
   },

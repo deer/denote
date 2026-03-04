@@ -41,7 +41,11 @@ import { darkModeScript, generateThemeCSS } from "./lib/theme.ts";
 import { CSS, HIGHLIGHT_CSS } from "@deer/gfm/style";
 import { type DenoteContext, isDev, type State } from "./utils.ts";
 import { buildRobotsTxt, buildSitemapXml } from "./lib/seo.ts";
-import { buildSearchIndex, generateFullDocs, getAllDocs } from "./lib/docs.ts";
+import {
+  buildMiniSearchJSON,
+  generateFullDocs,
+  getAllDocs,
+} from "./lib/docs.ts";
 import { findFirstHref } from "./lib/nav.ts";
 
 // Import page components for programmatic routing
@@ -357,8 +361,8 @@ export function denote(options: DenoteOptions): App<unknown> {
   });
 
   app.get("/api/search", async (ctx) => {
-    const index = await buildSearchIndex(ctx.state.denote);
-    return new Response(JSON.stringify(index), {
+    const json = await buildMiniSearchJSON(ctx.state.denote);
+    return new Response(json, {
       headers: {
         "Content-Type": "application/json",
         "Cache-Control": configCacheControl,
