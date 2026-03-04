@@ -256,7 +256,10 @@ Deno.test("scaffold creates expected files", async () => {
   // Tasks — plain Fresh tasks, no CLI
   assertEquals(denoJson.tasks.dev, "deno run -A npm:vite");
   assertEquals(denoJson.tasks.build, "deno run -A npm:vite build");
-  assertEquals(denoJson.tasks.start, "deno serve -A _fresh/server.js");
+  assertEquals(
+    denoJson.tasks.start,
+    "deno serve --allow-read --allow-net --allow-env=ANALYTICS_SITE_ID,DENO_DEPLOYMENT_ID,DENO_TESTING,NODE_ENV _fresh/server.js",
+  );
   assertEquals(
     denoJson.tasks.validate,
     "deno run -A jsr:@denote/core/validate",

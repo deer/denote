@@ -41,7 +41,7 @@ import { darkModeScript, generateThemeCSS } from "./lib/theme.ts";
 import { CSS, HIGHLIGHT_CSS } from "@deer/gfm/style";
 import { type DenoteContext, isDev, type State } from "./utils.ts";
 import { buildRobotsTxt, buildSitemapXml } from "./lib/seo.ts";
-import { buildSearchIndex, getAllDocs } from "./lib/docs.ts";
+import { buildSearchIndex, generateFullDocs, getAllDocs } from "./lib/docs.ts";
 import { findFirstHref } from "./lib/nav.ts";
 
 // Import page components for programmatic routing
@@ -335,7 +335,6 @@ export function denote(options: DenoteOptions): App<unknown> {
   });
 
   app.get("/llms-full.txt", async (ctx) => {
-    const { generateFullDocs } = await import("./lib/docs.ts");
     const txt = await generateFullDocs(ctx.state.denote);
     return new Response(txt, {
       headers: {

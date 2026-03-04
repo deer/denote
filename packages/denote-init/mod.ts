@@ -90,7 +90,8 @@ async function scaffold(projectDir: string, projectName: string) {
     tasks: {
       dev: "deno run -A npm:vite",
       build: "deno run -A npm:vite build",
-      start: "deno serve -A _fresh/server.js",
+      start:
+        "deno serve --allow-read --allow-net --allow-env=ANALYTICS_SITE_ID,DENO_DEPLOYMENT_ID,DENO_TESTING,NODE_ENV _fresh/server.js",
       ok: "deno fmt --check && deno lint && deno check && deno task validate",
       validate: "deno run -A jsr:@denote/core/validate",
     },
@@ -367,7 +368,7 @@ dist/
   // Pin to a specific Deno version for reproducible builds. Users should
   // update this when upgrading Deno.
   const dockerfile = `# Build stage
-FROM denoland/deno:2.7.1 AS builder
+FROM denoland/deno:2.7.2 AS builder
 
 WORKDIR /app
 
@@ -378,7 +379,7 @@ COPY . .
 RUN deno task build
 
 # Runtime stage
-FROM denoland/deno:2.7.1
+FROM denoland/deno:2.7.2
 
 WORKDIR /app
 
@@ -389,7 +390,7 @@ COPY --from=builder /app/static ./static
 
 EXPOSE 8000
 
-CMD ["deno", "serve", "-A", "_fresh/server.js"]
+CMD ["deno", "serve", "--allow-read=/app", "--allow-net", "--allow-env=ANALYTICS_SITE_ID,DENO_DEPLOYMENT_ID,DENO_TESTING,NODE_ENV", "_fresh/server.js"]
 `;
   if (!await fileExists(`${projectDir}/Dockerfile`)) {
     await Deno.writeTextFile(`${projectDir}/Dockerfile`, dockerfile);
