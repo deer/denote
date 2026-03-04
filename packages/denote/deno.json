@@ -17,10 +17,6 @@
     "./types": "./denote.config.ts",
     "./styles.css": "./styles.css"
   },
-  "tasks": {
-    "test": "deno test --allow-read --allow-net --allow-env",
-    "ok": "deno fmt --check . && deno lint . && deno check && deno task test"
-  },
   "lint": {
     "rules": {
       "tags": [

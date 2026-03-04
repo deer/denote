@@ -17,6 +17,8 @@ import type { DenoteContext } from "../utils.ts";
 import { resolve } from "@std/path";
 import { flattenNav, type NavLink } from "./nav.ts";
 import MiniSearch from "minisearch";
+import { SEARCH_OPTIONS } from "./search-options.ts";
+export { SEARCH_OPTIONS } from "./search-options.ts";
 
 export interface DocPage extends ParsedDoc {
   slug: string;
@@ -329,14 +331,11 @@ export async function buildSearchIndex(
     aiSummary: doc.frontmatter["ai-summary"],
     aiKeywords: doc.frontmatter["ai-keywords"],
     slug: doc.slug,
-    content: doc.content.slice(0, 500), // First 500 chars for search preview
+    content: doc.content,
   }));
 
   return cachedSearchIndex;
 }
-
-import { SEARCH_OPTIONS } from "./search-options.ts";
-export { SEARCH_OPTIONS } from "./search-options.ts";
 
 let cachedMiniSearchJSON: string | null = null;
 

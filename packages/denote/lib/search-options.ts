@@ -2,7 +2,7 @@
 export const SEARCH_OPTIONS = {
   idField: "slug" as const,
   fields: ["title", "description", "content", "aiSummary", "aiKeywords"],
-  storeFields: ["title", "description", "slug"],
+  storeFields: ["title", "description"],
   searchOptions: {
     boost: { title: 4, description: 2, aiSummary: 1.5 },
     fuzzy: 0.2,

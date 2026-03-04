@@ -90,7 +90,10 @@ export function Search(): preact.JSX.Element | null {
     isLoading.value = true;
     fetchError.value = false;
     fetch("/api/search")
-      .then((r) => r.text())
+      .then((r) => {
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        return r.text();
+      })
       .then((json) =>
         searchIndex.value = MiniSearch.loadJSON(json, SEARCH_OPTIONS)
       )
