@@ -118,11 +118,11 @@ For richer AI integration, Denote includes a built-in
 
 ### MCP Tools
 
-| Tool           | Description                                |
-| -------------- | ------------------------------------------ |
-| `search_docs`  | Search documentation by query string       |
-| `get_doc`      | Get full content of a page by slug         |
-| `get_all_docs` | Get entire documentation as one text block |
+| Tool           | Description                                          |
+| -------------- | ---------------------------------------------------- |
+| `search_docs`  | Fuzzy search with prefix matching and field boosting |
+| `get_doc`      | Get full content of a page by slug                   |
+| `get_all_docs` | Get entire documentation as one text block           |
 
 ### MCP Resources
 

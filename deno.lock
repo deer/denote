@@ -67,6 +67,7 @@
     "npm:hast-util-heading-rank@3": "3.0.0",
     "npm:hast-util-to-string@^3.0.1": "3.0.1",
     "npm:mdast-util-to-string@4": "4.0.0",
+    "npm:minisearch@7": "7.2.0",
     "npm:minisearch@^7.2.0": "7.2.0",
     "npm:preact-render-to-string@^6.5.0": "6.6.5_preact@10.28.3",
     "npm:preact-render-to-string@^6.6.3": "6.6.5_preact@10.28.3",

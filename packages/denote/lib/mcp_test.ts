@@ -179,6 +179,44 @@ Deno.test("search_docs - case insensitive", mcpTestOpts, async () => {
   await close();
 });
 
+Deno.test(
+  "search_docs - fuzzy match finds misspelled query",
+  mcpTestOpts,
+  async () => {
+    clearSearchIndexCache();
+    const { client, close } = await createTestClient();
+
+    const result = await client.callTool({
+      name: "search_docs",
+      arguments: { query: "instalation" }, // one L — fuzzy should match
+    });
+
+    const text = toolText(result);
+    assertStringIncludes(text, "Installation");
+
+    await close();
+  },
+);
+
+Deno.test(
+  "search_docs - prefix match finds partial query",
+  mcpTestOpts,
+  async () => {
+    clearSearchIndexCache();
+    const { client, close } = await createTestClient();
+
+    const result = await client.callTool({
+      name: "search_docs",
+      arguments: { query: "conf" }, // prefix should match Configuration
+    });
+
+    const text = toolText(result);
+    assertStringIncludes(text, "Configuration");
+
+    await close();
+  },
+);
+
 Deno.test("search_docs - limits results to 10", mcpTestOpts, async () => {
   clearSearchIndexCache();
   const { client, close } = await createTestClient();
