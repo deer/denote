@@ -47,9 +47,12 @@ Denote uses Fresh's island architecture to ship JavaScript only where needed:
 
 ### Search (⌘K)
 
-Press `⌘K` (or `Ctrl+K`) to open the search modal. It searches across all doc
-page titles, descriptions, and content. Navigate results with arrow keys and
-press Enter to select.
+Press `⌘K` (or `Ctrl+K`) to open the search modal. Powered by
+[MiniSearch](https://lucaong.github.io/minisearch/), it provides ranked
+full-text search across titles, descriptions, content, and AI metadata with
+fuzzy and prefix matching. The search index is lazily fetched from `/api/search`
+on first open and cached for instant subsequent use. Navigate results with arrow
+keys and press Enter to select.
 
 ### Active Table of Contents
 

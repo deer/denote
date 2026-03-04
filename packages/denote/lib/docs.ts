@@ -5,6 +5,10 @@
  * markdown parsing. The cache is populated on first access and invalidated
  * automatically via Deno.watchFs in development. In production the cache
  * lives for the lifetime of the process (content is immutable after deploy).
+ *
+ * Also builds the serialized MiniSearch index served at `/api/search` via
+ * {@linkcode buildMiniSearchJSON}. The index is cached alongside the doc
+ * cache and invalidated on content changes.
  */
 import {
   type ParsedDoc,

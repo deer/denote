@@ -55,30 +55,18 @@ curl https://your-docs.com/api/docs
 
 ### GET /api/search
 
-Returns the search index — all pages with content truncated to the first 500
-characters, plus AI metadata when available.
+Returns a serialized [MiniSearch](https://lucaong.github.io/minisearch/) index
+for client-side full-text search. The index includes all pages with titles,
+descriptions, content, and AI metadata. It supports fuzzy matching, prefix
+search, and field boosting (titles are weighted 4x, descriptions 2x).
 
 ```bash
 curl https://your-docs.com/api/search
 ```
 
-**Response:**
-
-```json
-[
-  {
-    "title": "Introduction",
-    "description": "Welcome to the project",
-    "aiSummary": "Project overview and getting started guide.",
-    "aiKeywords": ["intro", "overview"],
-    "slug": "introduction",
-    "content": "# Introduction\n\nWelcome to the project..."
-  }
-]
-```
-
-Fields `aiSummary` and `aiKeywords` are included when the page defines
-`ai-summary` and `ai-keywords` frontmatter.
+The response is a MiniSearch JSON object (not a flat array of documents). The
+Search island fetches this on first `Cmd+K` open and deserializes it with
+`MiniSearch.loadJSON()` for instant client-side search.
 
 ### GET /llms.txt
 

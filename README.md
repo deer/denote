@@ -64,8 +64,8 @@ Enable MCP in your config, then point any MCP client at your site:
 
 ## Features
 
-- 🔍 **⌘K Search** — Instant full-text search with keyboard navigation. No
-  external service needed.
+- 🔍 **⌘K Search** — Ranked full-text search powered by MiniSearch with fuzzy
+  and prefix matching. Lazily loaded, no external service needed.
 - 📱 **Mobile Responsive** — Collapsible sidebar, touch-friendly navigation.
 - 📑 **Table of Contents** — Auto-generated from headings.
 - 🧭 **Config-driven Navigation** — Define your sidebar in TypeScript.

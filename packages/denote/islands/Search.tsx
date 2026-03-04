@@ -25,14 +25,15 @@ effect(() => {
   selectedIndex.value = 0;
 });
 
+// Search results — recomputed when query or index changes
+const results = computed(() => {
+  const q = query.value.trim();
+  if (!q || !searchIndex.value) return [];
+  return searchIndex.value.search(q).slice(0, 10);
+});
+
 /** Full-text search modal activated by Cmd+K / Ctrl+K. */
 export function Search(): preact.JSX.Element | null {
-  const results = computed(() => {
-    const q = query.value.trim();
-    if (!q || !searchIndex.value) return [];
-    return searchIndex.value.search(q).slice(0, 10);
-  });
-
   // Keyboard shortcuts
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {

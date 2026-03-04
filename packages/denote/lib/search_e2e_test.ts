@@ -35,12 +35,21 @@ Deno.test("search e2e", async (t) => {
     stderr: "piped",
   }).spawn();
 
-  // Read the port from stdout ("Listening on http://0.0.0.0:<port>/")
+  // Read the port from stderr ("Listening on http://0.0.0.0:<port>/")
   let BASE = "";
   const decoder = new TextDecoder();
   const reader = serverProcess.stderr.getReader();
-  while (true) {
-    const { value, done } = await reader.read();
+  const deadline = Date.now() + 30_000;
+  while (Date.now() < deadline) {
+    const { value, done } = await Promise.race([
+      reader.read(),
+      new Promise<never>((_, reject) =>
+        setTimeout(
+          () => reject(new Error("Timed out waiting for server")),
+          30_000,
+        )
+      ),
+    ]);
     if (done) break;
     const text = decoder.decode(value);
     const match = text.match(/Listening on http:\/\/[^:]+:(\d+)/);
