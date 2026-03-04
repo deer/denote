@@ -1,5 +1,5 @@
 # Build stage
-FROM denoland/deno:2.7.1 AS builder
+FROM denoland/deno:2.7.2 AS builder
 
 WORKDIR /app
 
@@ -15,7 +15,7 @@ COPY . .
 RUN deno task build
 
 # Runtime stage
-FROM denoland/deno:2.7.1
+FROM denoland/deno:2.7.2
 
 WORKDIR /app
 
@@ -26,4 +26,4 @@ COPY --from=builder /app/docs/static ./static
 
 EXPOSE 8000
 
-CMD ["deno", "serve", "-A", "_fresh/server.js"]
+CMD ["deno", "serve", "--allow-read=/app", "--allow-net", "--allow-env=ANALYTICS_SITE_ID,DENO_DEPLOYMENT_ID,DENO_TESTING,NODE_ENV", "_fresh/server.js"]

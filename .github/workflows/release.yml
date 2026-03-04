@@ -42,12 +42,13 @@ jobs:
           fi
 
       - name: Publish @denote/core to JSR
+        id: core-publish
         if: steps.core.outputs.changed == 'true'
         run: deno publish
         working-directory: packages/denote
 
       - name: Create @denote/core release
-        if: steps.core.outputs.changed == 'true'
+        if: steps.core.outputs.changed == 'true' && steps.core-publish.outcome == 'success'
         run: |
           gh release create "${{ steps.core.outputs.tag }}" \
             --title "${{ steps.core.outputs.tag }}" \
@@ -73,12 +74,13 @@ jobs:
           fi
 
       - name: Publish @denote/init to JSR
+        id: init-publish
         if: steps.init.outputs.changed == 'true'
         run: deno publish
         working-directory: packages/denote-init
 
       - name: Create @denote/init release
-        if: steps.init.outputs.changed == 'true'
+        if: steps.init.outputs.changed == 'true' && steps.init-publish.outcome == 'success'
         run: |
           gh release create "${{ steps.init.outputs.tag }}" \
             --title "${{ steps.init.outputs.tag }}" \
