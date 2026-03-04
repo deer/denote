@@ -76,6 +76,33 @@ ${docUrls.join("\n")}
 </urlset>`;
 }
 
+// ── Sitemap cache ──────────────────────────────────────────
+
+/** Cached sitemap XML keyed by `${baseUrl}|${docsBasePath}`. */
+let sitemapCache: Map<string, string> = new Map();
+
+/** Return cached sitemap XML, or null on miss. */
+export function getCachedSitemap(
+  baseUrl: string,
+  docsBasePath: string,
+): string | null {
+  return sitemapCache.get(`${baseUrl}|${docsBasePath}`) ?? null;
+}
+
+/** Store sitemap XML in cache. */
+export function setCachedSitemap(
+  baseUrl: string,
+  docsBasePath: string,
+  xml: string,
+): void {
+  sitemapCache.set(`${baseUrl}|${docsBasePath}`, xml);
+}
+
+/** Clear the in-memory sitemap cache (called on content changes). */
+export function clearSitemapCache(): void {
+  sitemapCache = new Map();
+}
+
 /**
  * Build a robots.txt string.
  */

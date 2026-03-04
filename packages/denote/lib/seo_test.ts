@@ -1,5 +1,12 @@
 import { assertEquals } from "jsr:@std/assert@1";
-import { buildJsonLd, buildRobotsTxt, buildSitemapXml } from "./seo.ts";
+import {
+  buildJsonLd,
+  buildRobotsTxt,
+  buildSitemapXml,
+  clearSitemapCache,
+  getCachedSitemap,
+  setCachedSitemap,
+} from "./seo.ts";
 import type { DenoteConfig } from "../denote.config.ts";
 
 function minimalConfig(overrides?: Partial<DenoteConfig>): DenoteConfig {
@@ -119,4 +126,39 @@ Deno.test("buildRobotsTxt - uses baseUrl for sitemap reference", () => {
   const txt = buildRobotsTxt("https://denote.sh");
   assertEquals(txt.includes("Sitemap: https://denote.sh/sitemap.xml"), true);
   assertEquals(txt.includes("Allow: /"), true);
+});
+
+// ---------------------------------------------------------------------------
+// Sitemap cache
+// ---------------------------------------------------------------------------
+
+Deno.test("sitemap cache - returns null on miss", () => {
+  clearSitemapCache();
+  assertEquals(getCachedSitemap("https://example.com", "/docs"), null);
+});
+
+Deno.test("sitemap cache - returns cached XML on hit", () => {
+  clearSitemapCache();
+  setCachedSitemap("https://example.com", "/docs", "<xml>cached</xml>");
+  assertEquals(
+    getCachedSitemap("https://example.com", "/docs"),
+    "<xml>cached</xml>",
+  );
+});
+
+Deno.test("sitemap cache - keys by baseUrl and docsBasePath", () => {
+  clearSitemapCache();
+  setCachedSitemap("https://a.com", "/docs", "a");
+  setCachedSitemap("https://b.com", "/docs", "b");
+  assertEquals(getCachedSitemap("https://a.com", "/docs"), "a");
+  assertEquals(getCachedSitemap("https://b.com", "/docs"), "b");
+  assertEquals(getCachedSitemap("https://a.com", "/other"), null);
+});
+
+Deno.test("sitemap cache - clearSitemapCache clears all entries", () => {
+  setCachedSitemap("https://a.com", "/docs", "a");
+  setCachedSitemap("https://b.com", "/docs", "b");
+  clearSitemapCache();
+  assertEquals(getCachedSitemap("https://a.com", "/docs"), null);
+  assertEquals(getCachedSitemap("https://b.com", "/docs"), null);
 });

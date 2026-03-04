@@ -40,7 +40,12 @@ import { analyticsMiddleware } from "./lib/analytics.ts";
 import { darkModeScript, generateThemeCSS } from "./lib/theme.ts";
 import { CSS, HIGHLIGHT_CSS } from "@deer/gfm/style";
 import { type DenoteContext, isDev, type State } from "./utils.ts";
-import { buildRobotsTxt, buildSitemapXml } from "./lib/seo.ts";
+import {
+  buildRobotsTxt,
+  buildSitemapXml,
+  getCachedSitemap,
+  setCachedSitemap,
+} from "./lib/seo.ts";
 import {
   buildMiniSearchJSON,
   generateFullDocs,
@@ -377,28 +382,36 @@ export function denote(options: DenoteOptions): App<unknown> {
       const denoteCtx = ctx.state.denote;
       const seoBase = denoteCtx.config.seo?.url?.replace(/\/$/, "");
       const baseUrl = seoBase || new URL(ctx.req.url).origin;
-      const docs = await getAllDocs(denoteCtx);
 
-      // Read file modification times for accurate lastmod dates
-      const sitemapDocs = await Promise.all(
-        docs.map(async (doc) => {
-          try {
-            const stat = await Deno.stat(doc.path);
-            const mtime = stat.mtime ?? new Date();
-            return {
-              slug: doc.slug,
-              lastmod: mtime.toISOString().slice(0, 10),
-            };
-          } catch {
-            return { slug: doc.slug };
-          }
-        }),
-      );
+      let xml = getCachedSitemap(baseUrl, denoteCtx.docsBasePath);
+      if (!xml) {
+        const docs = await getAllDocs(denoteCtx);
 
-      const xml = buildSitemapXml(baseUrl, denoteCtx.docsBasePath, sitemapDocs);
+        // Read file modification times for accurate lastmod dates
+        const sitemapDocs = await Promise.all(
+          docs.map(async (doc) => {
+            try {
+              const stat = await Deno.stat(doc.path);
+              const mtime = stat.mtime ?? new Date();
+              return {
+                slug: doc.slug,
+                lastmod: mtime.toISOString().slice(0, 10),
+              };
+            } catch {
+              return { slug: doc.slug };
+            }
+          }),
+        );
+
+        xml = buildSitemapXml(baseUrl, denoteCtx.docsBasePath, sitemapDocs);
+        setCachedSitemap(baseUrl, denoteCtx.docsBasePath, xml);
+      }
 
       return new Response(xml, {
-        headers: { "Content-Type": "application/xml; charset=utf-8" },
+        headers: {
+          "Content-Type": "application/xml; charset=utf-8",
+          "Cache-Control": configCacheControl,
+        },
       });
     });
 
@@ -407,7 +420,10 @@ export function denote(options: DenoteOptions): App<unknown> {
       const baseUrl = seoBase || new URL(ctx.req.url).origin;
       const txt = buildRobotsTxt(baseUrl);
       return new Response(txt, {
-        headers: { "Content-Type": "text/plain; charset=utf-8" },
+        headers: {
+          "Content-Type": "text/plain; charset=utf-8",
+          "Cache-Control": configCacheControl,
+        },
       });
     });
   }
