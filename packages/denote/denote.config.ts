@@ -10,7 +10,7 @@
  *
  * @example
  * ```ts
- * import type { DenoteConfig } from "@denote/core/types";
+ * import type { DenoteConfig } from "@denote/core";
  *
  * export const config: DenoteConfig = {
  *   name: "My Docs",
@@ -99,7 +99,7 @@ export interface StyleConfig {
   roundedness?: "none" | "sm" | "md" | "lg" | "xl";
   /** Dark mode behavior: auto (system preference, no toggle), light (force light), dark (force dark), toggle (system preference + user toggle) */
   darkMode?: "auto" | "light" | "dark" | "toggle";
-  /** Path to a custom CSS file relative to the docs directory, loaded after all theme tokens */
+  /** URL path to a custom CSS file served from the static directory, loaded after all theme tokens */
   customCss?: string;
 }
 

@@ -1,7 +1,7 @@
 ---
 title: API Reference
 description: REST API endpoints for programmatic access to your documentation
-ai-summary: REST API endpoints for programmatic access. GET /api/docs returns structured JSON, GET /api/search returns the search index, GET /llms.txt and /llms-full.txt provide AI-optimized markdown, POST /mcp serves MCP protocol.
+ai-summary: REST API endpoints for programmatic access. GET /api/docs returns structured JSON, GET /api/search returns the search index, GET /llms.txt and /llms-full.txt provide AI-optimized markdown, serves MCP protocol over Streamable HTTP.
 ai-keywords: [
   API,
   REST,
