@@ -22,7 +22,7 @@ export async function DocsPage(ctx: PageProps<unknown, State>) {
   }
 
   const { doc, html, toc } = rendered;
-  const currentPath = `/docs/${slug}`;
+  const currentPath = `${denoteContext.docsBasePath}/${slug}`;
   const { prev, next } = getPrevNext(currentPath, denoteContext);
   const breadcrumbs = getBreadcrumbs(currentPath, denoteContext);
 
@@ -36,7 +36,9 @@ export async function DocsPage(ctx: PageProps<unknown, State>) {
       next={next}
       breadcrumbs={breadcrumbs}
     >
-      {config.search?.enabled !== false && <Search />}
+      {config.search?.enabled !== false && (
+        <Search docsBasePath={denoteContext.docsBasePath} />
+      )}
       <CopyButton />
       <div
         class="markdown-body"
