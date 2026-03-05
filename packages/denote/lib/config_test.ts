@@ -1,5 +1,5 @@
 import { assertEquals } from "jsr:@std/assert@1";
-import { setConfig } from "./config.ts";
+import { getDocsBasePath, setConfig, setDocsBasePath } from "./config.ts";
 
 /** Capture console.warn calls during fn(), restoring console.warn even if fn throws. */
 function captureWarnings(fn: () => void): string[] {
@@ -203,7 +203,7 @@ Deno.test("setConfig - warns on landing.hero missing title", () => {
 });
 
 // ---------------------------------------------------------------------------
-// Strict mode — unrecognized keys (audit #2)
+// Strict mode — unrecognized keys
 // ---------------------------------------------------------------------------
 
 Deno.test("setConfig - warns on unrecognized top-level key", () => {
@@ -219,7 +219,7 @@ Deno.test("setConfig - warns on unrecognized top-level key", () => {
 });
 
 // ---------------------------------------------------------------------------
-// New field validation (audit #2)
+// New field validation
 // ---------------------------------------------------------------------------
 
 Deno.test("setConfig - warns on invalid style.darkMode enum", () => {
@@ -314,4 +314,33 @@ Deno.test("setConfig - accepts full valid config without warnings", () => {
     warnings.filter((w) => w.includes("Config validation")).length,
     0,
   );
+});
+
+// ---------------------------------------------------------------------------
+// setDocsBasePath normalization
+// ---------------------------------------------------------------------------
+
+Deno.test("setDocsBasePath - adds leading slash", () => {
+  setDocsBasePath("docs");
+  assertEquals(getDocsBasePath(), "/docs");
+});
+
+Deno.test("setDocsBasePath - strips trailing slash", () => {
+  setDocsBasePath("/docs/");
+  assertEquals(getDocsBasePath(), "/docs");
+});
+
+Deno.test("setDocsBasePath - preserves root slash", () => {
+  setDocsBasePath("/");
+  assertEquals(getDocsBasePath(), "/");
+});
+
+Deno.test("setDocsBasePath - normalizes bare path with trailing slash", () => {
+  setDocsBasePath("guide/");
+  assertEquals(getDocsBasePath(), "/guide");
+});
+
+Deno.test("setDocsBasePath - already normalized is unchanged", () => {
+  setDocsBasePath("/docs");
+  assertEquals(getDocsBasePath(), "/docs");
 });

@@ -178,6 +178,54 @@ Deno.test("generateThemeCSS - explicit dark overrides", () => {
   assertStringIncludes(darkBlock, "--denote-border: #115e59;");
 });
 
+// --- Dark overrides: fallback branches ---
+
+Deno.test("generateThemeCSS - dark surface without text falls back to white", () => {
+  const css = generateThemeCSS(cfg({
+    colors: {
+      primary: "#000",
+      dark: { surface: "#0f766e" },
+    },
+  }));
+  const darkBlock = css.split("html:root.dark {")[1];
+  assertStringIncludes(darkBlock, "--denote-bg-secondary: #0f766e;");
+  assertStringIncludes(darkBlock, "color-mix(in srgb, #0f766e, white 15%)");
+});
+
+Deno.test("generateThemeCSS - dark text without background falls back to black", () => {
+  const css = generateThemeCSS(cfg({
+    colors: {
+      primary: "#000",
+      dark: { text: "#ccfbf1" },
+    },
+  }));
+  const darkBlock = css.split("html:root.dark {")[1];
+  assertStringIncludes(darkBlock, "--denote-text: #ccfbf1;");
+  assertStringIncludes(
+    darkBlock,
+    "--denote-text-secondary: color-mix(in srgb, #ccfbf1 65%, black);",
+  );
+  assertStringIncludes(
+    darkBlock,
+    "--denote-text-muted: color-mix(in srgb, #ccfbf1 40%, black);",
+  );
+});
+
+Deno.test("generateThemeCSS - dark border without text falls back to white", () => {
+  const css = generateThemeCSS(cfg({
+    colors: {
+      primary: "#000",
+      dark: { border: "#115e59" },
+    },
+  }));
+  const darkBlock = css.split("html:root.dark {")[1];
+  assertStringIncludes(darkBlock, "--denote-border: #115e59;");
+  assertStringIncludes(
+    darkBlock,
+    "--denote-border-strong: color-mix(in srgb, #115e59 70%, white);",
+  );
+});
+
 // --- Full integration ---
 
 Deno.test("generateThemeCSS - full config produces light and dark blocks", () => {

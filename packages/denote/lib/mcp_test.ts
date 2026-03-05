@@ -48,7 +48,9 @@ async function createTestClient(baseUrl?: string) {
 }
 
 // The MCP SDK's InMemoryTransport leaves internal async ops after close()
-// that Deno's sanitizer incorrectly attributes to other test files.
+// that Deno's sanitizer incorrectly flags. Applied only to tests that use
+// createTestClient() (i.e. the transport layer). Pure-data tests like
+// MCP_CORS_HEADERS run with full sanitizers.
 const mcpTestOpts = { sanitizeOps: false, sanitizeResources: false };
 
 // ---------------------------------------------------------------------------

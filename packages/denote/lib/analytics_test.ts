@@ -61,8 +61,11 @@ const customConfig: AnalyticsConfig = {
 // Analytics fires background fetch requests that are intentionally not awaited.
 const opts = { sanitizeOps: false, sanitizeResources: false };
 
-/** Wait for background analytics fetch to complete. */
-const flushAnalytics = () => new Promise<void>((r) => setTimeout(r, 50));
+/** Drain microtask queue so background analytics fetch completes. */
+const flushAnalytics = async () => {
+  await new Promise<void>((r) => setTimeout(r, 0));
+  await new Promise<void>((r) => setTimeout(r, 0));
+};
 
 Deno.test(
   "analyticsMiddleware - passes through and returns response",
