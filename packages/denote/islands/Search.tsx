@@ -32,8 +32,14 @@ const results = computed(() => {
   return searchIndex.value.search(q).slice(0, 10);
 });
 
+// Base path for doc pages — set from prop on first render, defaults to "/docs"
+let basePath = "/docs";
+
 /** Full-text search modal activated by Cmd+K / Ctrl+K. */
-export function Search(): preact.JSX.Element | null {
+export function Search(
+  { docsBasePath = "/docs" }: { docsBasePath?: string },
+): preact.JSX.Element | null {
+  basePath = docsBasePath;
   // Keyboard shortcuts
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
@@ -66,7 +72,7 @@ export function Search(): preact.JSX.Element | null {
         e.preventDefault();
         const item = results.value[selectedIndex.value];
         if (item) {
-          globalThis.location.href = `/docs/${item.id}`;
+          globalThis.location.href = `${basePath}/${item.id}`;
           isOpen.value = false;
         }
       }
@@ -166,7 +172,7 @@ export function Search(): preact.JSX.Element | null {
 
             {results.value.map((item, i) => (
               <a
-                href={`/docs/${item.id}`}
+                href={`${basePath}/${item.id}`}
                 class={`block px-4 py-3 rounded-lg transition-colors ${
                   i === selectedIndex.value
                     ? "bg-[var(--denote-primary-subtle)]"

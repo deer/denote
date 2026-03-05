@@ -83,7 +83,7 @@ async function _generateLlmsTxtInner(
         doc.frontmatter.description ||
         doc.frontmatter.title;
       lines.push(
-        `- [${doc.frontmatter.title}](${baseUrl}/docs/${doc.slug}): ${desc}`,
+        `- [${doc.frontmatter.title}](${baseUrl}${denoteContext.docsBasePath}/${doc.slug}): ${desc}`,
       );
     }
 

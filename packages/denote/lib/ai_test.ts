@@ -106,6 +106,16 @@ Deno.test("generateLlmsTxt - concurrent calls return same reference", async () =
   clearAiCache();
 });
 
+Deno.test("generateLlmsTxt - uses custom docsBasePath in links", async () => {
+  clearAiCache();
+  const customContext = { ...testContext, docsBasePath: "/guide" };
+  const txt = await generateLlmsTxt(customContext, "http://localhost:8000");
+  assertStringIncludes(txt, "http://localhost:8000/guide/introduction");
+  assertEquals(txt.includes("/docs/introduction"), false);
+  assertEquals(txt.includes("/guide/introduction"), true);
+  clearAiCache();
+});
+
 Deno.test("getDocsJson - concurrent calls return same reference", async () => {
   clearAiCache();
   const [a, b] = await Promise.all([
