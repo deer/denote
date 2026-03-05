@@ -193,8 +193,8 @@ export async function getDoc(
       docCache.set(slug, doc);
       startWatcher(denoteContext.contentDir);
       return doc;
-    } catch {
-      // File not found, try next path
+    } catch (e) {
+      if (!(e instanceof Deno.errors.NotFound)) throw e;
     }
   }
 
@@ -244,6 +244,7 @@ async function _getAllDocsInner(
   async function walkDir(dir: string, prefix = ""): Promise<void> {
     try {
       for await (const entry of Deno.readDir(dir)) {
+        if (entry.isSymlink) continue;
         const path = `${dir}/${entry.name}`;
 
         if (entry.isDirectory) {
