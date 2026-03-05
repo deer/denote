@@ -18,7 +18,7 @@ export async function DocsPage(ctx: PageProps<unknown, State>) {
   const rendered = await getRenderedDoc(slug, denoteContext);
 
   if (!rendered) {
-    throw new HttpError(404, `Documentation page not found: ${slug}`);
+    throw new HttpError(404, "Documentation page not found");
   }
 
   const { doc, html, toc } = rendered;
