@@ -3,7 +3,7 @@
  *
  * Tests for frontmatter parsing and @deer/gfm rendering via renderDoc.
  */
-import { assertEquals } from "jsr:@std/assert@1";
+import { assert, assertEquals } from "jsr:@std/assert@1";
 import { parseFrontmatter, renderDoc } from "./markdown.ts";
 
 // ---------------------------------------------------------------------------
@@ -22,6 +22,29 @@ description: A test
   assertEquals(result.frontmatter.title, "Test Page");
   assertEquals(result.frontmatter.description, "A test");
   assertEquals(result.content.trim(), "# Hello");
+});
+
+Deno.test("parseFrontmatter - missing title defaults to Untitled", () => {
+  const raw = `---
+description: No title here
+---
+
+Content.`;
+
+  const result = parseFrontmatter(raw);
+  assertEquals(result.frontmatter.title, "Untitled");
+});
+
+Deno.test("parseFrontmatter - malformed YAML falls back to defaults", () => {
+  const raw = `---
+: invalid: yaml: [
+---
+
+Content.`;
+
+  const result = parseFrontmatter(raw);
+  assertEquals(result.frontmatter.title, "Untitled");
+  assertEquals(result.content, raw);
 });
 
 Deno.test("parseFrontmatter - no frontmatter", () => {
@@ -149,4 +172,24 @@ Deno.test("renderDoc - nested lists", async () => {
   assertEquals(html.includes("Parent"), true);
   assertEquals(html.includes("Child 1"), true);
   assertEquals((html.match(/<ul>/g) || []).length >= 1, true);
+});
+
+// ---------------------------------------------------------------------------
+// XSS sanitization — rehype-sanitize must strip dangerous content
+// ---------------------------------------------------------------------------
+
+Deno.test("renderDoc - strips script tags", async () => {
+  const { html } = await renderDoc('<script>alert("xss")</script>');
+  assert(!html.includes("<script"), "script tag should be stripped");
+  assert(!html.includes("alert"), "script content should be stripped");
+});
+
+Deno.test("renderDoc - strips javascript: hrefs", async () => {
+  const { html } = await renderDoc('[click](javascript:alert("xss"))');
+  assert(!html.includes("javascript:"), "javascript: href should be stripped");
+});
+
+Deno.test("renderDoc - strips onerror attributes", async () => {
+  const { html } = await renderDoc('<img src="x" onerror="alert(1)">');
+  assert(!html.includes("onerror"), "onerror attribute should be stripped");
 });

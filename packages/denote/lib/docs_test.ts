@@ -13,6 +13,7 @@ import {
   getBreadcrumbs,
   getDoc,
   getPrevNext,
+  getRenderedDoc,
   stripMarkdown,
 } from "./docs.ts";
 
@@ -36,6 +37,29 @@ Deno.test("getDoc - rejects path traversal with ../", async () => {
 Deno.test("getDoc - rejects nested path traversal", async () => {
   const doc = await getDoc("foo/../../etc/passwd", testContext);
   assertEquals(doc, null);
+});
+
+// ---------------------------------------------------------------------------
+// getRenderedDoc
+// ---------------------------------------------------------------------------
+
+Deno.test("getRenderedDoc - returns rendered HTML and TOC for existing page", async () => {
+  const result = await getRenderedDoc("introduction", testContext);
+  assertNotEquals(result, null);
+  assertEquals(result!.doc.slug, "introduction");
+  assert(result!.html.includes("<"), "Expected HTML output");
+  assert(Array.isArray(result!.toc));
+});
+
+Deno.test("getRenderedDoc - returns null for missing page", async () => {
+  const result = await getRenderedDoc("nonexistent-page-xyz", testContext);
+  assertEquals(result, null);
+});
+
+Deno.test("getRenderedDoc - cache hit returns same reference", async () => {
+  const first = await getRenderedDoc("introduction", testContext);
+  const second = await getRenderedDoc("introduction", testContext);
+  assertEquals(first === second, true);
 });
 
 Deno.test("getAllDocs - returns all doc pages", async () => {

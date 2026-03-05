@@ -144,6 +144,36 @@ Deno.test("validate - accepts valid seo config", async () => {
   );
 });
 
+Deno.test("validate - warns on empty navigation", async () => {
+  const issues = await validate(ctx({
+    config: {
+      name: "Test",
+      navigation: [],
+    },
+  }));
+  assertEquals(
+    issues.some((i) => i.message.includes("'navigation' is empty")),
+    true,
+  );
+});
+
+Deno.test("validate - reports invalid dark hex color", async () => {
+  const issues = await validate(ctx({
+    config: {
+      name: "Test",
+      navigation: [{ title: "Intro", href: "/docs/introduction" }],
+      // @ts-ignore: intentionally testing invalid dark color without primary
+      colors: { dark: { primary: "not-hex" } },
+    },
+  }));
+  assertEquals(
+    issues.some((i) =>
+      i.message.includes("colors.dark") && i.message.includes("not a valid hex")
+    ),
+    true,
+  );
+});
+
 Deno.test("validate - skips external navigation links", async () => {
   const issues = await validate(ctx({
     config: {
