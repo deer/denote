@@ -433,16 +433,15 @@ deno task validate
 
 The validator checks:
 
-- **Config fields** — all fields are validated against their expected types and
-  values; unrecognized keys are flagged (catches typos like `darkmode` instead
-  of `style.darkMode`)
 - **Content directory** — exists and contains markdown files
 - **Frontmatter** — each page has a valid `title`
 - **Navigation links** — every internal nav href matches an existing doc page
 - **SEO URLs** — `seo.url` and `seo.ogImage` are valid URLs when set
 - **Hex colors** — all color values in `colors` and `colors.dark` are valid hex
-- **Enums** — `style.darkMode`, `style.roundedness`, and `analytics.provider`
-  must be valid values
+
+Note: Config field types, enums (`style.darkMode`, `style.roundedness`,
+`analytics.provider`), and unrecognized keys are validated by Zod at startup
+when `setConfig()` is called, not by `deno task validate`.
 
 If your project uses custom content or base paths, pass them as CLI args:
 
