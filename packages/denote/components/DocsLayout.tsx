@@ -45,9 +45,10 @@ export function DocsLayout({
       <Sidebar config={config} currentPath={currentPath} />
 
       <main
-        class={`lg:[padding-left:var(--denote-sidebar-width)]${
-          showToc ? " xl:[padding-right:var(--denote-toc-width)]" : ""
-        }`}
+        class={[
+          "lg:pl-[var(--denote-sidebar-width)]",
+          showToc && "xl:pr-[var(--denote-toc-width)]",
+        ].filter(Boolean).join(" ")}
       >
         <article
           class="mx-auto px-4 sm:px-6 lg:px-8 py-12"
