@@ -242,18 +242,33 @@ async function _getAllDocsInner(
   const docsDir = denoteContext.contentDir;
 
   async function walkDir(dir: string, prefix = ""): Promise<void> {
+    let entries: AsyncIterable<Deno.DirEntry>;
     try {
-      for await (const entry of Deno.readDir(dir)) {
-        if (entry.isSymlink) continue;
-        const path = `${dir}/${entry.name}`;
+      entries = Deno.readDir(dir);
+    } catch (e) {
+      if (e instanceof Deno.errors.NotFound) {
+        if (dir === docsDir) {
+          console.warn(
+            `[denote] Content directory not found at ${docsDir}. No docs will be served.`,
+          );
+        }
+        return;
+      }
+      throw e;
+    }
 
-        if (entry.isDirectory) {
-          await walkDir(path, `${prefix}${entry.name}/`);
-        } else if (entry.name.endsWith(".md")) {
-          const slug = entry.name === "index.md"
-            ? prefix.slice(0, -1) || "index"
-            : `${prefix}${entry.name.replace(".md", "")}`;
+    for await (const entry of entries) {
+      if (entry.isSymlink) continue;
+      const path = `${dir}/${entry.name}`;
 
+      if (entry.isDirectory) {
+        await walkDir(path, `${prefix}${entry.name}/`);
+      } else if (entry.name.endsWith(".md")) {
+        const slug = entry.name === "index.md"
+          ? prefix.slice(0, -1) || "index"
+          : `${prefix}${entry.name.replace(".md", "")}`;
+
+        try {
           const content = await Deno.readTextFile(path);
           const doc: DocPage = {
             ...parseDocument(content),
@@ -263,13 +278,10 @@ async function _getAllDocsInner(
 
           docs.push(doc);
           docCache.set(slug, doc);
+        } catch (e) {
+          if (e instanceof Deno.errors.NotFound) continue;
+          throw e;
         }
-      }
-    } catch {
-      if (dir === docsDir) {
-        console.warn(
-          `[denote] Content directory not found at ${docsDir}. No docs will be served.`,
-        );
       }
     }
   }
@@ -459,7 +471,7 @@ export async function getMiniSearchWithItems(
   denoteContext: DenoteContext,
 ): Promise<{ ms: MiniSearch<SearchItem>; items: SearchItem[] }> {
   const ms = await getMiniSearchInstance(denoteContext);
-  return { ms, items: cachedSearchIndex! };
+  return { ms, items: cachedSearchIndex ?? [] };
 }
 
 /**
