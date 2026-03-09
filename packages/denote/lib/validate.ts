@@ -105,7 +105,8 @@ export async function validate(
   const contentDir = denoteContext.contentDir;
   try {
     await Deno.stat(contentDir);
-  } catch {
+  } catch (e) {
+    if (!(e instanceof Deno.errors.NotFound)) throw e;
     issues.push({
       severity: "error",
       message:
