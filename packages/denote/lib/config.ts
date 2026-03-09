@@ -21,6 +21,19 @@ const HEX_COLOR = z.string().regex(
   "Must be a valid hex color (e.g. #ff0000)",
 );
 
+/** Matches BCP 47-like locale tags: en, en-US, zh-Hant-TW, etc. */
+export const LOCALE_REGEX = /^[a-zA-Z]{2,3}(-[a-zA-Z0-9]{2,8})*$/;
+
+/**
+ * Safe href validator — blocks javascript: and data: URIs.
+ * Allows local paths (starting with /) and http(s) URLs.
+ */
+const SAFE_HREF = z.string().refine(
+  (s) =>
+    s.startsWith("/") || s.startsWith("https://") || s.startsWith("http://"),
+  "Must be a local path (/) or http(s) URL — javascript: and data: URIs are not allowed",
+);
+
 const ColorSchema = z.object({
   primary: HEX_COLOR,
   accent: HEX_COLOR.optional(),
@@ -41,7 +54,7 @@ const ColorSchema = z.object({
 const NavItemSchema: z.ZodType<unknown> = z.lazy(() =>
   z.object({
     title: z.string(),
-    href: z.string().optional(),
+    href: SAFE_HREF.optional(),
     icon: z.string().optional(),
     children: z.array(NavItemSchema).optional(),
   })
@@ -53,7 +66,10 @@ const SeoSchema = z.object({
   ogImage: z.string().url("Must be a valid URL").optional(),
   ogImageWidth: z.number().positive().optional(),
   ogImageHeight: z.number().positive().optional(),
-  locale: z.string().optional(),
+  locale: z.string().regex(
+    LOCALE_REGEX,
+    "Must be a valid locale (e.g. en, en-US)",
+  ).optional(),
   jsonLdType: z.string().optional(),
   jsonLdExtra: z.record(z.string(), z.unknown()).optional(),
 }).optional();
@@ -75,8 +91,8 @@ const LandingSchema = z.object({
     description: z.string().optional(),
   }).optional(),
   cta: z.object({
-    primary: z.object({ text: z.string(), href: z.string() }).optional(),
-    secondary: z.object({ text: z.string(), href: z.string() }).optional(),
+    primary: z.object({ text: z.string(), href: SAFE_HREF }).optional(),
+    secondary: z.object({ text: z.string(), href: SAFE_HREF }).optional(),
   }).optional(),
   install: z.string().optional(),
   features: z.array(z.object({
@@ -87,8 +103,8 @@ const LandingSchema = z.object({
 }).optional();
 
 const LogoSchema = z.object({
-  light: z.string().optional(),
-  dark: z.string().optional(),
+  light: SAFE_HREF.optional(),
+  dark: SAFE_HREF.optional(),
   text: z.string().optional(),
   suffix: z.string().optional(),
 }).optional();
@@ -97,7 +113,7 @@ const FontSchema = z.object({
   body: z.string().optional(),
   heading: z.string().optional(),
   mono: z.string().optional(),
-  imports: z.array(z.string()).optional(),
+  imports: z.array(SAFE_HREF).optional(),
 }).optional();
 
 const StyleSchema = z.object({
@@ -118,13 +134,13 @@ const LayoutSchema = z.object({
 
 const TopNavSchema = z.array(z.object({
   title: z.string(),
-  href: z.string(),
+  href: SAFE_HREF,
 })).optional();
 
 const FooterSchema = z.object({
   links: z.array(z.object({
     title: z.string(),
-    href: z.string(),
+    href: SAFE_HREF,
   })).optional(),
   copyright: z.string().optional(),
 }).optional();
@@ -141,7 +157,10 @@ const SearchSchema = z.object({
 
 const AnalyticsSchema = z.object({
   provider: z.enum(["umami", "plausible", "custom"]),
-  endpoint: z.string().optional(),
+  endpoint: z.string().url("Must be a valid URL").refine(
+    (s) => s.startsWith("https://"),
+    "Analytics endpoint must use HTTPS",
+  ).optional(),
   siteId: z.string().optional(),
 }).optional();
 
@@ -166,7 +185,7 @@ const ConfigSchema = z.object({
   social: SocialSchema,
   search: SearchSchema,
   analytics: AnalyticsSchema,
-  editUrl: z.string().optional(),
+  editUrl: z.string().url("editUrl must be a valid URL").optional(),
   seo: SeoSchema,
   landing: LandingSchema,
   ai: AiSchema,

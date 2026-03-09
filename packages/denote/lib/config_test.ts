@@ -317,6 +317,211 @@ Deno.test("setConfig - accepts full valid config without warnings", () => {
 });
 
 // ---------------------------------------------------------------------------
+// Locale validation (BCP 47-like)
+// ---------------------------------------------------------------------------
+
+Deno.test("setConfig - accepts valid locale tags", () => {
+  for (const locale of ["en", "en-US", "zh-Hant-TW", "pt-BR"]) {
+    const warnings = captureWarnings(() => {
+      setConfig({
+        name: "Test",
+        navigation: [{ title: "X", href: "/docs/x" }],
+        seo: { locale },
+      });
+    });
+    assertEquals(
+      warnings.some((w) => w.includes("locale")),
+      false,
+      `Expected no warning for locale "${locale}"`,
+    );
+  }
+});
+
+Deno.test("setConfig - warns on invalid locale", () => {
+  for (const locale of ["123", "e", "en_US", "javascript:alert(1)"]) {
+    const warnings = captureWarnings(() => {
+      setConfig({
+        name: "Test",
+        navigation: [{ title: "X", href: "/docs/x" }],
+        seo: { locale },
+      });
+    });
+    assertEquals(
+      warnings.some((w) => w.includes("locale")),
+      true,
+      `Expected warning for locale "${locale}"`,
+    );
+  }
+});
+
+// ---------------------------------------------------------------------------
+// Safe href validation (blocks javascript: URIs)
+// ---------------------------------------------------------------------------
+
+Deno.test("setConfig - warns on javascript: href in navigation", () => {
+  const warnings = captureWarnings(() => {
+    setConfig({
+      name: "Test",
+      // @ts-ignore: intentionally testing dangerous href
+      navigation: [{ title: "X", href: "javascript:alert(1)" }],
+    });
+  });
+  assertEquals(warnings.some((w) => w.includes("javascript:")), true);
+});
+
+Deno.test("setConfig - warns on javascript: href in topNav", () => {
+  const warnings = captureWarnings(() => {
+    setConfig({
+      name: "Test",
+      navigation: [{ title: "X", href: "/docs/x" }],
+      // @ts-ignore: intentionally testing dangerous href
+      topNav: [{ title: "Evil", href: "javascript:alert(1)" }],
+    });
+  });
+  assertEquals(warnings.some((w) => w.includes("javascript:")), true);
+});
+
+Deno.test("setConfig - warns on javascript: href in footer links", () => {
+  const warnings = captureWarnings(() => {
+    setConfig({
+      name: "Test",
+      navigation: [{ title: "X", href: "/docs/x" }],
+      // @ts-ignore: intentionally testing dangerous href
+      footer: { links: [{ title: "Evil", href: "javascript:void(0)" }] },
+    });
+  });
+  assertEquals(warnings.some((w) => w.includes("javascript:")), true);
+});
+
+Deno.test("setConfig - warns on data: URI in logo", () => {
+  const warnings = captureWarnings(() => {
+    setConfig({
+      name: "Test",
+      navigation: [{ title: "X", href: "/docs/x" }],
+      // @ts-ignore: intentionally testing dangerous URI
+      logo: { light: "data:image/svg+xml,<svg/>" },
+    });
+  });
+  assertEquals(warnings.some((w) => w.includes("data:")), true);
+});
+
+Deno.test("setConfig - accepts safe hrefs (local paths and http URLs)", () => {
+  const warnings = captureWarnings(() => {
+    setConfig({
+      name: "Test",
+      navigation: [{ title: "X", href: "/docs/x" }],
+      topNav: [{ title: "Docs", href: "/docs" }],
+      footer: { links: [{ title: "GH", href: "https://github.com" }] },
+      logo: { light: "/logo.svg", dark: "https://example.com/logo.png" },
+      landing: {
+        hero: { title: "Hi" },
+        cta: {
+          primary: { text: "Go", href: "/docs" },
+          secondary: { text: "Code", href: "https://github.com" },
+        },
+      },
+    });
+  });
+  assertEquals(
+    warnings.filter((w) => w.includes("Config validation")).length,
+    0,
+  );
+});
+
+// ---------------------------------------------------------------------------
+// fonts.imports validation
+// ---------------------------------------------------------------------------
+
+Deno.test("setConfig - warns on javascript: in fonts.imports", () => {
+  const warnings = captureWarnings(() => {
+    setConfig({
+      name: "Test",
+      navigation: [{ title: "X", href: "/docs/x" }],
+      // @ts-ignore: intentionally testing dangerous URI
+      fonts: { imports: ["javascript:alert(1)"] },
+    });
+  });
+  assertEquals(warnings.some((w) => w.includes("javascript:")), true);
+});
+
+Deno.test("setConfig - accepts safe fonts.imports", () => {
+  const warnings = captureWarnings(() => {
+    setConfig({
+      name: "Test",
+      navigation: [{ title: "X", href: "/docs/x" }],
+      fonts: {
+        imports: [
+          "/fonts.css",
+          "https://fonts.googleapis.com/css2?family=Inter",
+        ],
+      },
+    });
+  });
+  assertEquals(
+    warnings.filter((w) => w.includes("Config validation")).length,
+    0,
+  );
+});
+
+// ---------------------------------------------------------------------------
+// analytics.endpoint validation
+// ---------------------------------------------------------------------------
+
+Deno.test("setConfig - warns on non-HTTPS analytics endpoint", () => {
+  const warnings = captureWarnings(() => {
+    setConfig({
+      name: "Test",
+      navigation: [{ title: "X", href: "/docs/x" }],
+      analytics: { provider: "umami", endpoint: "http://internal:9090/api" },
+    });
+  });
+  assertEquals(warnings.some((w) => w.includes("HTTPS")), true);
+});
+
+Deno.test("setConfig - warns on non-URL analytics endpoint", () => {
+  const warnings = captureWarnings(() => {
+    setConfig({
+      name: "Test",
+      navigation: [{ title: "X", href: "/docs/x" }],
+      analytics: { provider: "umami", endpoint: "not-a-url" },
+    });
+  });
+  assertEquals(warnings.some((w) => w.includes("analytics")), true);
+});
+
+Deno.test("setConfig - accepts valid HTTPS analytics endpoint", () => {
+  const warnings = captureWarnings(() => {
+    setConfig({
+      name: "Test",
+      navigation: [{ title: "X", href: "/docs/x" }],
+      analytics: {
+        provider: "umami",
+        endpoint: "https://analytics.example.com/api",
+      },
+    });
+  });
+  assertEquals(
+    warnings.filter((w) => w.includes("Config validation")).length,
+    0,
+  );
+});
+
+// ---------------------------------------------------------------------------
+// editUrl validation
+// ---------------------------------------------------------------------------
+
+Deno.test("setConfig - warns on invalid editUrl", () => {
+  const warnings = captureWarnings(() => {
+    setConfig({
+      name: "Test",
+      navigation: [{ title: "X", href: "/docs/x" }],
+      editUrl: "not-a-url",
+    });
+  });
+  assertEquals(warnings.some((w) => w.includes("editUrl")), true);
+});
+
+// ---------------------------------------------------------------------------
 // setDocsBasePath normalization
 // ---------------------------------------------------------------------------
 
