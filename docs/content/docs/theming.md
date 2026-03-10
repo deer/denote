@@ -323,7 +323,6 @@ reference these tokens — you never need to edit component files.
 | `--denote-text-inverse`      | Text on dark backgrounds                 |
 | `--denote-border`            | Default border color                     |
 | `--denote-border-strong`     | Emphasized borders                       |
-| `--denote-shadow-color`      | Box shadow color                         |
 | `--denote-shadow-primary`    | Primary-tinted shadow                    |
 | `--denote-font-body`         | Body text font family                    |
 | `--denote-font-heading`      | Heading font family                      |

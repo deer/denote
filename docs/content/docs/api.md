@@ -43,13 +43,21 @@ curl https://your-docs.com/api/docs
       "slug": "introduction",
       "title": "Introduction",
       "description": "Welcome to the project",
+      "aiSummary": "One-line summary from ai-summary frontmatter",
+      "aiKeywords": ["keyword1", "keyword2"],
       "content": "# Introduction\n\nFull markdown content...",
       "headings": [
         { "level": 1, "title": "Introduction", "id": "introduction" },
         { "level": 2, "title": "Quick Start", "id": "quick-start" }
       ]
     }
-  ]
+  ],
+  "llmsFullTxt": "https://your-docs.com/llms-full.txt",
+  "mcp": {
+    "endpoint": "https://your-docs.com/mcp",
+    "transport": "Streamable HTTP",
+    "tools": ["search_docs", "get_doc", "get_all_docs"]
+  }
 }
 ```
 

@@ -298,7 +298,7 @@ graph LR
     Agent[AI Agent] -->|"GET /llms.txt"| Index["llms.txt<br/>(index + summaries)"]
     Agent -->|"GET /llms-full.txt"| Full["Full markdown dump"]
     Agent -->|"GET /api/docs"| JSON["Structured JSON<br/>(metadata, headings)"]
-    Agent -->|"POST /mcp"| MCP["MCP Server<br/>(search, get, list tools)"]
+    Agent -->|"GET/POST/DELETE /mcp"| MCP["MCP Server<br/>(search, get, list tools)"]
 
     Index -->|points to| Full
     Index -->|points to| JSON
@@ -366,7 +366,7 @@ DenoteConfig (denote.config.ts)
 ├── ColorConfig                  { primary (required), accent?, background?, surface?, text?, border?, dark? }
 ├── FontConfig                   { body?, heading?, mono?, imports[]? }
 ├── StyleConfig                  { roundedness?, darkMode?, customCss? }
-├── LayoutConfig                 { sidebarWidth?, contentMaxWidth?, headerHeight?, tocWidth?, toc?, breadcrumbs?, footer? }
+├── LayoutConfig                 { sidebarWidth?, maxContentWidth?, headerHeight?, tocWidth?, toc?, breadcrumbs?, footer? }
 ├── LandingConfig                { enabled?, hero?, cta?, features[], install? }
 ├── SeoConfig                    { url?, ogImage?, locale?, jsonLdType?, jsonLdExtra? }
 ├── AiConfig                     { mcp? }
@@ -454,7 +454,7 @@ extends ParsedDoc { frontmatter, content } + { slug, path }
 - **docker-compose volume paths**: Mount paths assume `content/` and
   `denote.config.ts` at repo root, but actual files are in `docs/` — needs
   adjustment for non-docs-site use
-- **`actions/checkout@v6`** in CI workflows — may not be stable
+- **`actions/checkout@v6`** in CI workflows — current and stable
 
 ## Navigation Guide
 

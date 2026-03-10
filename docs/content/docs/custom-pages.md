@@ -1,7 +1,7 @@
 ---
 title: Custom Pages
 description: Add standalone pages like legal notices, about pages, or anything outside the docs layout
-ai-summary: Add standalone routes (legal, about, landing pages) outside the docs layout. Fresh file-system routing with automatic PageLayout wrapping. Supports typed state via createDefine and access to DenoteContext.
+ai-summary: Add standalone routes (legal, about, landing pages) outside the docs layout. Fresh file-system routing with automatic PageLayout wrapping and access to DenoteContext.
 ai-keywords: [
   custom pages,
   routes,
@@ -10,7 +10,6 @@ ai-keywords: [
   PageLayout,
   standalone,
   legal pages,
-  createDefine,
 ]
 ---
 

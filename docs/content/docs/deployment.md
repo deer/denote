@@ -86,6 +86,7 @@ configuration needed:
 | `X-Frame-Options`           | `DENY`                                         |
 | `Referrer-Policy`           | `strict-origin-when-cross-origin`              |
 | `Content-Security-Policy`   | Auto-configured policy                         |
+| `Permissions-Policy`        | Restricts browser features (camera, mic, etc.) |
 
 These headers are always active in both development and production. Hashed
 static assets (files matching `/_fresh/` or `.[hash].(js|css|...)`) also receive
