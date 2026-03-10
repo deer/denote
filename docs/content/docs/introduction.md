@@ -46,9 +46,10 @@ Every Denote site ships with these endpoints automatically:
 - **`/api/docs`** — Structured JSON API serving your entire knowledge base,
   ready for RAG pipelines, embeddings, or direct context injection.
 - **MCP server** — Expose your docs as tools and resources for Cursor, Claude
-  Desktop, ChatGPT, and any MCP-compatible client.
+  Desktop, ChatGPT, and any MCP-compatible client. Requires `ai: { mcp: true }`
+  in your config.
 
-No extra config required. Just write Markdown.
+The llms.txt and JSON API endpoints are zero-config. Just write Markdown.
 
 ## Quick Example
 

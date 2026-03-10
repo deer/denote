@@ -23,7 +23,7 @@ For detailed architecture, module guide, data flows, and navigation guide, see
 ```bash
 deno task dev       # Start docs dev server (delegates to docs/)
 deno task test      # Run all tests across workspace
-deno task ok        # Full CI gate: fmt + lint + check + test
+deno task ok        # Full CI gate: fmt + lint + check + build + test + validate
 deno task build     # Production build (delegates to docs/)
 deno task validate  # Validate config + content + nav links
 ```
