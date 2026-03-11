@@ -39,7 +39,8 @@ Deno.test("search e2e", async (t) => {
   // Skip gracefully when the docs site hasn't been built
   try {
     await Deno.stat(serverEntry);
-  } catch {
+  } catch (e) {
+    if (!(e instanceof Deno.errors.NotFound)) throw e;
     console.warn(
       "⚠ Skipping search e2e: docs site not built. Run `deno task build` first.",
     );

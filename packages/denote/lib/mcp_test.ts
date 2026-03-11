@@ -209,11 +209,11 @@ Deno.test(
 
     const result = await client.callTool({
       name: "search_docs",
-      arguments: { query: "conf" }, // prefix should match Configuration
+      arguments: { query: "inst" }, // prefix should match Installation
     });
 
     const text = toolText(result);
-    assertStringIncludes(text, "Configuration");
+    assertStringIncludes(text, "Installation");
 
     await close();
   },
@@ -252,7 +252,7 @@ Deno.test("get_doc - returns existing page", mcpTestOpts, async () => {
   });
 
   const text = toolText(result);
-  assertStringIncludes(text, "# Welcome to Denote");
+  assertStringIncludes(text, "# Fixture Introduction");
 
   await close();
 });
@@ -404,7 +404,7 @@ Deno.test(
     assertEquals((result.contents[0] as Any).mimeType, "text/markdown");
 
     const text = resourceText(result);
-    assertStringIncludes(text, "# Welcome to Denote");
+    assertStringIncludes(text, "# Fixture Introduction");
 
     await close();
   },

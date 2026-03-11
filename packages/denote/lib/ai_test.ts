@@ -125,3 +125,27 @@ Deno.test("getDocsJson - concurrent calls return same reference", async () => {
   assertEquals(a === b, true);
   clearAiCache();
 });
+
+Deno.test("getDocsJson - with baseUrl includes llmsFullTxt and mcp", async () => {
+  clearAiCache();
+  const mcpContext = {
+    ...testContext,
+    config: { ...testContext.config, ai: { mcp: true } },
+  };
+  const json = await getDocsJson(mcpContext, "http://localhost:8000") as Record<
+    string,
+    unknown
+  >;
+  assertEquals(typeof json.llmsFullTxt, "string");
+  assertStringIncludes(json.llmsFullTxt as string, "llms-full.txt");
+  assertEquals(typeof json.mcp, "object");
+  clearAiCache();
+});
+
+Deno.test("getDocsJson - without baseUrl omits llmsFullTxt and mcp", async () => {
+  clearAiCache();
+  const json = await getDocsJson(testContext) as Record<string, unknown>;
+  assertEquals(json.llmsFullTxt, undefined);
+  assertEquals(json.mcp, undefined);
+  clearAiCache();
+});

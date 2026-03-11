@@ -9,17 +9,9 @@ import { dirname, fromFileUrl, join } from "@std/path";
 // Prevent file watcher from starting during tests (avoids resource leaks)
 Deno.env.set("DENO_TESTING", "1");
 
-// Set content directory to docs/content/docs in monorepo
+// Set content directory to co-located fixtures
 const __dirname = dirname(fromFileUrl(import.meta.url));
-const testContentDir = join(
-  __dirname,
-  "..",
-  "..",
-  "..",
-  "docs",
-  "content",
-  "docs",
-);
+const testContentDir = join(__dirname, "fixtures");
 
 // Test config object
 const testConfig: DenoteConfig = {
@@ -34,28 +26,8 @@ const testConfig: DenoteConfig = {
       ],
     },
     {
-      title: "Core Concepts",
-      children: [
-        { title: "Configuration", href: "/docs/configuration" },
-        { title: "Writing Content", href: "/docs/content" },
-        { title: "Components", href: "/docs/components" },
-      ],
-    },
-    {
-      title: "AI & API",
-      children: [
-        { title: "AI Native", href: "/docs/ai-native" },
-        { title: "API Reference", href: "/docs/api" },
-      ],
-    },
-    {
-      title: "Deployment",
-      children: [{ title: "Deploy Your Site", href: "/docs/deployment" }],
-    },
-    {
       title: "Customization",
       children: [
-        { title: "Theming", href: "/docs/theming" },
         { title: "Styling", href: "/docs/styling" },
       ],
     },

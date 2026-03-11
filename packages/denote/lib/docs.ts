@@ -571,6 +571,11 @@ async function _generateFullDocsInner(
   }
 }
 
+/** Clear all content caches — useful for testing and for consumers resetting state. */
+export function clearAllCaches(): void {
+  invalidate();
+}
+
 /** Clear the full docs cache (called on content invalidation) */
 export function clearFullDocsCache(): void {
   cachedFullDocs = null;

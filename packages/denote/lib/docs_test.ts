@@ -8,19 +8,23 @@ import {
 import {
   buildMiniSearchJSON,
   buildSearchIndex,
+  clearAllCaches,
   clearSearchIndexCache,
   getAllDocs,
   getBreadcrumbs,
   getDoc,
+  getMiniSearchWithItems,
   getPrevNext,
   getRenderedDoc,
+  onContentInvalidated,
+  stopWatcher,
   stripMarkdown,
 } from "./docs.ts";
 
 Deno.test("getDoc - returns introduction page", async () => {
   const doc = await getDoc("introduction", testContext);
   assertNotEquals(doc, null);
-  assertEquals(doc!.frontmatter.title, "Welcome to Denote");
+  assertEquals(doc!.frontmatter.title, "Fixture Introduction");
   assertEquals(doc!.slug, "introduction");
 });
 
@@ -77,6 +81,12 @@ Deno.test("getPrevNext - returns neighbors for middle page", () => {
   assertEquals(prev!.title, "Introduction");
   assertNotEquals(next, null);
   assertEquals(next!.title, "Quick Start");
+});
+
+Deno.test("getPrevNext - last nav page has no next", () => {
+  const { prev, next } = getPrevNext("/docs/styling", testContext);
+  assertNotEquals(prev, null);
+  assertEquals(next, null);
 });
 
 Deno.test("getPrevNext - first page has no prev", () => {
@@ -229,4 +239,41 @@ Deno.test("buildSearchIndex - concurrent calls return same reference", async () 
   ]);
   assertEquals(a === b, true);
   clearSearchIndexCache();
+});
+
+// ---------------------------------------------------------------------------
+// onContentInvalidated / clearAllCaches
+// ---------------------------------------------------------------------------
+
+Deno.test("onContentInvalidated - callback fires on clearAllCaches", async () => {
+  // Ensure doc cache is populated first
+  await getAllDocs(testContext);
+  let called = false;
+  onContentInvalidated(() => {
+    called = true;
+  });
+  clearAllCaches();
+  assertEquals(called, true);
+});
+
+// ---------------------------------------------------------------------------
+// getMiniSearchWithItems
+// ---------------------------------------------------------------------------
+
+Deno.test("getMiniSearchWithItems - returns ms and items with correct shape", async () => {
+  clearSearchIndexCache();
+  const { ms, items } = await getMiniSearchWithItems(testContext);
+  assert(typeof ms.search === "function", "ms should have a search method");
+  assert(items.length > 0, "items should be non-empty");
+  assertEquals(typeof items[0].title, "string");
+  assertEquals(typeof items[0].slug, "string");
+  clearSearchIndexCache();
+});
+
+// ---------------------------------------------------------------------------
+// stopWatcher
+// ---------------------------------------------------------------------------
+
+Deno.test("stopWatcher - does not throw when no watcher running", () => {
+  stopWatcher();
 });
