@@ -211,6 +211,11 @@ export function getConfig(): DenoteConfig {
   return _config;
 }
 
+/** Reset config to uninitialized state (test-only). */
+export function _resetConfigForTesting(): void {
+  _config = null;
+}
+
 /** Set the active Denote configuration. */
 export function setConfig(config: DenoteConfig): void {
   const result = ConfigSchema.safeParse(config);

@@ -82,7 +82,7 @@ Deno.test(
   },
 );
 
-Deno.test("analyticsMiddleware - skips non-GET requests", opts, async () => {
+Deno.test("analyticsMiddleware - skips non-GET requests", async () => {
   const fetchSpy = spy(globalThis, "fetch");
   try {
     const handler = analyticsMiddleware(umamiConfig);
@@ -98,7 +98,7 @@ Deno.test("analyticsMiddleware - skips non-GET requests", opts, async () => {
   }
 });
 
-Deno.test("analyticsMiddleware - skips non-HTML responses", opts, async () => {
+Deno.test("analyticsMiddleware - skips non-HTML responses", async () => {
   const fetchSpy = spy(globalThis, "fetch");
   try {
     const handler = analyticsMiddleware(umamiConfig);
@@ -115,7 +115,7 @@ Deno.test("analyticsMiddleware - skips non-HTML responses", opts, async () => {
   }
 });
 
-Deno.test("analyticsMiddleware - skips asset paths", opts, async () => {
+Deno.test("analyticsMiddleware - skips asset paths", async () => {
   const fetchSpy = spy(globalThis, "fetch");
   try {
     const handler = analyticsMiddleware(umamiConfig);
@@ -171,7 +171,6 @@ Deno.test(
 
 Deno.test(
   "analyticsMiddleware - silently passes through when no siteId",
-  opts,
   async () => {
     const prev = Deno.env.get("ANALYTICS_SITE_ID");
     try {

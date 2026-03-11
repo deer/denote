@@ -1,5 +1,11 @@
-import { assertEquals } from "jsr:@std/assert@1";
-import { getDocsBasePath, setConfig, setDocsBasePath } from "./config.ts";
+import { assertEquals, assertThrows } from "jsr:@std/assert@1";
+import {
+  _resetConfigForTesting,
+  getConfig,
+  getDocsBasePath,
+  setConfig,
+  setDocsBasePath,
+} from "./config.ts";
 
 /** Capture console.warn calls during fn(), restoring console.warn even if fn throws. */
 function captureWarnings(fn: () => void): string[] {
@@ -526,26 +532,72 @@ Deno.test("setConfig - warns on invalid editUrl", () => {
 // ---------------------------------------------------------------------------
 
 Deno.test("setDocsBasePath - adds leading slash", () => {
-  setDocsBasePath("docs");
-  assertEquals(getDocsBasePath(), "/docs");
+  const saved = getDocsBasePath();
+  try {
+    setDocsBasePath("docs");
+    assertEquals(getDocsBasePath(), "/docs");
+  } finally {
+    setDocsBasePath(saved);
+  }
 });
 
 Deno.test("setDocsBasePath - strips trailing slash", () => {
-  setDocsBasePath("/docs/");
-  assertEquals(getDocsBasePath(), "/docs");
+  const saved = getDocsBasePath();
+  try {
+    setDocsBasePath("/docs/");
+    assertEquals(getDocsBasePath(), "/docs");
+  } finally {
+    setDocsBasePath(saved);
+  }
 });
 
 Deno.test("setDocsBasePath - preserves root slash", () => {
-  setDocsBasePath("/");
-  assertEquals(getDocsBasePath(), "/");
+  const saved = getDocsBasePath();
+  try {
+    setDocsBasePath("/");
+    assertEquals(getDocsBasePath(), "/");
+  } finally {
+    setDocsBasePath(saved);
+  }
 });
 
 Deno.test("setDocsBasePath - normalizes bare path with trailing slash", () => {
-  setDocsBasePath("guide/");
-  assertEquals(getDocsBasePath(), "/guide");
+  const saved = getDocsBasePath();
+  try {
+    setDocsBasePath("guide/");
+    assertEquals(getDocsBasePath(), "/guide");
+  } finally {
+    setDocsBasePath(saved);
+  }
 });
 
 Deno.test("setDocsBasePath - already normalized is unchanged", () => {
-  setDocsBasePath("/docs");
-  assertEquals(getDocsBasePath(), "/docs");
+  const saved = getDocsBasePath();
+  try {
+    setDocsBasePath("/docs");
+    assertEquals(getDocsBasePath(), "/docs");
+  } finally {
+    setDocsBasePath(saved);
+  }
+});
+
+// ---------------------------------------------------------------------------
+// getConfig after reset
+// ---------------------------------------------------------------------------
+
+Deno.test("getConfig - throws after _resetConfigForTesting", () => {
+  _resetConfigForTesting();
+  try {
+    assertThrows(
+      () => getConfig(),
+      Error,
+      "not initialized",
+    );
+  } finally {
+    // Restore config so subsequent tests still work
+    setConfig({
+      name: "Denote",
+      navigation: [{ title: "X", href: "/docs/x" }],
+    });
+  }
 });
