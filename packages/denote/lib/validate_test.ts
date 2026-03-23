@@ -1,19 +1,8 @@
 import { testContext } from "./test_config.ts";
 import { assertEquals } from "jsr:@std/assert@1";
-import { validate } from "./validate.ts";
+import { spy } from "jsr:@std/testing@1/mock";
+import { validate, validateAndPrint } from "./validate.ts";
 import type { DenoteContext } from "../utils.ts";
-import { dirname, fromFileUrl, join } from "@std/path";
-
-const __dirname = dirname(fromFileUrl(import.meta.url));
-const realContentDir = join(
-  __dirname,
-  "..",
-  "..",
-  "..",
-  "docs",
-  "content",
-  "docs",
-);
 
 /** Create a test context with overrides */
 function ctx(
@@ -23,7 +12,7 @@ function ctx(
 ): DenoteContext {
   return {
     ...testContext,
-    contentDir: overrides?.contentDir ?? realContentDir,
+    contentDir: overrides?.contentDir ?? testContext.contentDir,
     docsBasePath: overrides?.docsBasePath ?? testContext.docsBasePath,
     config: overrides?.config
       ? { ...testContext.config, ...overrides.config }
@@ -189,4 +178,69 @@ Deno.test("validate - skips external navigation links", async () => {
     errors.some((i) => i.message.includes("github.com")),
     false,
   );
+});
+
+// ---------------------------------------------------------------------------
+// validateAndPrint
+// ---------------------------------------------------------------------------
+
+Deno.test("validateAndPrint - all-pass case returns 0", async () => {
+  const logSpy = spy(console, "log");
+  try {
+    const result = await validateAndPrint(ctx({
+      config: {
+        name: "Test",
+        navigation: [
+          { title: "Introduction", href: "/docs/introduction" },
+        ],
+      },
+    }));
+    assertEquals(result, 0);
+    assertEquals(
+      logSpy.calls.some((c) => String(c.args[0]).includes("All checks passed")),
+      true,
+    );
+  } finally {
+    logSpy.restore();
+  }
+});
+
+Deno.test("validateAndPrint - warnings-only returns 0", async () => {
+  const logSpy = spy(console, "log");
+  try {
+    const result = await validateAndPrint(ctx({
+      config: {
+        name: "Test",
+        navigation: [],
+      },
+    }));
+    assertEquals(result, 0);
+    assertEquals(
+      logSpy.calls.some((c) => String(c.args[0]).includes("\u26A0")),
+      true,
+    );
+  } finally {
+    logSpy.restore();
+  }
+});
+
+Deno.test("validateAndPrint - errors case returns >0", async () => {
+  const logSpy = spy(console, "log");
+  try {
+    const result = await validateAndPrint(ctx({
+      config: {
+        name: "Test",
+        navigation: [
+          { title: "Styling", href: "/docs/styling" },
+        ],
+      },
+    }));
+    assertEquals(result > 0, true);
+    assertEquals(
+      logSpy.calls.some((c) => String(c.args[0]).includes("\u2717")),
+      true,
+    );
+  } finally {
+    logSpy.restore();
+  }
 });

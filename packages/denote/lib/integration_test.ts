@@ -14,7 +14,7 @@ Deno.env.set("DENO_TESTING", "1");
 import { dirname, fromFileUrl, join } from "@std/path";
 
 const __dirname = dirname(fromFileUrl(import.meta.url));
-const contentDir = join(__dirname, "..", "..", "..", "docs", "content", "docs");
+const contentDir = join(__dirname, "fixtures");
 
 function createHandler() {
   const app = denote({
