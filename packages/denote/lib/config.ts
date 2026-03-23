@@ -11,6 +11,7 @@
 import type { DenoteConfig } from "../denote.config.ts";
 import { resolve } from "@std/path";
 import { z } from "zod";
+import { clearThemeCSSCache } from "./theme.ts";
 
 /** Matches 3, 6, or 8-digit hex color strings like #f00, #ff0000, #ff000080 */
 export const HEX_COLOR_REGEX =
@@ -228,6 +229,7 @@ export function setConfig(config: DenoteConfig): void {
     }
   }
   _config = config;
+  clearThemeCSSCache();
 }
 
 // ---------------------------------------------------------------------------

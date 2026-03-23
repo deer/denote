@@ -7,8 +7,19 @@
  */
 import type { DenoteConfig } from "../denote.config.ts";
 
+/** Cached theme CSS — config reference used as key since it's immutable per setConfig cycle */
+let cachedConfig: DenoteConfig | null = null;
+let cachedCSS: string | null = null;
+
+/** Clear the theme CSS cache (called by setConfig) */
+export function clearThemeCSSCache(): void {
+  cachedConfig = null;
+  cachedCSS = null;
+}
+
 /** Generate CSS custom property overrides from DenoteConfig */
 export function generateThemeCSS(config: DenoteConfig): string {
+  if (cachedConfig === config && cachedCSS !== null) return cachedCSS;
   const c = config.colors;
   const f = config.fonts;
   const hasColors = c?.primary || c?.accent || c?.background || f?.body;
@@ -16,7 +27,11 @@ export function generateThemeCSS(config: DenoteConfig): string {
     config.layout?.maxContentWidth || config.layout?.headerHeight ||
     config.layout?.tocWidth;
   const hasStyle = config.style?.roundedness;
-  if (!hasColors && !hasLayout && !hasStyle) return "";
+  if (!hasColors && !hasLayout && !hasStyle) {
+    cachedConfig = config;
+    cachedCSS = "";
+    return "";
+  }
 
   const p = c?.primary;
   const a = c?.accent;
@@ -186,7 +201,10 @@ export function generateThemeCSS(config: DenoteConfig): string {
     lines.push("}");
   }
 
-  return lines.join("\n");
+  const css = lines.join("\n");
+  cachedConfig = config;
+  cachedCSS = css;
+  return css;
 }
 
 /** Generate the dark-mode detection IIFE, respecting darkMode config */

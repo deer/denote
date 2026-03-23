@@ -208,11 +208,12 @@ export async function getDoc(
 export async function getRenderedDoc(
   slug: string,
   denoteContext: DenoteContext,
+  prefetchedDoc?: DocPage,
 ): Promise<{ doc: DocPage; html: string; toc: TocItem[] } | null> {
   const cached = renderCache.get(slug);
   if (cached) return cached;
 
-  const doc = await getDoc(slug, denoteContext);
+  const doc = prefetchedDoc ?? await getDoc(slug, denoteContext);
   if (!doc) return null;
 
   const { html, toc } = await renderDoc(doc.content);
@@ -297,8 +298,28 @@ async function _getAllDocsInner(
 }
 
 // ---------------------------------------------------------------------------
-// Navigation helpers
+// Navigation helpers (memoized — cleared on content invalidation)
 // ---------------------------------------------------------------------------
+
+/** Cached flattenNav result, keyed by navigation array reference */
+let cachedNavRef: NavItem[] | null = null;
+let cachedFlatNav: NavLink[] | null = null;
+const breadcrumbCache = new Map<string, Breadcrumb[]>();
+
+function getCachedFlatNav(navigation: NavItem[]): NavLink[] {
+  if (cachedNavRef === navigation && cachedFlatNav) return cachedFlatNav;
+  cachedNavRef = navigation;
+  cachedFlatNav = flattenNav(navigation);
+  breadcrumbCache.clear();
+  return cachedFlatNav;
+}
+
+// Clear nav caches on content invalidation
+onContentInvalidated(() => {
+  cachedNavRef = null;
+  cachedFlatNav = null;
+  breadcrumbCache.clear();
+});
 
 /**
  * Get previous and next pages for a given path
@@ -307,7 +328,7 @@ export function getPrevNext(
   currentPath: string,
   denoteContext: DenoteContext,
 ): { prev: NavLink | null; next: NavLink | null } {
-  const pages = flattenNav(denoteContext.config.navigation);
+  const pages = getCachedFlatNav(denoteContext.config.navigation);
   const index = pages.findIndex((p) => p.href === currentPath);
   if (index === -1) return { prev: null, next: null };
   return {
@@ -328,6 +349,10 @@ export function getBreadcrumbs(
   currentPath: string,
   denoteContext: DenoteContext,
 ): Breadcrumb[] {
+  getCachedFlatNav(denoteContext.config.navigation);
+  const cached = breadcrumbCache.get(currentPath);
+  if (cached) return cached;
+
   const crumbs: Breadcrumb[] = [];
 
   function findPath(items: NavItem[], parents: Breadcrumb[]): boolean {
@@ -347,6 +372,7 @@ export function getBreadcrumbs(
   }
 
   findPath(denoteContext.config.navigation, []);
+  breadcrumbCache.set(currentPath, crumbs);
   return crumbs;
 }
 

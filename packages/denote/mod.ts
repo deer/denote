@@ -343,7 +343,10 @@ export function denote(options: DenoteOptions): App<unknown> {
     const baseUrl = new URL(ctx.req.url).origin;
     const txt = await generateLlmsTxt(ctx.state.denote, baseUrl);
     return new Response(txt, {
-      headers: { "Content-Type": "text/plain; charset=utf-8" },
+      headers: {
+        "Content-Type": "text/plain; charset=utf-8",
+        "Cache-Control": configCacheControl,
+      },
     });
   });
 

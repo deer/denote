@@ -15,7 +15,7 @@ export async function DocsPage(ctx: PageProps<unknown, State>) {
     ? slugParts.join("/")
     : slugParts || "introduction";
 
-  const rendered = await getRenderedDoc(slug, denoteContext);
+  const rendered = await getRenderedDoc(slug, denoteContext, ctx.state.doc);
 
   if (!rendered) {
     throw new HttpError(404, "Documentation page not found");
