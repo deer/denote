@@ -23,6 +23,8 @@ export interface State {
   pageUrl?: string;
   /** OG image URL for the current page. */
   pageImage?: string;
+  /** Pre-fetched doc from middleware — avoids redundant getDoc in page handler */
+  doc?: import("./lib/docs.ts").DocPage;
   /** Denote configuration context — set by denote() middleware */
   denote: DenoteContext;
 }

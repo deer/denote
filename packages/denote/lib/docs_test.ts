@@ -277,3 +277,30 @@ Deno.test("getMiniSearchWithItems - returns ms and items with correct shape", as
 Deno.test("stopWatcher - does not throw when no watcher running", () => {
   stopWatcher();
 });
+
+// ---------------------------------------------------------------------------
+// Nav caching (getPrevNext / getBreadcrumbs)
+// ---------------------------------------------------------------------------
+
+Deno.test("getPrevNext - repeated calls return consistent results", () => {
+  const first = getPrevNext("/docs/installation", testContext);
+  const second = getPrevNext("/docs/installation", testContext);
+  assertEquals(first.prev?.href, second.prev?.href);
+  assertEquals(first.next?.href, second.next?.href);
+});
+
+Deno.test("getBreadcrumbs - repeated calls return cached result", () => {
+  const first = getBreadcrumbs("/docs/installation", testContext);
+  const second = getBreadcrumbs("/docs/installation", testContext);
+  assertEquals(first === second, true);
+});
+
+Deno.test("getBreadcrumbs - cache clears on content invalidation", async () => {
+  const first = getBreadcrumbs("/docs/installation", testContext);
+  // Populate doc cache so clearAllCaches has something to clear
+  await getAllDocs(testContext);
+  clearAllCaches();
+  const second = getBreadcrumbs("/docs/installation", testContext);
+  assertEquals(first !== second, true);
+  assertEquals(first.length, second.length);
+});

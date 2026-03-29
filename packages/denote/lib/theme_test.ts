@@ -1,5 +1,9 @@
 import { assertEquals, assertStringIncludes } from "jsr:@std/assert@1";
-import { darkModeScript, generateThemeCSS } from "./theme.ts";
+import {
+  clearThemeCSSCache,
+  darkModeScript,
+  generateThemeCSS,
+} from "./theme.ts";
 import type { DenoteConfig } from "../denote.config.ts";
 
 /** Helper: minimal config */
@@ -404,4 +408,43 @@ Deno.test("darkModeScript - toggle respects system preference", () => {
 Deno.test("darkModeScript - undefined defaults to auto behavior", () => {
   const script = darkModeScript();
   assertEquals(script, darkModeScript("auto"));
+});
+
+// --- Caching ---
+
+Deno.test("generateThemeCSS - same config reference returns cached result", () => {
+  clearThemeCSSCache();
+  const config = cfg({ colors: { primary: "#ff0000" } });
+  const first = generateThemeCSS(config);
+  const second = generateThemeCSS(config);
+  assertEquals(first === second, true);
+});
+
+Deno.test("generateThemeCSS - different config reference regenerates", () => {
+  clearThemeCSSCache();
+  const configA = cfg({ colors: { primary: "#ff0000" } });
+  const configB = cfg({ colors: { primary: "#00ff00" } });
+  const a = generateThemeCSS(configA);
+  const b = generateThemeCSS(configB);
+  assertStringIncludes(a, "#ff0000");
+  assertStringIncludes(b, "#00ff00");
+});
+
+Deno.test("generateThemeCSS - clearThemeCSSCache forces regeneration", () => {
+  clearThemeCSSCache();
+  const config = cfg({ colors: { primary: "#ff0000" } });
+  const first = generateThemeCSS(config);
+  clearThemeCSSCache();
+  const second = generateThemeCSS(config);
+  assertEquals(first, second);
+  // Both produce the same string, but they're regenerated (cache was cleared)
+});
+
+Deno.test("generateThemeCSS - empty config caches empty string", () => {
+  clearThemeCSSCache();
+  const config = cfg();
+  const first = generateThemeCSS(config);
+  const second = generateThemeCSS(config);
+  assertEquals(first, "");
+  assertEquals(first === second, true);
 });

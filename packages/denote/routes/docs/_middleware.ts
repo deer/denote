@@ -16,6 +16,7 @@ export const handler = define.middleware(async (ctx) => {
   if (slug) {
     const doc = await getDoc(slug, denoteContext);
     if (doc) {
+      ctx.state.doc = doc;
       ctx.state.pageTitle = doc.frontmatter.title;
       ctx.state.pageDescription = doc.frontmatter.description;
       if (doc.frontmatter.image) {
