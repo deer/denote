@@ -1,7 +1,7 @@
 /**
  * Documentation Page Layout
  */
-import type { ComponentChildren } from "preact";
+import { type ComponentChildren, Fragment } from "preact";
 import { Header } from "./Header.tsx";
 import { Sidebar } from "./Sidebar.tsx";
 import { ActiveToc } from "../islands/ActiveToc.tsx";
@@ -58,7 +58,7 @@ export function DocsLayout({
           {showBreadcrumbs && breadcrumbs.length > 1 && (
             <nav class="flex items-center gap-1.5 text-sm text-[var(--denote-text-muted)] mb-4">
               {breadcrumbs.map((crumb, i) => (
-                <>
+                <Fragment key={crumb.href ?? i}>
                   {i > 0 && (
                     <svg
                       class="w-3.5 h-3.5 text-[var(--denote-text-muted)] flex-shrink-0"
@@ -92,7 +92,7 @@ export function DocsLayout({
                         {crumb.title}
                       </span>
                     )}
-                </>
+                </Fragment>
               ))}
             </nav>
           )}

@@ -14,7 +14,7 @@ export interface DenoteContext {
 /** Fresh route state populated by Denote middleware. */
 export interface State {
   /** Shared state string (Fresh convention). */
-  shared: string;
+  shared?: string;
   /** Current page title (set by docs middleware). */
   pageTitle?: string;
   /** Current page meta description (set by docs middleware). */

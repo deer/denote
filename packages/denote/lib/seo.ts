@@ -4,6 +4,11 @@
  */
 import type { DenoteConfig } from "../denote.config.ts";
 
+/** Escape special XML characters in text content. */
+function xmlEscape(s: string): string {
+  return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
 /** Minimal doc shape needed by sitemap builder */
 export interface SitemapDoc {
   slug: string;
@@ -61,7 +66,7 @@ export function buildSitemapXml(
 
   const docUrls = docs.map((doc) =>
     `  <url>
-    <loc>${baseUrl}${docsBasePath}/${doc.slug}</loc>
+    <loc>${baseUrl}${docsBasePath}/${xmlEscape(doc.slug)}</loc>
     <lastmod>${doc.lastmod ?? today}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
