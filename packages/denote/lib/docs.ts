@@ -62,6 +62,7 @@ const invalidationHooks: (() => void)[] = [];
 
 /** Register a callback to run whenever content is invalidated. */
 export function onContentInvalidated(fn: () => void): void {
+  if (invalidationHooks.includes(fn)) return;
   invalidationHooks.push(fn);
 }
 
@@ -399,8 +400,8 @@ export function stripMarkdown(md: string): string {
     .replace(/(\*{3}|_{3})(.+?)\1/g, "$2")
     // Bold **text** or __text__
     .replace(/(\*{2}|_{2})(.+?)\1/g, "$2")
-    // Italic *text* or _text_ (avoid matching horizontal rules)
-    .replace(/(?<!\*)(\*|_)(?!\s)(.+?)(?<!\s)\1(?!\*)/g, "$2")
+    // Italic *text* or _text_ (character class prevents backtracking)
+    .replace(/([*_])([^*_\n]+)\1/g, "$2")
     // Headings (# at start of line)
     .replace(/^#{1,6}\s+/gm, "")
     // Horizontal rules

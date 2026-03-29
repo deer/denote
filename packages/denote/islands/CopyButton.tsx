@@ -8,7 +8,6 @@
  * by `@deer/gfm` on the page.
  */
 import { useEffect } from "preact/hooks";
-import { signal } from "@preact/signals";
 
 const COPY_ICON =
   `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>`;
@@ -21,16 +20,13 @@ function setIconContent(el: HTMLElement, html: string) {
   el.replaceChildren(template.content.cloneNode(true));
 }
 
-// Track which button was just copied (by index) and clear after timeout
-const copiedIndex = signal(-1);
-
 /** Attaches copy-to-clipboard buttons to all fenced code blocks on the page. Renders nothing visible. */
 export function CopyButton(): null {
   useEffect(() => {
     // @deer/gfm wraps code blocks in: .highlight > .code-header + pre > code
     const headers = document.querySelectorAll(".code-header");
 
-    headers.forEach((header, index) => {
+    headers.forEach((header) => {
       // Skip if already processed
       if (header.querySelector(".copy-btn")) return;
 
@@ -49,12 +45,10 @@ export function CopyButton(): null {
         const text = code.textContent || "";
         try {
           await navigator.clipboard.writeText(text);
-          copiedIndex.value = index;
           setIconContent(btn, CHECK_ICON);
-          btn.style.color = "#22c55e";
+          btn.style.color = "var(--denote-primary)";
 
           setTimeout(() => {
-            copiedIndex.value = -1;
             setIconContent(btn, COPY_ICON);
             btn.style.color = "";
           }, 2000);

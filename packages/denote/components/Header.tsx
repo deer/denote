@@ -64,6 +64,7 @@ export function Header(
           <nav class="hidden md:flex items-center gap-6">
             {config.topNav?.map((item) => (
               <a
+                key={item.href}
                 href={item.href}
                 class="text-sm text-[var(--denote-text-secondary)] hover:text-[var(--denote-text)] transition-colors"
               >

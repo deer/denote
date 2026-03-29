@@ -59,7 +59,12 @@
   --denote-font-body: system-ui, -apple-system, sans-serif;
   --denote-font-heading: system-ui, -apple-system, sans-serif;
   --denote-font-mono:
-    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    ui-monospace,
+    SFMono-Regular,
+    Menlo,
+    Monaco,
+    Consolas,
+    monospace;
 
   /* GFM Bridge */
   --gfm-fg-default: var(--denote-text-secondary);

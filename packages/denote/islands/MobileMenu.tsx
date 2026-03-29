@@ -182,6 +182,7 @@ function MobileOverlay(
             <div class="space-y-1">
               {topNav.map((item) => (
                 <a
+                  key={item.href}
                   href={item.href}
                   onClick={() => (isOpen.value = false)}
                   class="flex items-center gap-2 px-3 py-2 text-sm font-medium text-[var(--denote-text-secondary)] hover:text-[var(--denote-text)] hover:bg-[var(--denote-bg-tertiary)] rounded-md transition-colors"
@@ -196,7 +197,11 @@ function MobileOverlay(
         {/* Sidebar navigation */}
         <nav class="p-4 space-y-6">
           {navigation.map((section) => (
-            <NavSection section={section} currentPath={currentPath} />
+            <NavSection
+              key={section.title}
+              section={section}
+              currentPath={currentPath}
+            />
           ))}
         </nav>
       </aside>
@@ -216,7 +221,7 @@ function NavSection(
         </div>
         <ul class="space-y-1 ml-2 border-l border-[var(--denote-border)]">
           {section.children.map((child) => (
-            <li>
+            <li key={child.href || child.title}>
               <NavSection section={child} currentPath={currentPath} />
             </li>
           ))}

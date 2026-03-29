@@ -62,12 +62,12 @@ export function CollapsibleNav(
 
   return (
     <nav class="p-4 space-y-6">
-      {navigation.map((section, i) => (
+      {navigation.map((section) => (
         <NavSection
           key={section.title}
           section={section}
           currentPath={currentPath}
-          sectionKey={String(i)}
+          sectionKey={section.title}
         />
       ))}
     </nav>
