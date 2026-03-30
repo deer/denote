@@ -1,6 +1,8 @@
 /**
  * Server-Side Analytics Middleware for Denote
  *
+ * @module
+ *
  * Pluggable, privacy-friendly analytics that reports pageviews server-side.
  * No client-side JavaScript, no cookies. Built-in providers (Umami, Plausible)
  * handle visitor privacy server-side. Custom endpoints receive forwarded
@@ -14,6 +16,7 @@ import type { Context } from "fresh";
 // Types
 // ---------------------------------------------------------------------------
 
+/** Configuration for the {@linkcode analyticsMiddleware}. */
 export interface AnalyticsConfig {
   /** Analytics provider */
   provider: "umami" | "plausible" | "custom";
