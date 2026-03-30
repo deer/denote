@@ -84,7 +84,7 @@ async function scaffold(projectDir: string, projectName: string) {
   // Create deno.json — a plain Fresh/Deno project config
   // Note: ^0.0.x in semver means >=0.0.x <0.0.(x+1) — effectively pinned to
   // patch. This is intentional for pre-1.0 packages where minor bumps may break.
-  const coreSpecifier = "jsr:@denote/core@^0.0.6";
+  const coreSpecifier = "jsr:@denote/core@^0.0.7";
   const denoJson = {
     nodeModulesDir: "auto",
     tasks: {
