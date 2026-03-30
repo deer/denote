@@ -161,7 +161,9 @@ const FORMATTERS = {
  * Sends pageview events asynchronously after each document response.
  * Non-blocking — analytics never delay the response to the visitor.
  */
-export function analyticsMiddleware(config: AnalyticsConfig) {
+export function analyticsMiddleware(
+  config: AnalyticsConfig,
+): <T>(ctx: Context<T>) => Promise<Response> {
   const formatter = FORMATTERS[config.provider];
   const resolved = resolveConfig(config);
 
