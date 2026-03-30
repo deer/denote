@@ -27,12 +27,13 @@ jobs:
         run: deno install --frozen
 
       - name: Verify
-        run: deno task ok
+        run: deno task check
 
   deploy:
     name: Deploy
     needs: verify
     runs-on: ubuntu-latest
+    timeout-minutes: 15
 
     permissions:
       id-token: write
