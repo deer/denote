@@ -23,7 +23,7 @@ jobs:
         run: deno install --frozen
 
       - name: Verify
-        run: deno task ok
+        run: deno task check
 
       # --- @denote/core ---
       - name: Check @denote/core version
