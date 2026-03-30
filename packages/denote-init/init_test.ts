@@ -111,6 +111,7 @@ async function patchDenoJsonFull(projectDir: string) {
   const coreUrl = new URL("./", `file://${DENOTE_CORE_DIR}/`).href;
 
   config.imports["@denote/core"] = coreUrl + "mod.ts";
+  config.imports["@denote/core/"] = coreUrl;
   config.imports["@denote/core/types"] = coreUrl + "denote.config.ts";
   config.imports["@denote/core/validate"] =
     new URL("validate.ts", coreUrl).href;
