@@ -97,7 +97,6 @@ async function scaffold(projectDir: string, projectName: string) {
     },
     imports: {
       "@denote/core": coreSpecifier,
-      "@denote/core/": coreSpecifier + "/",
       "@fresh/plugin-vite": "jsr:@fresh/plugin-vite@^1.0.8",
       "@tailwindcss/vite": "npm:@tailwindcss/vite@^4.1.12",
       "vite": "npm:vite@^7.3.1",
@@ -177,7 +176,7 @@ import "./styles.css";
   const viteConfig = `import { defineConfig } from "vite";
 import { fresh } from "@fresh/plugin-vite";
 import tailwindcss from "@tailwindcss/vite";
-import { denoteHmr } from "@denote/core/vite.ts";
+import { denoteHmr } from "@denote/core/vite";
 import { islandSpecifiers } from "@denote/core";
 
 export default defineConfig({
