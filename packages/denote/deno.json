@@ -14,8 +14,7 @@
     "./islands/CopyButton.tsx": "./islands/CopyButton.tsx",
     "./islands/ActiveToc.tsx": "./islands/ActiveToc.tsx",
     "./analytics": "./lib/analytics.ts",
-    "./types": "./denote.config.ts",
-    "./styles.css": "./styles.css"
+    "./types": "./denote.config.ts"
   },
   "lint": {
     "rules": {
