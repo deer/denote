@@ -8,6 +8,7 @@ import {
   McpServer,
   ResourceTemplate,
 } from "@modelcontextprotocol/sdk/server/mcp.js";
+import type { Variables } from "@modelcontextprotocol/sdk/shared/uriTemplate.js";
 import { getAllDocs, getDoc, getMiniSearchWithItems } from "./docs.ts";
 import type { DenoteContext } from "../utils.ts";
 import { z } from "zod";
@@ -42,7 +43,7 @@ export function createMcpServer(
   server.resource(
     "docs-index",
     "docs://index",
-    async (uri) => {
+    async (uri: URL) => {
       const docs = await getAllDocs(denoteContext);
       const listing = docs
         .map((d) => {
@@ -80,7 +81,7 @@ export function createMcpServer(
         };
       },
     }),
-    async (uri, { slug }) => {
+    async (uri: URL, { slug }: Variables) => {
       // Validate slug before passing to getDoc
       if (!SLUG_PATTERN.test(slug as string)) {
         const hint = (slug as string) !== (slug as string).toLowerCase()

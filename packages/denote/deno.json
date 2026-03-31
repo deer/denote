@@ -1,6 +1,6 @@
 {
   "name": "@denote/core",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "AI-native documentation framework",
   "license": "MIT",
   "exports": {
@@ -38,7 +38,7 @@
   "imports": {
     "@std/path": "jsr:@std/path@1",
     "@modelcontextprotocol/sdk": "npm:@modelcontextprotocol/sdk@^1.25.3",
-    "fresh": "jsr:@fresh/core@^2.2.0",
+    "fresh": "jsr:@fresh/core@^2.2.2",
     "preact": "npm:preact@^10.27.2",
     "@preact/signals": "npm:@preact/signals@^2.5.0",
     "@fresh/plugin-vite": "jsr:@fresh/plugin-vite@^1.0.8",

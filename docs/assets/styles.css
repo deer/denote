@@ -1,7 +1,7 @@
 @import "tailwindcss";
-@import "../../packages/denote/styles.css";
+@import "@denote/core/styles.css";
 
 @source "./";
-@source "../../packages/denote/";
+@source "node_modules/@denote/core/";
 
 @variant dark (&:where(.dark, .dark *));
