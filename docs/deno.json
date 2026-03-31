@@ -12,7 +12,7 @@
     "@denote/core": "../packages/denote/mod.ts",
     "@denote/core/": "../packages/denote/",
     "@std/path": "jsr:@std/path@1",
-    "fresh": "jsr:@fresh/core@^2.2.0",
+    "fresh": "jsr:@fresh/core@^2.2.2",
     "preact": "npm:preact@^10.27.2",
     "@preact/signals": "npm:@preact/signals@^2.5.0",
     "@fresh/plugin-vite": "jsr:@fresh/plugin-vite@^1.0.8",

@@ -84,7 +84,7 @@ async function scaffold(projectDir: string, projectName: string) {
   // Create deno.json — a plain Fresh/Deno project config
   // Note: ^0.0.x in semver means >=0.0.x <0.0.(x+1) — effectively pinned to
   // patch. This is intentional for pre-1.0 packages where minor bumps may break.
-  const coreSpecifier = "jsr:@denote/core@^0.0.7";
+  const coreSpecifier = "jsr:@denote/core@^0.0.8";
   const denoJson = {
     nodeModulesDir: "auto",
     tasks: {
@@ -101,7 +101,7 @@ async function scaffold(projectDir: string, projectName: string) {
       "@tailwindcss/vite": "npm:@tailwindcss/vite@^4.1.12",
       "vite": "npm:vite@^7.3.1",
       "tailwindcss": "npm:tailwindcss@^4.1.10",
-      "fresh": "jsr:@fresh/core@^2.2.0",
+      "fresh": "jsr:@fresh/core@^2.2.2",
       "preact": "npm:preact@^10.27.2",
       "@preact/signals": "npm:@preact/signals@^2.5.0",
     },
@@ -158,11 +158,17 @@ import "./styles.css";
 
   // Create styles.css — Tailwind + Denote styles
   // @import pulls in design tokens, markdown overrides, animations from core.
-  // @source scans the installed core package for server component classes.
+  // @source "node_modules/@denote/core/" is rewritten at build time by the
+  // denoteStyles() Vite plugin to the actual Deno cache path, since JSR
+  // packages are not installed into node_modules.
   const stylesCss = `@import "tailwindcss";
 @import "@denote/core/styles.css";
 
-/* @source tells Tailwind where to scan for class names to include in the build */
+/* @source tells Tailwind where to scan for class names to include in the build.
+   NOTE: "node_modules/@denote/core/" does not literally exist — JSR packages are
+   cached by Deno, not installed into node_modules. The denoteStyles() Vite plugin
+   (from @denote/core/vite) rewrites this path at build time to the real Deno cache
+   location derived from import.meta.url. Do not remove it or change the path. */
 @source "./";
 @source "node_modules/@denote/core/";
 
@@ -176,12 +182,13 @@ import "./styles.css";
   const viteConfig = `import { defineConfig } from "vite";
 import { fresh } from "@fresh/plugin-vite";
 import tailwindcss from "@tailwindcss/vite";
-import { denoteHmr } from "@denote/core/vite";
+import { denoteHmr, denoteStyles } from "@denote/core/vite";
 import { islandSpecifiers } from "@denote/core";
 
 export default defineConfig({
   server: { port: 8000 },
   plugins: [
+    denoteStyles(),
     denoteHmr(),
     fresh({
       serverEntry: "main.ts",
