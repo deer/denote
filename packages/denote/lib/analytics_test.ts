@@ -222,7 +222,10 @@ Deno.test("analyticsMiddleware - umami payload shape", opts, async () => {
     await flushAnalytics();
 
     assertSpyCalls(fetchSpy, 1);
-    const [url, init] = fetchSpy.calls[0].args;
+    const [url, init] = fetchSpy.calls[0].args as [
+      string,
+      RequestInit & { method: string; body: string },
+    ];
     assertEquals(url, "https://cloud.umami.is/api/send");
     assertEquals(init!.method, "POST");
 
@@ -248,7 +251,10 @@ Deno.test("analyticsMiddleware - plausible payload shape", opts, async () => {
     await flushAnalytics();
 
     assertSpyCalls(fetchSpy, 1);
-    const [url, init] = fetchSpy.calls[0].args;
+    const [url, init] = fetchSpy.calls[0].args as [
+      string,
+      RequestInit & { body: string },
+    ];
     assertEquals(url, "https://plausible.io/api/event");
 
     const body = JSON.parse(init!.body as string);
@@ -272,7 +278,10 @@ Deno.test("analyticsMiddleware - custom payload shape", opts, async () => {
     await flushAnalytics();
 
     assertSpyCalls(fetchSpy, 1);
-    const [url, init] = fetchSpy.calls[0].args;
+    const [url, init] = fetchSpy.calls[0].args as [
+      string,
+      RequestInit & { body: string },
+    ];
     assertEquals(url, "https://my-analytics.example.com/collect");
 
     const body = JSON.parse(init!.body as string);

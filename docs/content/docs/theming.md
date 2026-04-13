@@ -38,6 +38,47 @@ adapt to light mode, dark mode, and any custom theme:
 </div>;
 ```
 
+## How Styles Are Loaded
+
+The scaffolded project wires the style pipeline through three pieces:
+
+**`styles.css`** — your project's main stylesheet:
+
+```css
+@import "tailwindcss";
+@import "@denote/core/styles.css";
+@source "./";
+@variant dark (&:where(.dark, .dark *));
+```
+
+- `@import "tailwindcss"` brings in Tailwind's reset, theme tokens, and empty
+  utilities layer — utilities get generated on demand for the classes Tailwind
+  finds in _your_ source.
+- `@import "@denote/core/styles.css"` brings in Denote's design tokens, markdown
+  rules, and a **pre-compiled block of Tailwind utilities** for every class used
+  inside the framework's own components. Denote ships these pre-compiled because
+  JSR packages aren't installed into `node_modules`, so your Tailwind build
+  can't scan the framework source itself.
+- `@source "./"` tells Tailwind to scan your project root for class names in
+  your own markup.
+
+**`vite.config.ts`** — the `denoteStyles()` plugin inlines the framework CSS at
+build time. It's required because `@tailwindcss/vite` has its own CSS `@import`
+resolver that bypasses Vite's plugin chain and can't find JSR packages. The
+plugin runs before `tailwindcss()` in the plugins array.
+
+**What this means for you:**
+
+- Write any Tailwind utility class in your own components, routes, or markdown —
+  Tailwind scans your source and generates it automatically.
+- You don't need to duplicate or re-declare framework utilities. They're already
+  in the shipped CSS.
+- To override a framework color, change the `--denote-*` tokens via config (see
+  [Colors](#colors)) — don't try to override `.bg-[var(--denote-bg)]` directly.
+  The tokens drive every framework class.
+- For custom CSS rules beyond tokens, use the [`style.customCss`](#custom-css)
+  config option.
+
 ## Colors
 
 Set your brand colors in `denote.config.ts`:

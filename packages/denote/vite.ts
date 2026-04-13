@@ -5,13 +5,12 @@
  *
  * Provides {@linkcode denoteStyles} and {@linkcode denoteHmr}.
  *
- * - `denoteStyles()` handles two things in CSS files before `@tailwindcss/vite`
- *   processes them: it inlines `@import "@denote/core/styles.css"` with the
- *   actual CSS content, and rewrites `@source "node_modules/@denote/core/"` to
- *   the real package path derived from `import.meta.url`. Both are necessary
- *   because JSR packages are not installed into `node_modules` — `@tailwindcss/vite`
- *   uses its own CSS import resolver that bypasses Vite's plugin `resolveId`
- *   chain, so virtual modules cannot intercept CSS `@import` statements.
+ * - `denoteStyles()` inlines `@import "@denote/core/styles.css"` with the
+ *   actual CSS content before `@tailwindcss/vite` processes the file. This
+ *   is necessary because `@tailwindcss/vite` resolves CSS `@import`s with its
+ *   own resolver that bypasses Vite's `resolveId` plugin chain, and JSR
+ *   packages are not installed into `node_modules` so the import would
+ *   otherwise fail to resolve.
  * - `denoteHmr()` watches `denote.config.ts` and hot-reloads it without
  *   restarting the dev server.
  *
@@ -37,7 +36,6 @@
 
 import { setConfig } from "./lib/config.ts";
 
-const VIRTUAL_STYLES_ID = "\0@denote/core/styles.css";
 const stylesUrl = new URL("./styles.css", import.meta.url);
 let stylesCache: string | null = null;
 
@@ -52,64 +50,31 @@ async function loadStyles(): Promise<string> {
 }
 
 /**
- * Vite plugin that pre-processes CSS files before `@tailwindcss/vite` sees them:
- * 1. Inlines `@import "@denote/core/styles.css"` with the actual CSS content.
- *    `@tailwindcss/vite` resolves CSS `@import` with its own resolver that
- *    bypasses Vite's `resolveId` plugin chain, so virtual modules don't work here.
- * 2. Rewrites `@source "node_modules/@denote/core/"` to the actual package
- *    directory derived from `import.meta.url`, so Tailwind can scan the
- *    framework source files for class names. JSR packages are not installed
- *    into `node_modules`, so the path would otherwise resolve to nothing.
+ * Vite plugin that inlines `@import "@denote/core/styles.css"` with the
+ * actual pre-compiled CSS before `@tailwindcss/vite` processes the file.
+ *
+ * `@tailwindcss/vite` resolves CSS `@import`s with its own resolver that
+ * bypasses Vite's `resolveId` plugin chain, so a virtual module would never
+ * get reached for CSS imports. JSR packages aren't installed into
+ * `node_modules`, so the import would otherwise fail to resolve.
+ *
+ * The framework's `styles.css` is already fully compiled (design tokens,
+ * markdown overrides, and a pre-compiled block of Tailwind utilities for
+ * every class used by framework components). No scanning of the framework
+ * source happens at consumer build time.
  *
  * Must be listed before `tailwindcss()` in the plugins array.
  */
 export function denoteStyles(): import("vite").Plugin {
-  // Resolve the package directory at plugin-load time.
-  // When loaded from JSR, import.meta.url is a file:// URL pointing to the
-  // Deno module cache, which is a real directory on disk.
-  const packageDir = new URL(".", import.meta.url);
-
   return {
     name: "denote-styles",
     enforce: "pre",
 
-    resolveId(id: string) {
-      if (id === "@denote/core/styles.css") {
-        return VIRTUAL_STYLES_ID;
-      }
-    },
-
-    async load(id: string) {
-      if (id === VIRTUAL_STYLES_ID) {
-        return await loadStyles();
-      }
-    },
-
-    // @tailwindcss/vite resolves CSS @import statements with its own resolver
-    // (outside Vite's resolveId chain), so the virtual module above won't be
-    // reached for CSS @import. Instead we inline the content and rewrite
-    // @source here, before @tailwindcss/vite processes the file.
     async transform(code: string, id: string) {
       if (!id.endsWith(".css")) return;
-
-      let result = code;
-
-      if (result.includes('@import "@denote/core/styles.css"')) {
-        const styles = await loadStyles();
-        result = result.replace('@import "@denote/core/styles.css"', styles);
-      }
-
-      if (
-        result.includes("node_modules/@denote/core/") &&
-        packageDir.protocol === "file:"
-      ) {
-        result = result.replace(
-          /@source "node_modules\/@denote\/core\/"/g,
-          `@source "${packageDir.pathname}"`,
-        );
-      }
-
-      return result !== code ? result : undefined;
+      if (!code.includes('@import "@denote/core/styles.css"')) return;
+      const styles = await loadStyles();
+      return code.replace('@import "@denote/core/styles.css"', styles);
     },
   };
 }
