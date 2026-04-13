@@ -2,6 +2,5 @@
 @import "@denote/core/styles.css";
 
 @source "./";
-@source "node_modules/@denote/core/";
 
 @variant dark (&:where(.dark, .dark *));

@@ -84,7 +84,7 @@ async function scaffold(projectDir: string, projectName: string) {
   // Create deno.json — a plain Fresh/Deno project config
   // Note: ^0.0.x in semver means >=0.0.x <0.0.(x+1) — effectively pinned to
   // patch. This is intentional for pre-1.0 packages where minor bumps may break.
-  const coreSpecifier = "jsr:@denote/core@^0.0.8";
+  const coreSpecifier = "jsr:@denote/core@^0.0.9";
   const denoJson = {
     nodeModulesDir: "auto",
     tasks: {
@@ -157,22 +157,15 @@ import "./styles.css";
   console.log(`  ${green("✓")} client.ts`);
 
   // Create styles.css — Tailwind + Denote styles
-  // @import pulls in design tokens, markdown overrides, animations from core.
-  // @source "node_modules/@denote/core/" is rewritten at build time by the
-  // denoteStyles() Vite plugin to the actual Deno cache path, since JSR
-  // packages are not installed into node_modules.
-  const stylesCss = `@import "tailwindcss";
+  const stylesCss =
+    `/* Tailwind scans this project's source for classes you write. */
+@import "tailwindcss";
+/* Framework styles: design tokens, markdown rules, and pre-compiled
+   Tailwind utilities for every class used inside @denote/core components. */
 @import "@denote/core/styles.css";
 
-/* @source tells Tailwind where to scan for class names to include in the build.
-   NOTE: "node_modules/@denote/core/" does not literally exist — JSR packages are
-   cached by Deno, not installed into node_modules. The denoteStyles() Vite plugin
-   (from @denote/core/vite) rewrites this path at build time to the real Deno cache
-   location derived from import.meta.url. Do not remove it or change the path. */
 @source "./";
-@source "node_modules/@denote/core/";
 
-/* @variant defines when "dark:" utility classes apply — here, when .dark is on an ancestor */
 @variant dark (&:where(.dark, .dark *));
 `;
   await Deno.writeTextFile(`${projectDir}/styles.css`, stylesCss);
@@ -188,7 +181,11 @@ import { islandSpecifiers } from "@denote/core";
 export default defineConfig({
   server: { port: 8000 },
   plugins: [
+    // denoteStyles() inlines @import "@denote/core/styles.css" before
+    // @tailwindcss/vite sees it — required because JSR packages aren't
+    // installed into node_modules, so the CSS @import would not resolve.
     denoteStyles(),
+    // denoteHmr() hot-reloads denote.config.ts without restarting Vite.
     denoteHmr(),
     fresh({
       serverEntry: "main.ts",

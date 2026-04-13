@@ -10,11 +10,16 @@
   ],
   "tasks": {
     "build": "cd docs && deno task build",
+    "build:styles": "deno run -A packages/denote/build_styles.ts",
     "dev": "cd docs && deno task dev",
     "start": "cd docs && deno task start",
     "validate": "cd docs && deno task validate",
     "test": "rm -rf .coverage && deno test -A --coverage=.coverage && deno coverage .coverage --lcov > lcov.info",
     "check": "deno fmt --check && deno lint && deno check && deno task test && deno task validate",
     "ok": "deno task check && deno task build"
+  },
+  "allowScripts": {
+    "allow": ["npm:@parcel/watcher@2.5.6"],
+    "deny": ["npm:esbuild@0.25.12", "npm:esbuild@0.25.7", "npm:esbuild@0.27.2"]
   }
 }
