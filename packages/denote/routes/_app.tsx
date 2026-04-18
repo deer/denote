@@ -7,8 +7,9 @@ export function App({ Component, state }: PageProps<unknown, State>) {
   const config = state.denote.config;
   const pageTitle = state.pageTitle
     ? `${state.pageTitle} | ${config.name}`
-    : `${config.name} — Docs for humans and machines`;
+    : config.name;
   const pageDescription = state.pageDescription ||
+    config.seo?.description ||
     "Documentation powered by Denote";
   const pageUrl = state.pageUrl;
   const pageImage = state.pageImage || config.seo?.ogImage;
@@ -42,19 +43,14 @@ export function App({ Component, state }: PageProps<unknown, State>) {
           type={faviconHref.endsWith(".svg") ? "image/svg+xml" : undefined}
           href={faviconHref}
         />
-        <link
-          rel="apple-touch-icon"
-          sizes="180x180"
-          href="/apple-touch-icon.png"
-        />
         <meta
           name="theme-color"
-          content="#ffffff"
+          content={config.colors?.background ?? "#ffffff"}
           media="(prefers-color-scheme: light)"
         />
         <meta
           name="theme-color"
-          content="#030712"
+          content={config.colors?.dark?.background ?? "#030712"}
           media="(prefers-color-scheme: dark)"
         />
         <link rel="manifest" href="/manifest.json" />
@@ -100,10 +96,14 @@ export function App({ Component, state }: PageProps<unknown, State>) {
             content={String(ogImageHeight)}
           />
         )}
+        <meta property="og:locale" content={locale} />
         <meta property="og:site_name" content={config.name} />
 
         {/* Twitter Card */}
-        <meta name="twitter:card" content="summary_large_image" />
+        <meta
+          name="twitter:card"
+          content={pageImage ? "summary_large_image" : "summary"}
+        />
         <meta name="twitter:title" content={pageTitle} />
         <meta name="twitter:description" content={pageDescription} />
         {pageImage && <meta name="twitter:image" content={pageImage} />}

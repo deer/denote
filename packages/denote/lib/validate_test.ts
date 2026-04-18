@@ -193,6 +193,7 @@ Deno.test("validateAndPrint - all-pass case returns 0", async () => {
         navigation: [
           { title: "Introduction", href: "/docs/introduction" },
         ],
+        seo: { url: "https://example.com" },
       },
     }));
     assertEquals(result, 0);

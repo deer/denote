@@ -281,6 +281,16 @@ export function Home(props: PageProps<unknown, State>) {
                   {link.title}
                 </a>
               ))}
+              {config.footer?.poweredBy !== false && (
+                <a
+                  href="https://denote.sh"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="text-sm text-[var(--denote-text-muted)] hover:text-[var(--denote-text-secondary)] transition-colors"
+                >
+                  Documentation by Denote
+                </a>
+              )}
             </div>
           </div>
         </div>

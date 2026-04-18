@@ -150,6 +150,22 @@ export function DocsLayout({
       </main>
 
       {showToc && <ActiveToc items={toc} />}
+
+      {config.footer?.poweredBy !== false && (
+        <footer class="lg:pl-[var(--denote-sidebar-width)] py-4 border-t border-[var(--denote-border)]">
+          <p class="text-center text-xs text-[var(--denote-text-muted)]">
+            Documentation by{" "}
+            <a
+              href="https://denote.sh"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="hover:text-[var(--denote-text-secondary)] transition-colors underline underline-offset-2"
+            >
+              Denote
+            </a>
+          </p>
+        </footer>
+      )}
     </div>
   );
 }

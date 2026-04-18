@@ -163,3 +163,132 @@ Deno.test("Responses include security headers", async () => {
   );
   await res.text(); // consume body
 });
+
+// ── /manifest.json ─────────────────────────────────────────
+
+Deno.test("GET /manifest.json - returns PWA manifest derived from config", async () => {
+  const res = await request("/manifest.json");
+  assertEquals(res.status, 200);
+  assertStringIncludes(
+    res.headers.get("content-type") || "",
+    "manifest",
+  );
+  const json = await res.json();
+  assertEquals(json.name, "Test Docs");
+  assertEquals(json.start_url, "/");
+  assert(Array.isArray(json.icons) && json.icons.length > 0);
+});
+
+// ── Trailing slash redirect ─────────────────────────────────
+
+Deno.test("GET /docs/introduction/ - redirects to canonical path without trailing slash", async () => {
+  const res = await request("/docs/introduction/");
+  assert(res.status === 301 || res.status === 302);
+  assertEquals(res.headers.get("location"), "/docs/introduction");
+  await res.body?.cancel();
+});
+
+// ── HTML meta tags ─────────────────────────────────────────
+
+function createHandlerWithSeoDescription() {
+  const app = denote({
+    config: {
+      name: "Meta Test",
+      navigation: [{
+        title: "Guide",
+        children: [{ title: "Introduction", href: "/docs/introduction" }],
+      }],
+      seo: {
+        url: "https://example.com",
+        description: "A custom site description",
+      },
+    },
+    contentDir,
+    includeStaticFiles: false,
+    includeErrorHandlers: false,
+  });
+  return app.handler();
+}
+
+Deno.test("seo.description used as meta description fallback on pages without frontmatter description", async () => {
+  // introduction.md fixture has no description in frontmatter
+  const handler2 = createHandlerWithSeoDescription();
+  const res = await handler2(
+    new Request("http://localhost/docs/introduction"),
+  );
+  assertEquals(res.status, 200);
+  const html = await res.text();
+  assertStringIncludes(html, 'content="A custom site description"');
+});
+
+Deno.test("og:locale meta tag is emitted", async () => {
+  const res = await request("/docs/introduction");
+  assertEquals(res.status, 200);
+  const html = await res.text();
+  assertStringIncludes(html, 'property="og:locale"');
+});
+
+Deno.test("twitter:card is summary when no ogImage configured", async () => {
+  const res = await request("/docs/introduction");
+  assertEquals(res.status, 200);
+  const html = await res.text();
+  assertStringIncludes(html, 'content="summary"');
+});
+
+Deno.test("twitter:card is summary_large_image when ogImage configured", async () => {
+  const app = denote({
+    config: {
+      name: "OG Test",
+      navigation: [{
+        title: "Guide",
+        children: [{ title: "Introduction", href: "/docs/introduction" }],
+      }],
+      seo: {
+        url: "https://example.com",
+        ogImage: "https://example.com/og.png",
+      },
+    },
+    contentDir,
+    includeStaticFiles: false,
+    includeErrorHandlers: false,
+  });
+  const res = await app.handler()(
+    new Request("http://localhost/docs/introduction"),
+  );
+  assertEquals(res.status, 200);
+  const html = await res.text();
+  assertStringIncludes(html, 'content="summary_large_image"');
+});
+
+// ── "Powered by Denote" footer ──────────────────────────────
+
+Deno.test("docs page includes Powered by Denote attribution by default", async () => {
+  const res = await request("/docs/introduction");
+  assertEquals(res.status, 200);
+  const html = await res.text();
+  assertStringIncludes(html, "denote.sh");
+  assertStringIncludes(html, "Denote");
+});
+
+Deno.test("footer.poweredBy: false suppresses attribution", async () => {
+  const app = denote({
+    config: {
+      name: "No Attribution",
+      navigation: [{
+        title: "Guide",
+        children: [{ title: "Introduction", href: "/docs/introduction" }],
+      }],
+      footer: { poweredBy: false },
+    },
+    contentDir,
+    includeStaticFiles: false,
+    includeErrorHandlers: false,
+  });
+  const res = await app.handler()(
+    new Request("http://localhost/docs/introduction"),
+  );
+  assertEquals(res.status, 200);
+  const html = await res.text();
+  // "denote.sh" link should not appear
+  assert(!html.includes("denote.sh"));
+});

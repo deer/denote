@@ -185,6 +185,8 @@ export interface LandingConfig {
 export interface SeoConfig {
   /** Canonical base URL (e.g. "https://denote.sh"). Used for canonical links, sitemap, hreflang, OG. */
   url?: string;
+  /** Default meta description and og:description for pages without frontmatter description */
+  description?: string;
   /** Default OG image URL (1200x630 recommended) */
   ogImage?: string;
   /** OG image width (default: 1200 when ogImage is set) */
@@ -238,6 +240,8 @@ export interface DenoteConfig {
   footer?: {
     links?: { title: string; href: string }[];
     copyright?: string;
+    /** Show "Documentation by Denote" attribution link (default: true). Set false to hide. */
+    poweredBy?: boolean;
   };
   /** Social media links shown in the header/footer. */
   social?: {
