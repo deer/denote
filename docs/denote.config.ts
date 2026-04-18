@@ -59,6 +59,8 @@ export const config: DenoteConfig = {
   },
   seo: {
     url: "https://denote.sh",
+    description:
+      "AI-native documentation framework with built-in MCP server, llms.txt, and JSON API. Document any project. Every AI feature free.",
     locale: "en",
     jsonLdType: "WebSite",
     jsonLdExtra: {
@@ -151,8 +153,7 @@ export const config: DenoteConfig = {
       {
         icon: "⚡",
         title: "Lightning Fast",
-        description:
-          "Server-rendered with Fresh's island architecture. Minimal client JavaScript.",
+        description: "Minimal client JavaScript. Fast page loads, no bloat.",
       },
       {
         icon: "🔍",
@@ -161,15 +162,16 @@ export const config: DenoteConfig = {
           "Instant full-text search with keyboard navigation. No external service, no API key, no indexing delay.",
       },
       {
-        icon: "🦕",
-        title: "Deno Native",
-        description: "Built on Deno's secure runtime. TypeScript-first.",
+        icon: "🌐",
+        title: "Any Project",
+        description:
+          "Document any codebase — Java, Go, Rust, Python, TypeScript. Denote is the docs layer, independent of your stack.",
       },
       {
         icon: "🚀",
         title: "Deploy Anywhere",
         description:
-          "One-click Deno Deploy, or self-host on anything that runs Deno. Docker support included.",
+          "Docker, Deno Deploy, or any server. One-click cloud or self-host.",
       },
     ],
   },

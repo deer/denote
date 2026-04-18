@@ -82,7 +82,7 @@ async function scaffold(projectDir: string, projectName: string) {
   }
 
   // Create deno.json — a plain Fresh/Deno project config
-  const coreSpecifier = "jsr:@denote/core@^0.1.0";
+  const coreSpecifier = "jsr:@denote/core@^0.2.0";
   const denoJson = {
     nodeModulesDir: "auto",
     tasks: {
@@ -205,6 +205,9 @@ export const config: DenoteConfig = {
   colors: {
     primary: "#6366f1",
   },
+  seo: {
+    // url: "https://your-domain.com", // Required for canonical links, sitemap, and OG URLs
+  },
   landing: {
     hero: {
       badge: "Open Source",
@@ -215,12 +218,9 @@ export const config: DenoteConfig = {
     },
     cta: {
       primary: { text: "Get Started", href: "/docs/introduction" },
-      secondary: {
-        text: "GitHub",
-        href: "https://github.com/your-org/${projectName}",
-      },
+      // secondary: { text: "GitHub", href: "https://github.com/your-org/${projectName}" },
     },
-    install: "deno run -Ar jsr:@denote/init",
+    // install: "your-package-manager install ${projectName}",
     features: [
       {
         icon: "⚡",
@@ -252,9 +252,9 @@ export const config: DenoteConfig = {
   topNav: [
     { title: "Documentation", href: "/docs" },
   ],
-  social: {
-    github: "https://github.com/your-org/${projectName}",
-  },
+  // social: {
+  //   github: "https://github.com/your-org/${projectName}",
+  // },
   footer: {
     copyright: "© ${new Date().getFullYear()} ${projectName}",
   },
@@ -277,12 +277,12 @@ description: Welcome to ${projectName}
 
 # Welcome to ${projectName}
 
-This is your documentation site, powered by **Denote**.
+This is your documentation site.
 
 ## Features
 
 - 📝 **Markdown First** — Write docs in plain Markdown
-- ⚡ **Lightning Fast** — Server-rendered with Fresh
+- ⚡ **Lightning Fast** — Minimal client JavaScript, fast page loads
 - 🤖 **AI Native** — Built-in MCP server, llms.txt, and JSON API
 - 🔍 **Full-text Search** — Instant ⌘K search
 
@@ -313,22 +313,18 @@ Get started with ${projectName} quickly.
 
 ## Prerequisites
 
-- [Deno](https://deno.com) v2.0 or later
+List any prerequisites here (runtime version, system dependencies, etc.).
 
 ## Install
 
 \`\`\`bash
-# Replace this with your project's actual install command
-deno add @your-org/${projectName}
+# Replace with your project's actual install command
 \`\`\`
 
 ## Usage
 
-\`\`\`typescript
-// Replace this with a real usage example
-import { hello } from "@your-org/${projectName}";
-
-hello("world");
+\`\`\`
+// Replace with a real usage example
 \`\`\`
 
 ## Configuration
@@ -364,6 +360,25 @@ dist/
 `;
   await Deno.writeTextFile(`${projectDir}/.gitignore`, gitignore);
   console.log(`  ${green("✓")} .gitignore`);
+
+  // Create a minimal favicon using the first letter of the project name
+  const faviconLetter = projectName.charAt(0).toUpperCase();
+  const faviconSvg =
+    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <rect width="32" height="32" rx="8" fill="#6366f1" />
+  <text
+    x="16"
+    y="23"
+    font-family="system-ui,sans-serif"
+    font-size="20"
+    font-weight="bold"
+    text-anchor="middle"
+    fill="white"
+  >${faviconLetter}</text>
+</svg>
+`;
+  await Deno.writeTextFile(`${projectDir}/static/favicon.svg`, faviconSvg);
+  console.log(`  ${green("✓")} static/favicon.svg`);
 
   // Create Dockerfile
   // Pin to a specific Deno version for reproducible builds. Users should

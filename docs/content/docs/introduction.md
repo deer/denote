@@ -4,12 +4,11 @@ description: Denote — the open-source, AI-native documentation framework
 ai-summary: Denote is an open-source, AI-native documentation framework. It auto-generates llms.txt, JSON API, and MCP server endpoints so AI agents can consume your docs as structured data. Zero config, server-rendered, markdown-first.
 ai-keywords: [
   documentation,
-  deno,
-  fresh,
   ai-native,
   open-source,
   llms.txt,
   mcp,
+  any-language,
 ]
 ---
 
@@ -31,11 +30,11 @@ Denote takes a different approach:
   site is a first-class data source for AI agents, out of the box.
 - **Zero Config**: Works immediately with sensible defaults. No plugins, no
   setup.
-- **Deno Native**: Built on Deno's secure runtime. TypeScript-first.
+- **Any Project**: Document any codebase — Java, Go, Rust, Python, TypeScript.
+  Denote is the docs layer, independent of your stack.
 - **Markdown First**: Write your docs in Markdown with frontmatter. No MDX
   compilation step. Just files.
-- **Lightning Fast**: Server-rendered with Fresh's island architecture. Minimal
-  client JavaScript.
+- **Lightning Fast**: Minimal client JavaScript. Fast page loads, no bloat.
 
 ## AI Features
 
@@ -73,8 +72,8 @@ Welcome to my documentation!
 - 🎨 Beautiful, responsive design with dark mode
 - 🔍 Full-text search (⌘K)
 - 📱 Mobile-friendly navigation
-- ⚡ Lightning fast, server-rendered
-- 🚀 Deploy anywhere — Deno Deploy, Docker, or self-host
+- ⚡ Lightning fast, minimal client JavaScript
+- 🚀 Deploy anywhere — Docker, Deno Deploy, or self-host
 
 ## Getting Started
 

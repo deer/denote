@@ -1,12 +1,17 @@
-import type { PageProps } from "fresh";
+import { HttpError, type PageProps } from "fresh";
 import { define, isDev, type State } from "../utils.ts";
 import { Header } from "../components/Header.tsx";
 import { findFirstHref } from "../lib/nav.ts";
+import { NotFoundPage } from "./_404.tsx";
 
 /** Error page component — exported for programmatic routing */
 export function ErrorPage(ctx: PageProps<unknown, State>) {
-  const config = ctx.state.denote.config;
   const error = ctx.error;
+  if (error instanceof HttpError && error.status === 404) {
+    return <NotFoundPage {...ctx} />;
+  }
+
+  const config = ctx.state.denote.config;
   const message = error instanceof Error ? error.message : "An error occurred";
   const devMode = isDev();
   const docsHref = findFirstHref(config.navigation) ||

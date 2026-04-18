@@ -63,6 +63,13 @@ function validateConfig(config: DenoteConfig): ValidationIssue[] {
   }
 
   // Validate SEO fields
+  if (!config.seo?.url) {
+    issues.push({
+      severity: "warning",
+      message:
+        `Config: seo.url is not set. Canonical links, sitemap URLs, and Open Graph URLs will fall back to the request origin (e.g. localhost). Set seo.url to your production domain: seo: { url: "https://yourdomain.com" }.`,
+    });
+  }
   if (config.seo?.url) {
     try {
       new URL(config.seo.url);

@@ -23,11 +23,9 @@ documentation too. Denote is:
   a first-class data source for AI agents — not an afterthought.
 - 📝 **Markdown First** — Write docs in Markdown with frontmatter. No MDX
   compilation step. Just files.
-- ⚡ **Lightning Fast** — Server-rendered with Fresh's island architecture.
-  Minimal client JavaScript.
-- 🦕 **Deno Native** — Built on Deno's secure runtime. TypeScript-first.
-- 🚀 **Deploy Anywhere** — One-click Deno Deploy, or self-host on anything that
-  runs Deno. Docker support included.
+- ⚡ **Lightning Fast** — Minimal client JavaScript. Fast page loads, no bloat.
+- 🚀 **Deploy Anywhere** — Docker, Deno Deploy, or any server. One-click cloud
+  or self-host.
 
 ## Quick Start
 

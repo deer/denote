@@ -24,7 +24,7 @@
  * // Run with: deno serve -A main.ts
  * ```
  */
-import { App, staticFiles } from "fresh";
+import { App, staticFiles, trailingSlashes } from "fresh";
 export type { App } from "fresh";
 import type { DenoteConfig } from "./denote.config.ts";
 import {
@@ -160,6 +160,8 @@ export function denote(options: DenoteOptions): App<unknown> {
   if (includeStaticFiles) {
     app.use(staticFiles());
   }
+
+  app.use(trailingSlashes("never"));
 
   // ── Analytics middleware (opt-in, server-side) ───────────────
   if (config.analytics) {
@@ -437,6 +439,34 @@ export function denote(options: DenoteOptions): App<unknown> {
     });
   }
 
+  // ── PWA manifest ───────────────────────────────────────────
+  // Serves a minimal manifest.json derived from config. Static files take
+  // priority — if the user provides static/manifest.json it wins.
+
+  app.get("/manifest.json", (ctx) => {
+    const cfg = ctx.state.denote.config;
+    const manifest = {
+      name: cfg.name,
+      short_name: cfg.name,
+      description: cfg.seo?.description ?? "",
+      start_url: "/",
+      display: "standalone",
+      background_color: "#ffffff",
+      theme_color: "#ffffff",
+      icons: [{
+        src: cfg.favicon ?? "/favicon.svg",
+        type: "image/svg+xml",
+        sizes: "any",
+      }],
+    };
+    return new Response(JSON.stringify(manifest, null, 2), {
+      headers: {
+        "Content-Type": "application/manifest+json",
+        "Cache-Control": configCacheControl,
+      },
+    });
+  });
+
   // ── Landing page ───────────────────────────────────────────
 
   if (includeLandingPage) {
@@ -450,9 +480,13 @@ export function denote(options: DenoteOptions): App<unknown> {
   // Middleware for docs pages (sets page metadata in state)
   app.use(`${docsBasePath}/*`, docsMiddleware);
 
-  // Redirect /docs to the first navigation page
-  const firstNavHref = findFirstHref(config.navigation) ||
+  // Redirect /docs to the first navigation page.
+  // Guard against a redirect loop if the nav config points to the base docs path itself.
+  const rawFirstNavHref = findFirstHref(config.navigation) ||
     `${docsBasePath}/introduction`;
+  const firstNavHref = rawFirstNavHref === docsBasePath
+    ? `${docsBasePath}/introduction`
+    : rawFirstNavHref;
   app.get(docsBasePath, () =>
     new Response(null, {
       status: 302,

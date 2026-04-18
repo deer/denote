@@ -193,9 +193,14 @@ export const config: DenoteConfig = {
       { title: "Terms", href: "/terms" },
       { title: "Privacy", href: "/privacy" },
     ],
+    poweredBy: false, // Hide "Documentation by Denote" attribution (default: true)
   },
 };
 ```
+
+A subtle "Documentation by Denote" attribution link is shown by default in the
+docs layout footer and the landing page footer. Set `poweredBy: false` to remove
+it.
 
 ## Edit Link
 
@@ -235,18 +240,20 @@ export const config: DenoteConfig = {
 };
 ```
 
-| Property        | Description                                                                    |
-| --------------- | ------------------------------------------------------------------------------ |
-| `url`           | Canonical base URL — unlocks proper canonical URLs, hreflang, and sitemap URLs |
-| `ogImage`       | Default OG image for social sharing (1200x630 recommended)                     |
-| `ogImageWidth`  | OG image width in pixels (default: 1200 when ogImage is set)                   |
-| `ogImageHeight` | OG image height in pixels (default: 630 when ogImage is set)                   |
-| `locale`        | Language code for `<html lang>` and hreflang tags (default: "en")              |
-| `jsonLdType`    | JSON-LD `@type` (default: "WebSite", or "SoftwareApplication", etc.)           |
-| `jsonLdExtra`   | Additional properties merged into the JSON-LD structured data object           |
+| Property        | Description                                                                               |
+| --------------- | ----------------------------------------------------------------------------------------- |
+| `url`           | Canonical base URL — unlocks proper canonical URLs, hreflang, and sitemap URLs            |
+| `description`   | Default meta description and `og:description` for pages without frontmatter `description` |
+| `ogImage`       | Default OG image for social sharing (1200x630 recommended)                                |
+| `ogImageWidth`  | OG image width in pixels (default: 1200 when ogImage is set)                              |
+| `ogImageHeight` | OG image height in pixels (default: 630 when ogImage is set)                              |
+| `locale`        | Language code for `<html lang>`, `og:locale`, and hreflang tags (default: "en")           |
+| `jsonLdType`    | JSON-LD `@type` (default: "WebSite", or "SoftwareApplication", etc.)                      |
+| `jsonLdExtra`   | Additional properties merged into the JSON-LD structured data object                      |
 
-All fields are optional. Without `seo`, Denote still generates correct meta tags
-using the request origin as the base URL.
+`seo.url` is technically optional but strongly recommended for any deployed site
+— without it, canonical links, sitemap URLs, and OG URLs fall back to the
+request origin (e.g. `localhost`). `deno task validate` warns when it is unset.
 
 ### Per-Page Meta Tags
 
@@ -436,7 +443,8 @@ The validator checks:
 - **Content directory** — exists and contains markdown files
 - **Frontmatter** — each page has a valid `title`
 - **Navigation links** — every internal nav href matches an existing doc page
-- **SEO URLs** — `seo.url` and `seo.ogImage` are valid URLs when set
+- **SEO URLs** — `seo.url` and `seo.ogImage` are valid URLs when set; warns if
+  `seo.url` is absent
 - **Hex colors** — all color values in `colors` and `colors.dark` are valid hex
 
 Note: Config field types, enums (`style.darkMode`, `style.roundedness`,
