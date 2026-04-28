@@ -37,19 +37,19 @@
   ],
   "imports": {
     "@std/path": "jsr:@std/path@1",
-    "@modelcontextprotocol/sdk": "npm:@modelcontextprotocol/sdk@^1.25.3",
-    "fresh": "jsr:@fresh/core@^2.2.2",
-    "preact": "npm:preact@^10.27.2",
-    "@preact/signals": "npm:@preact/signals@^2.5.0",
-    "@fresh/plugin-vite": "jsr:@fresh/plugin-vite@^1.0.8",
+    "@modelcontextprotocol/sdk": "npm:@modelcontextprotocol/sdk@1.25.3",
+    "fresh": "jsr:@fresh/core@2.2.2",
+    "preact": "npm:preact@10.29.1",
+    "@preact/signals": "npm:@preact/signals@2.9.0",
+    "@fresh/plugin-vite": "jsr:@fresh/plugin-vite@1.0.8",
     "@deer/gfm": "jsr:@deer/gfm@0.0.7",
 
-    "vite": "npm:vite@^7.3.1",
-    "tailwindcss": "npm:tailwindcss@^4.1.10",
-    "@tailwindcss/vite": "npm:@tailwindcss/vite@^4.1.12",
-    "minisearch": "npm:minisearch@^7.2.0",
-    "zod": "npm:zod@^4.3.6",
-    "preact-render-to-string": "npm:preact-render-to-string@^6.5.0"
+    "vite": "npm:vite@7.3.1",
+    "tailwindcss": "npm:tailwindcss@4.1.10",
+    "@tailwindcss/vite": "npm:@tailwindcss/vite@4.1.12",
+    "minisearch": "npm:minisearch@7.2.0",
+    "zod": "npm:zod@4.3.6",
+    "preact-render-to-string": "npm:preact-render-to-string@6.6.7"
   },
   "publish": {
     "exclude": [
