@@ -70,13 +70,19 @@ function formatUmami(
   pageUrl: URL,
   siteId: string,
   endpoint: string,
+  ip: string,
 ): ProviderPayload {
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+    "User-Agent": request.headers.get("user-agent") || "Denote/1.0",
+  };
+  if (ip) {
+    headers["X-Forwarded-For"] = ip;
+  }
+
   return {
     url: endpoint,
-    headers: {
-      "Content-Type": "application/json",
-      "User-Agent": request.headers.get("user-agent") || "Denote/1.0",
-    },
+    headers,
     body: JSON.stringify({
       type: "event",
       payload: {
@@ -96,16 +102,14 @@ function formatPlausible(
   pageUrl: URL,
   siteId: string,
   endpoint: string,
+  ip: string,
 ): ProviderPayload {
-  const xff = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
-    "";
-
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
     "User-Agent": request.headers.get("user-agent") || "Denote/1.0",
   };
-  if (xff) {
-    headers["X-Forwarded-For"] = xff;
+  if (ip) {
+    headers["X-Forwarded-For"] = ip;
   }
 
   return {
@@ -125,10 +129,8 @@ function formatCustom(
   pageUrl: URL,
   siteId: string,
   endpoint: string,
+  ip: string,
 ): ProviderPayload {
-  const xff = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
-    "";
-
   return {
     url: endpoint,
     headers: {
@@ -142,7 +144,7 @@ function formatCustom(
       siteId,
       referrer: request.headers.get("referer") || "",
       userAgent: request.headers.get("user-agent") || "",
-      ip: xff,
+      ip,
       language: request.headers.get("accept-language")?.split(",")[0] || "",
     }),
   };
@@ -182,8 +184,12 @@ export function analyticsMiddleware(
     const ct = res.headers.get("content-type") || "";
     if (!ct.includes("text/html")) return res;
 
+    const ip = ctx.req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+      (ctx.info.remoteAddr as Deno.NetAddr).hostname ||
+      "";
+
     // Fire analytics async — never block the response
-    sendEvent(ctx.req, resolved, formatter);
+    sendEvent(ctx.req, resolved, formatter, ip);
 
     return res;
   };
@@ -193,6 +199,7 @@ function sendEvent(
   request: Request,
   resolved: { endpoint: string; siteId: string },
   formatter: typeof FORMATTERS[keyof typeof FORMATTERS],
+  ip: string,
 ): void {
   Promise.resolve().then(async () => {
     const pageUrl = new URL(request.url);
@@ -213,6 +220,7 @@ function sendEvent(
       pageUrl,
       resolved.siteId,
       resolved.endpoint,
+      ip,
     );
 
     await fetch(payload.url, {

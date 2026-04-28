@@ -10,6 +10,8 @@ function mockCtx(
     method?: string;
     responseHeaders?: Record<string, string>;
     responseStatus?: number;
+    requestHeaders?: Record<string, string>;
+    remoteAddr?: string;
   } = {},
 ) {
   const {
@@ -17,6 +19,8 @@ function mockCtx(
     method = "GET",
     responseHeaders = { "content-type": "text/html" },
     responseStatus = 200,
+    requestHeaders = {},
+    remoteAddr = "127.0.0.1",
   } = opts;
 
   const response = new Response("OK", {
@@ -32,8 +36,12 @@ function mockCtx(
       headers: {
         "user-agent": "TestAgent/1.0",
         "accept-language": "en-US",
+        ...requestHeaders,
       },
     }),
+    info: {
+      remoteAddr: { transport: "tcp", hostname: remoteAddr, port: 0 },
+    },
     next: nextFn,
   };
 
@@ -238,6 +246,61 @@ Deno.test("analyticsMiddleware - umami payload shape", opts, async () => {
     fetchSpy.restore();
   }
 });
+
+Deno.test(
+  "analyticsMiddleware - umami uses x-forwarded-for when present",
+  opts,
+  async () => {
+    const fetchSpy = spy(globalThis, "fetch");
+    try {
+      const handler = analyticsMiddleware(umamiConfig);
+      const { ctx } = mockCtx({
+        requestHeaders: { "x-forwarded-for": "203.0.113.42, 10.0.0.1" },
+        remoteAddr: "10.0.0.1",
+      });
+
+      // deno-lint-ignore no-explicit-any
+      await handler(ctx as any);
+      await flushAnalytics();
+
+      assertSpyCalls(fetchSpy, 1);
+      const [, init] = fetchSpy.calls[0].args as [
+        string,
+        RequestInit & { headers: Record<string, string>; body: string },
+      ];
+      assertEquals(init!.headers["X-Forwarded-For"], "203.0.113.42");
+      const body = JSON.parse(init!.body as string);
+      assertEquals(body.payload.ip, undefined);
+    } finally {
+      fetchSpy.restore();
+    }
+  },
+);
+
+Deno.test(
+  "analyticsMiddleware - umami falls back to remoteAddr when no x-forwarded-for",
+  opts,
+  async () => {
+    const fetchSpy = spy(globalThis, "fetch");
+    try {
+      const handler = analyticsMiddleware(umamiConfig);
+      const { ctx } = mockCtx({ remoteAddr: "203.0.113.99" });
+
+      // deno-lint-ignore no-explicit-any
+      await handler(ctx as any);
+      await flushAnalytics();
+
+      assertSpyCalls(fetchSpy, 1);
+      const [, init] = fetchSpy.calls[0].args as [
+        string,
+        RequestInit & { headers: Record<string, string> },
+      ];
+      assertEquals(init!.headers["X-Forwarded-For"], "203.0.113.99");
+    } finally {
+      fetchSpy.restore();
+    }
+  },
+);
 
 Deno.test("analyticsMiddleware - plausible payload shape", opts, async () => {
   const fetchSpy = spy(globalThis, "fetch");
