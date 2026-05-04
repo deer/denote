@@ -104,7 +104,7 @@ Deno.test("listTools - returns all three tools", mcpTestOpts, async () => {
   const { client, close } = await createTestClient();
 
   const { tools } = await client.listTools();
-  const names = tools.map((t) => t.name).sort();
+  const names = tools.map((t: { name: string }) => t.name).sort();
   assertEquals(names, ["get_all_docs", "get_doc", "search_docs"]);
 
   await close();
@@ -339,7 +339,7 @@ Deno.test("listResources - includes docs-index", mcpTestOpts, async () => {
   const { client, close } = await createTestClient();
 
   const { resources } = await client.listResources();
-  const uris = resources.map((r) => r.uri);
+  const uris = resources.map((r: { uri: string }) => r.uri);
   assertEquals(uris.includes("docs://index"), true);
 
   await close();
@@ -353,7 +353,7 @@ Deno.test(
 
     const { resources } = await client.listResources();
     // The list callback should populate resources from all docs
-    const docResources = resources.filter((r) =>
+    const docResources = resources.filter((r: { uri: string }) =>
       r.uri.startsWith("docs://") && r.uri !== "docs://index"
     );
     assertEquals(docResources.length > 0, true);
@@ -438,7 +438,9 @@ Deno.test(
     const { client, close } = await createTestClient();
 
     const { resourceTemplates } = await client.listResourceTemplates();
-    const templates = resourceTemplates.map((t) => t.uriTemplate);
+    const templates = resourceTemplates.map((t: { uriTemplate: string }) =>
+      t.uriTemplate
+    );
     assertEquals(templates.includes("docs://{slug}"), true);
 
     await close();

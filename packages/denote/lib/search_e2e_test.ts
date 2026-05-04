@@ -9,7 +9,7 @@
  * 4. Prefix matching works (partial word matches)
  * 5. Cached on reopen (no loading state on second open)
  */
-import { launch } from "jsr:@astral/astral@0.5.5";
+import { launch } from "jsr:@astral/astral@0.5.6";
 import { assert, assertEquals } from "jsr:@std/assert@1";
 import { deadline as withDeadline } from "jsr:@std/async@1/deadline";
 import { dirname, fromFileUrl, join } from "@std/path";
