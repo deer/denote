@@ -99,7 +99,7 @@ async function scaffold(projectDir: string, projectName: string) {
       "@tailwindcss/vite": "npm:@tailwindcss/vite@4.1.12",
       "vite": "npm:vite@7.3.2",
       "tailwindcss": "npm:tailwindcss@4.1.10",
-      "fresh": "jsr:@fresh/core@^2.3.3",
+      "fresh": "jsr:@fresh/core@2.3.3",
       "preact": "npm:preact@10.29.1",
       "@preact/signals": "npm:@preact/signals@2.9.0",
     },
