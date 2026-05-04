@@ -268,7 +268,8 @@ Deno.test(
         string,
         RequestInit & { headers: Record<string, string>; body: string },
       ];
-      assertEquals(init!.headers["X-Forwarded-For"], "203.0.113.42");
+      assertEquals(init!.headers["x-umami-client-ip"], "203.0.113.42");
+      assertEquals(init!.headers["X-Forwarded-For"], undefined);
       const body = JSON.parse(init!.body as string);
       assertEquals(body.payload.ip, undefined);
     } finally {
@@ -295,7 +296,7 @@ Deno.test(
         string,
         RequestInit & { headers: Record<string, string> },
       ];
-      assertEquals(init!.headers["X-Forwarded-For"], "203.0.113.99");
+      assertEquals(init!.headers["x-umami-client-ip"], "203.0.113.99");
     } finally {
       fetchSpy.restore();
     }

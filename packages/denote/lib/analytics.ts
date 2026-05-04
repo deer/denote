@@ -77,7 +77,7 @@ function formatUmami(
     "User-Agent": request.headers.get("user-agent") || "Denote/1.0",
   };
   if (ip) {
-    headers["X-Forwarded-For"] = ip;
+    headers["x-umami-client-ip"] = ip;
   }
 
   return {
